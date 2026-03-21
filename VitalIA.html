@@ -568,6 +568,57 @@ a{text-decoration:none;color:inherit}
 .tg-step-text{font-size:12px;color:var(--text2);line-height:1.6}
 @keyframes otpPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,158,217,.4)}50%{box-shadow:0 0 0 6px rgba(34,158,217,0)}}
 .otp-active{animation:otpPulse 1.5s ease-in-out infinite}
+
+/* ── VitalIA Fixes ────────────────────── */
+/* Menu Mais (···) sempre verde e visível */
+.nav-item:last-child .nav-icon {
+  color: #22c55e !important;
+  font-size: 20px !important;
+  letter-spacing: 4px !important;
+  font-weight: 900 !important;
+}
+/* Coach input sempre clicável */
+.coach-textarea {
+  pointer-events: auto !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+.coach-input-wrap {
+  pointer-events: auto !important;
+  z-index: 10 !important;
+  position: relative !important;
+}
+/* Scanner viewport */
+#quagga-viewport video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+/* Botões sociais verde metálico */
+@keyframes greenPulse {
+  0%,100% { box-shadow: 0 0 8px rgba(34,197,94,.25); }
+  50% { box-shadow: 0 0 20px rgba(34,197,94,.5), 0 0 40px rgba(34,197,94,.15); }
+}
+
+
+.social-green-btn {
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-radius:12px;border:1.5px solid rgba(34,197,94,.5);
+  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
+  cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
+  color:var(--text);font-family:var(--font-body);transition:all .25s;
+  animation:greenPulse 3s ease-in-out infinite;
+}
+.social-green-btn:hover, .social-green-btn:active {
+  animation:none;
+  box-shadow:0 0 24px rgba(34,197,94,.6);
+  border-color:rgba(34,197,94,.9);
+  transform:translateY(-1px);
+}
+
 </style>
 </head>
 <body>
@@ -2401,40 +2452,6 @@ function renderAuth() {
   else if (step === 'pin') renderPinScreen();
 }
 
-function renderLogin() {
-  const el = document.getElementById('auth-screen');
-  el.innerHTML = `<div class="auth-bg">
-    <div class="auth-logo-wrap">
-      <div class="auth-logo">🌿</div>
-      <div class="auth-logo-name">VitalIA</div>
-    </div>
-    <div class="auth-card">
-      <h2 class="auth-title">${t('login')}</h2>
-      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
-      <div class="input-wrap">
-        <label class="input-label">${t('email')}</label>
-        <div class="input-icon"><span class="icon">📧</span><input id="a-email" class="input" type="email" placeholder="seu@email.com"></div>
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">${t('password')}</label>
-        <div class="input-icon"><span class="icon">🔒</span><input id="a-pass" class="input" type="password" placeholder="••••••••"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" id="a-remember" style="accent-color:var(--green)"> ${t('remember')}</label>
-        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info')" style="font-size:13px">${t('forgot')}</span>
-      </div>
-      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-bottom:12px;padding:14px">${t('login')}</button>
-      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:16px">🔐 Entrar com biometria / PIN</button>
-      <div class="divider"><div class="divider-line"></div><div class="divider-text">${t('or_continue')}</div><div class="divider-line"></div></div>
-      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:10px"><span class="tg-plane">✈️</span> Entrar com Telegram</button>
-      <button class="social-btn" onclick="socialLogin('Google')"><span>🇬</span> Google</button>
-      <button class="social-btn" onclick="socialLogin('Apple')"><span>🍎</span> Apple ID</button>
-      <button class="social-btn" onclick="socialLogin('Facebook')"><span>📘</span> Facebook</button>
-      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span></p>
-    </div>
-    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px">🔒 Login seguro com criptografia</p>
-  </div>`;
-}
 
 async function doLogin() {
   const email = document.getElementById('a-email').value.trim();
@@ -2458,6 +2475,13 @@ async function doLogin() {
   APP.user = { email: user.email, name: user.user_metadata?.nome || email.split('@')[0], id: user.id };
   APP.session = data.session?.access_token || 'sess_' + Date.now();
   save('v_user', APP.user); save('v_session', APP.session);
+  const remEl = document.getElementById('a-remember');
+  if (remEl && remEl.checked) {
+    localStorage.setItem('v_remember', '1');
+  } else {
+    localStorage.removeItem('v_remember');
+    sessionStorage.setItem('v_tab_session', APP.session);
+  }
   const remEl2 = document.getElementById('a-remember');
   if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
 
@@ -2470,119 +2494,8 @@ async function doLogin() {
   else { finishAuth(); }
 }
 
-function socialLogin(provider) {
-  toast(`Login com ${provider} em desenvolvimento`, 'info');
-  setTimeout(() => {
-    APP.user = {email:`user@${provider.toLowerCase()}.com`, name:'Usuário Demo'};
-    APP.profile = {name:'Usuário Demo', weight:78, height:175, age:30, gender:'m', goal:'lose', activity:'mod', restrictions:[]};
-    APP.calc = calcProfile(APP.profile);
-    APP.water = 0; APP.meals = [];
-    APP.weightHistory = WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
-    APP.session = 'sess_' + Date.now();
-    save('v_user', APP.user); save('v_profile', APP.profile); save('v_session', APP.session);
-    APP.authStep = 'biometric'; renderAuth();
-  }, 800);
-}
 
-async function tryBiometric() {
-  // Try WebAuthn first (real fingerprint/FaceID)
-  if (window.PublicKeyCredential && localStorage.getItem('v_webauthn_id')) {
-    try {
-      const credId = localStorage.getItem('v_webauthn_id');
-      const challenge = new Uint8Array(32);
-      window.crypto.getRandomValues(challenge);
-      const assertion = await navigator.credentials.get({
-        publicKey: {
-          challenge,
-          allowCredentials: [{
-            id: Uint8Array.from(atob(credId), c => c.charCodeAt(0)),
-            type: 'public-key',
-          }],
-          userVerification: 'preferred',
-          timeout: 30000,
-        }
-      });
-      if (assertion) {
-        toast('✅ Biometria verificada!','success');
-        setTimeout(async () => {
-          APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
-          APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
-          APP.calc = calcProfile(APP.profile);
-          APP.water = APP.water||0; APP.meals = MOCK_MEALS();
-          APP.session = 'bio_' + Date.now();
-          save('v_session', APP.session);
-          // Sync from Supabase if user has id
-          if (APP.user?.id) await syncFromSupabase(APP.user.id);
-          finishAuth();
-        }, 600);
-        return;
-      }
-    } catch(e) {
-      // WebAuthn failed, fall through to PIN
-    }
-  }
-  // Fallback: PIN or simple biometric simulation
-  if (localStorage.getItem('v_biometric')) {
-    // Show device biometric prompt simulation
-    if (window.PublicKeyCredential) {
-      toast('🔐 Verificando biometria...','info',1500);
-      setTimeout(async () => {
-        APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
-        APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
-        APP.calc = calcProfile(APP.profile);
-        APP.water = APP.water||0; APP.meals = MOCK_MEALS();
-        APP.session = 'bio_' + Date.now();
-        save('v_session', APP.session);
-        if (APP.user?.id) await syncFromSupabase(APP.user.id);
-        toast('✅ Biometria verificada!','success');
-        finishAuth();
-      }, 1500);
-    } else {
-      toast('✅ Acesso liberado!','success');
-      setTimeout(finishAuth, 600);
-    }
-  } else {
-    APP.authStep = 'pin'; APP.pinInput = ''; renderAuth();
-  }
-}
 
-async function activateBiometric() {
-  // Try real WebAuthn registration
-  if (window.PublicKeyCredential && navigator.credentials) {
-    try {
-      const challenge = new Uint8Array(32);
-      window.crypto.getRandomValues(challenge);
-      const userId = new Uint8Array(16);
-      window.crypto.getRandomValues(userId);
-
-      const credential = await navigator.credentials.create({
-        publicKey: {
-          challenge,
-          rp: { name: 'VitalIA', id: location.hostname || 'localhost' },
-          user: { id: userId, name: APP.user?.email || 'user', displayName: APP.profile?.name || 'Usuário' },
-          pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
-          authenticatorSelection: { userVerification: 'preferred', residentKey: 'preferred' },
-          timeout: 30000,
-        }
-      });
-
-      if (credential) {
-        const credId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
-        localStorage.setItem('v_webauthn_id', credId);
-        localStorage.setItem('v_biometric', '1');
-        toast('✅ Biometria registrada! Próximo acesso: toque no sensor.','success',3000);
-        setTimeout(finishAuth, 1200);
-        return;
-      }
-    } catch(e) {
-      // WebAuthn not available or user cancelled
-    }
-  }
-  // Fallback
-  localStorage.setItem('v_biometric','1');
-  toast('✅ Biometria ativada! Próximo acesso será instantâneo.','success',3000);
-  setTimeout(finishAuth, 1200);
-}
 
 function renderBiometricOffer() {
   const el = document.getElementById('auth-screen');
@@ -2852,33 +2765,6 @@ function renderNav() {
   ).join('');
 }
 
-function navigate(tab) {
-  APP.tab = tab;
-  if(tab !== 'fasting' && typeof FAST !== 'undefined' && FAST.interval){ clearInterval(FAST.interval); FAST.interval=null; }
-  if(tab !== 'scanner' && typeof stopLiveScanner === 'function') stopLiveScanner();
-  renderNav();
-  const body = document.getElementById('app-body');
-  body.innerHTML = '';
-  const screen = document.createElement('div');
-  screen.className = 'screen active fade-in';
-  if(tab==='coach') screen.style.overflow='hidden';
-  // ALL screens registered here — single source of truth
-  const renderers = {
-    home:renderHome, nutrition:renderNutrition, recipes:renderRecipes,
-    hydration:renderHydration, more:renderMore, fasting:renderFasting,
-    scanner:renderScanner, coach:renderCoach, progress:renderProgress,
-    achievements:renderAchievements, shopping:renderShopping, settings:renderSettings,
-    analytics:renderAnalytics, community:renderCommunity, integrations:renderIntegrations,
-    premium:renderPremiumScreen, telegram:renderTelegramSettings,
-  };
-  if(renderers[tab]){
-    screen.innerHTML = renderers[tab]();
-    body.appendChild(screen);
-    if(tab==='coach') attachCoach(screen);
-    if(tab==='nutrition') attachNutrition(screen);
-    if(tab==='scanner' && SCAN.mode==='live') setTimeout(startLiveScanner, 400);
-  }
-}
 
 /* ═══════════════════════════════════════
    HOME SCREEN
@@ -3564,125 +3450,8 @@ window.setScanMode = function(mode) {
   if (mode === 'live') setTimeout(startLiveScanner, 300);
 };
 
-// ── MODO 1: Câmera ao vivo com QuaggaJS ──
-window.startLiveScanner = async function() {
-  // No mobile browser (não app nativo), câmera ao vivo tem restrições HTTPS
-  // Verifica se é HTTPS ou localhost
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    const statusEl = document.getElementById('scan-live-status');
-    if (statusEl) statusEl.innerHTML = '⚠️ Câmera ao vivo requer HTTPS. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use o modo Foto</a>';
-    return;
-  }
-  const statusEl = document.getElementById('scan-live-status');
-  const viewport = document.getElementById('quagga-viewport');
-  if (!viewport) return;
-
-  // Check camera permission
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
-    stream.getTracks().forEach(t => t.stop()); // Just testing permission
-  } catch(e) {
-    if (statusEl) statusEl.innerHTML = '❌ Câmera negada. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use foto</a>';
-    return;
-  }
-
-  if (typeof Quagga === 'undefined') {
-    if (statusEl) statusEl.textContent = '⏳ Carregando leitor de código...';
-    // Load QuaggaJS dynamically
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-      s.onload = resolve;
-      s.onerror = () => {
-        if (statusEl) statusEl.innerHTML = '❌ Erro ao carregar leitor. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use foto</a>';
-        reject();
-      };
-      document.head.appendChild(s);
-    }).catch(() => null);
-    if (typeof Quagga === 'undefined') return;
-  }
-
-  if (statusEl) statusEl.textContent = '📷 Câmera ativa — aponte para o código';
-
-  try {
-    Quagga.init({
-      inputStream: {
-        name: 'Live',
-        type: 'LiveStream',
-        target: viewport,
-        constraints: {
-          facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-      },
-      locator: { patchSize: 'medium', halfSample: true },
-      numOfWorkers: 2,
-      frequency: 10,
-      decoder: {
-        readers: ['ean_reader','ean_8_reader','code_128_reader','code_39_reader','upc_reader','upc_e_reader','i2of5_reader','2of5_reader'],
-      },
-      locate: true,
-    }, function(err) {
-      if (err) {
-        console.error('QuaggaJS init error:', err);
-        if (statusEl) statusEl.textContent = '❌ Erro ao iniciar câmera. Tente o modo Foto.';
-        return;
-      }
-      Quagga.start();
-      SCAN.quaggaRunning = true;
-      if (statusEl) statusEl.textContent = '🟢 Câmera ativa — aponte para o código de barras';
-    });
-
-    // On successful decode
-    let lastCode = '', lastTime = 0;
-    Quagga.onDetected(function(result) {
-      const code = result.codeResult.code;
-      const now = Date.now();
-      // Debounce: same code within 3s = skip
-      if (code === lastCode && now - lastTime < 3000) return;
-      lastCode = code;
-      lastTime = now;
-
-      // Vibrate on success
-      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      stopLiveScanner();
-      doScan(code);
-    });
-
-    // Draw overlay on detected frames
-    Quagga.onProcessed(function(result) {
-      const drawingCtx = Quagga.canvas.ctx.overlay;
-      const drawingCanvas = Quagga.canvas.dom.overlay;
-      if (!drawingCtx || !drawingCanvas) return;
-      drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-      if (result && result.boxes) {
-        result.boxes.filter(b => b !== result.box).forEach(box => {
-          Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: 'rgba(255,255,0,0.5)', lineWidth: 2 });
-        });
-      }
-      if (result && result.box) {
-        Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: '#22c55e', lineWidth: 3 });
-      }
-    });
-
-  } catch(e) {
-    if (statusEl) statusEl.textContent = '❌ Câmera não disponível. Use o modo Foto.';
-  }
-};
-
-window.stopLiveScanner = function() {
-  if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
-    try { Quagga.stop(); } catch(e) {}
-    SCAN.quaggaRunning = false;
-  }
-  // Also stop any media streams
-  const viewport = document.getElementById('quagga-viewport');
-  if (viewport) {
-    const videos = viewport.querySelectorAll('video');
-    videos.forEach(v => { try { v.srcObject?.getTracks().forEach(t => t.stop()); } catch(e) {} });
-  }
-};
+// ── MODO 1: Câmera ao vivo com QuaggaJS ──;
+;
 
 // ── MODO 2: Leitura de foto com ZXing ─────
 window.scanFromPhoto = async function(input) {
@@ -3823,72 +3592,25 @@ function doScan(code) {
 /* ═══════════════════════════════════════
    COACH SCREEN
 ═══════════════════════════════════════ */
-function renderCoach() {
-  const p = APP.profile||{name:'Usuário'};
-  if(!APP.coachMsgs.length) APP.coachMsgs=[{role:'ai',text:t('coach_greeting',p.name?.split(' ')[0]),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}];
-  const suggs = [
-    '💪 Como aumentar proteínas?',
-    '💧 Quanto devo beber de água?',
-    '🔥 Cardápio para emagrecer',
-    '🥗 Sou gestante, o que comer?',
-    '🩸 Alimentos no período menstrual',
-    '🏃 Nutrição pré e pós-treino',
-    '💊 Qual suplemento devo tomar?',
-    '⏱️ Dicas de jejum intermitente',
-  ];
-  return `<div class="coach-wrap">
-  <div class="coach-header" style="background:var(--bg)">
-    <button onclick="navigate('more')" class="btn btn-ghost" style="font-size:18px;padding:4px">←</button>
-    <div class="coach-avatar">🤖<div class="online-dot"></div></div>
-    <div style="flex:1"><div style="font-size:14px;font-weight:700">Coach IA Nutri</div><div style="font-size:11px;color:var(--green)">${t('coach_online')} • Nutricionista Virtual</div></div>
-    <button onclick="clearCoachHistory()" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>
-  </div>
-  <div class="coach-sugg" id="coach-sugg-row">
-    ${suggs.map(s=>`<button class="coach-sugg-chip" onclick="sendCoach('${s}')">${s}</button>`).join('')}
-  </div>
-  <div class="coach-msgs" id="coach-msgs">
-    <div class="chat-wrap" style="display:flex;flex-direction:column;gap:10px">
-    ${APP.coachMsgs.map(m=>`<div class="msg-wrap ${m.role}">
-      ${m.audio?`<div class="coach-audio-msg"><button class="audio-play-btn" onclick="playAudioMsg('${m.audio}')">▶</button><div><div style="font-size:11px;font-weight:700">Áudio enviado</div><div style="font-size:10px;color:var(--text3)">${m.text||'...'}</div></div></div>`:
-      `<div class="msg-bubble">${m.text}</div>`}
-      ${m.tts?`<div style="margin-top:4px"><button class="audio-play-btn" style="width:28px;height:28px;font-size:12px;background:rgba(34,197,94,.2);color:var(--green)" onclick="speakText('${m.text.replace(/'/g,"\'")}')">🔊 Ouvir</button></div>`:''}
-      <div class="msg-time">${m.time}</div>
-    </div>`).join('')}
-    ${APP.coachLoading?`<div class="msg-wrap ai"><div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`:''}
-    </div>
-  </div>
-  <div class="recording-indicator" id="rec-indicator">
-    <div class="rec-dot"></div> Gravando áudio... Solte para enviar
-  </div>
-  <div class="coach-input-wrap">
-    <button class="coach-mic" id="mic-btn" title="Segurar para gravar" 
-      onmousedown="startRecording()" onmouseup="stopRecording()"
-      ontouchstart="event.preventDefault();startRecording()" ontouchend="event.preventDefault();stopRecording()">🎤</button>
-    <textarea class="coach-textarea" id="coach-input" placeholder="Pergunte sobre nutrição, dieta, suplementos..." rows="1" 
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCoach()}" 
-      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
-    <button class="coach-send" onclick="sendCoach()" id="coach-send-btn">➤</button>
-  </div>
-  </div>`;
-}
 
 function attachCoach(screen) {
-  const msgs = screen.querySelector('#coach-msgs');
-  if(msgs) setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,100);
+  const msgs = document.getElementById('coach-msgs');
+  if (msgs) setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 80);
+  setTimeout(() => {
+    const ta = document.getElementById('coach-input');
+    if (ta) {
+      ta.style.pointerEvents = 'auto';
+      ta.style.webkitUserSelect = 'text';
+      ta.style.userSelect = 'text';
+      ta.removeAttribute('readonly');
+      ta.removeAttribute('disabled');
+      ta.focus();
+    }
+    const btn = document.querySelector('.coach-send');
+    if (btn) btn.onclick = function(){ window.sendCoach && window.sendCoach(); };
+  }, 180);
 }
-
-window.sendCoach = async function(txt) {
-  const inp = document.getElementById('coach-input');
-  const msg = txt || inp?.value?.trim();
-  if(!msg||APP.coachLoading) return;
-  if(inp) inp.value='';
-  const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'user',text:msg,time});
-  APP.coachLoading=true; navigate('coach');
-  const resp = await getNutriCoachResponse(msg);
-  APP.coachMsgs.push({role:'ai',text:resp,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),tts:true});
-  APP.coachLoading=false; addXP(5); navigate('coach');
-};
+;
 
 window.playAudioMsg = function(audioSrc) {
   toast('▶ Reproduzindo áudio...', 'info', 2000);
@@ -3920,501 +3642,88 @@ window.startRecording = async function() {
   const mic = document.getElementById('mic-btn');
   const rec = document.getElementById('rec-indicator');
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.start();
-    if(mic) mic.classList.add('recording');
-    if(rec) rec.style.display = 'flex';
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    window._audioChunks = [];
+    const opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
+    window._mediaRecorder = new MediaRecorder(stream, opts);
+    window._mediaRecorder.ondataavailable = e => { if(e.data && e.data.size > 0) window._audioChunks.push(e.data); };
+    window._mediaRecorder.start(100);
+    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
+    if (rec) rec.style.display = 'flex';
+    window._recTimer = setTimeout(() => window.stopRecording && window.stopRecording(), 30000);
   } catch(e) {
-    toast('❌ Permita acesso ao microfone nas configurações','error', 4000);
+    if (e.name === 'NotAllowedError') toast && toast('❌ Permita acesso ao microfone nas configurações', 'error', 5000);
+    else toast && toast('❌ Microfone não disponível: ' + e.message, 'error');
   }
 };
 
 window.stopRecording = function() {
   const mic = document.getElementById('mic-btn');
   const rec = document.getElementById('rec-indicator');
-  if(!mediaRecorder || mediaRecorder.state==='inactive') return;
-  mediaRecorder.stop();
-  if(mic) mic.classList.remove('recording');
-  if(rec) rec.style.display = 'none';
-  mediaRecorder.onstop = async () => {
-    const blob = new Blob(audioChunks, {type:'audio/webm'});
-    if(blob.size < 1000) { toast('Gravação muito curta','info'); return; }
-    // Simulate transcription (in production use Whisper API)
-    const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    const transcriptions = [
-      'Quais alimentos são ricos em proteína?',
-      'Como devo me alimentar antes do treino?',
-      'Tenho diabetes, o que posso comer?',
-      'Qual a diferença entre whey e caseína?',
-      'Como perder barriga rápido com alimentação?',
+  clearTimeout(window._recTimer);
+  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
+  if (rec) rec.style.display = 'none';
+  if (!window._mediaRecorder || window._mediaRecorder.state === 'inactive') return;
+  window._mediaRecorder.stop();
+  window._mediaRecorder.onstop = async () => {
+    const stream = window._mediaRecorder.stream;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    const blob = new Blob(window._audioChunks || [], {type: window._mediaRecorder.mimeType || 'audio/webm'});
+    if (blob.size < 500) { toast && toast('Gravação muito curta, tente novamente','info'); return; }
+    toast && toast('🎤 Processando áudio...','info',2000);
+    await new Promise(r => setTimeout(r, 1200));
+    // Transcrição simulada (integre Whisper para produção)
+    const phrases = [
+      'Como aumentar minha ingestão de proteínas?',
+      'Qual o cardápio ideal para emagrecer?',
+      'Como me alimentar antes e depois do treino?',
+      'Quanto de água devo beber por dia?',
+      'Quais suplementos são recomendados?',
+      'Como reduzir cólicas com alimentação?',
+      'Estou grávida, o que devo comer?'
     ];
-    const transcribed = transcriptions[Math.floor(Math.random()*transcriptions.length)];
-    toast('🎤 Áudio transcrito!','success', 2000);
-    APP.coachMsgs.push({role:'user', text:`🎤 ${transcribed}`, time, audio: true});
-    APP.coachLoading = true; navigate('coach');
-    const resp = await getNutriCoachResponse(transcribed);
-    APP.coachMsgs.push({role:'ai', text:resp, time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), tts:true});
-    APP.coachLoading = false; addXP(5); navigate('coach');
+    const transcribed = phrases[Math.floor(Math.random() * phrases.length)];
+    const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'user', text:'🎤 ' + transcribed, time:ts, audio:true});
+    APP.coachLoading = true;
+    const msgsEl = document.getElementById('coach-msgs');
+    if (msgsEl) {
+      const ub = document.createElement('div');
+      ub.className = 'msg-wrap user fade-in';
+      ub.innerHTML = '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div><div><div style="font-size:11px;font-weight:700">Áudio enviado</div><div style="font-size:10px;color:var(--text3)">"' + transcribed.substring(0,55) + '..."</div></div></div><div class="msg-time">' + ts + '</div>';
+      msgsEl.appendChild(ub);
+      const tb = document.createElement('div');
+      tb.id='coach-typing'; tb.className='msg-wrap ai';
+      tb.innerHTML='<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+      msgsEl.appendChild(tb);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+    let resp = '';
+    try { resp = await getNutriCoachResponse(transcribed); }
+    catch(e) { resp = 'Não consegui processar. Tente digitar sua pergunta! 🙏'; }
+    const tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
+    const typing = document.getElementById('coach-typing');
+    if (typing) typing.remove();
+    if (msgsEl) {
+      const idx = APP.coachMsgs.length - 1;
+      const safe = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      const ab = document.createElement('div');
+      ab.className = 'msg-wrap ai fade-in';
+      ab.innerHTML = '<div class="msg-bubble">'+safe+'</div>'
+        +'<div style="display:flex;gap:6px;margin-top:6px">'
+        +'<button data-idx="'+idx+'" onclick="speakCoachText(parseInt(this.dataset.idx))" style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>'
+        +'</div><div class="msg-time">'+tsR+'</div>';
+      msgsEl.appendChild(ab);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      if (window._voiceMode) speakCoachText(idx);
+    }
+    APP.coachLoading = false;
+    if (typeof addXP === 'function') addXP(8);
   };
 };
 
 // Coach IA com conhecimento completo de nutricionista
-async function getNutriCoachResponse(msg) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const m = msg.toLowerCase();
-      const p = APP.profile || {};
-      const lang = APP.lang || 'pt';
-      const nome = p.name?.split(' ')[0] || {'pt':'você','en':'you','es':'tú','ru':'вы'}[lang]||'você';
-      const peso = p.weight || 70;
-      const meta = p.goal || 'lose';
-      const calc = APP.calc || {};
-
-      // ── Language-aware keywords ────────────────
-      const keywords = {
-        gestante: {
-          pt: ['gestant','grávid','gravidez'],
-          en: ['pregnant','pregnancy','gestational','prenatal'],
-          es: ['gestante','embaraz','prenat'],
-          ru: ['беремен','гестац','дородов']
-        },
-        menstrual: {
-          pt: ['menstrual','cólica','tpm','período','menstruaç'],
-          en: ['menstrual','period','cramp','pms','cycle'],
-          es: ['menstrual','cólico','menstruac','período'],
-          ru: ['менструац','спазм','предменстр','цикл']
-        },
-        proteina: {
-          pt: ['proteína','músculo','massa','whey'],
-          en: ['protein','muscle','mass','whey'],
-          es: ['proteína','músculo','masa','whey'],
-          ru: ['белок','протеин','мышц','масс']
-        },
-        emagrecer: {
-          pt: ['emagrecer','perder peso','déficit','gordura','queimar'],
-          en: ['lose weight','diet','deficit','fat','slim'],
-          es: ['adelgazar','perder peso','déficit','grasa'],
-          ru: ['похудет','снизить вес','дефицит','жир']
-        },
-        agua: {
-          pt: ['água','hidrat'],
-          en: ['water','hydrat'],
-          es: ['agua','hidrat'],
-          ru: ['вода','гидрат']
-        },
-        suplemento: {
-          pt: ['suplemento','creatina','bcaa','vitamina','ômega'],
-          en: ['supplement','creatine','bcaa','vitamin','omega'],
-          es: ['suplemento','creatina','bcaa','vitamina','omega'],
-          ru: ['добавк','креатин','витамин','омега']
-        },
-        jejum: {
-          pt: ['jejum','16:8','intermitente'],
-          en: ['fasting','intermittent','16:8'],
-          es: ['ayuno','intermitente','16:8'],
-          ru: ['голодан','интервал','16:8']
-        },
-        treino: {
-          pt: ['treino','academia','musculaç','exercício'],
-          en: ['workout','gym','training','exercise'],
-          es: ['entrenamiento','gimnasio','ejercicio'],
-          ru: ['тренировк','спортзал','упражнен']
-        },
-        menstrual_es: {
-          pt: [],
-          en: [],
-          es: ['menstrual','regla','menstruación'],
-          ru: []
-        }
-      };
-
-      // Helper: check if message matches keywords for given topic
-      function matches(topic) {
-        const kws = keywords[topic]?.[lang] || keywords[topic]?.['pt'] || [];
-        return kws.some(k => m.includes(k));
-      }
-
-      // Responses by language
-      const responses = {
-        gestante: {
-          pt: `🤰 *Nutrição para Gestantes*\n\nOlá, ${nome}! A alimentação na gravidez é fundamental.\n\n**Nutrientes essenciais:**\n• **Ácido fólico** — 400-800mcg/dia (folhas verdes, feijão)\n• **Ferro** — 27mg/dia (carne vermelha + vitamina C)\n• **Cálcio** — 1000mg/dia (leite, iogurte, brócolis)\n• **Ômega-3 / DHA** — 200mg/dia (salmão, sardinha, chia)\n• **Colina** — 450mg/dia (3 ovos/dia)\n\n**Evitar na gestação:**\n🚫 Álcool — zero tolerância\n🚫 Peixes grandes crus (atum, cação)\n🚫 Queijos moles não pasteurizados\n🚫 Cafeína acima de 200mg/dia\n\n⚠️ Sempre consulte seu obstetra e nutricionista!`,
-          en: `🤰 *Nutrition for Pregnant Women*\n\nHello, ${nome}! Nutrition during pregnancy is essential.\n\n**Key nutrients:**\n• **Folic acid** — 400-800mcg/day (leafy greens, beans)\n• **Iron** — 27mg/day (red meat + vitamin C)\n• **Calcium** — 1000mg/day (dairy, broccoli)\n• **Omega-3 / DHA** — 200mg/day (salmon, sardine, chia)\n• **Choline** — 450mg/day (3 eggs/day)\n\n**Avoid during pregnancy:**\n🚫 Alcohol — zero tolerance\n🚫 Raw large fish (tuna, shark)\n🚫 Unpasteurized soft cheeses\n🚫 More than 200mg caffeine/day\n\n⚠️ Always consult your OB and nutritionist!`,
-          es: `🤰 *Nutrición para Gestantes*\n\n¡Hola, ${nome}! La alimentación en el embarazo es fundamental.\n\n**Nutrientes esenciales:**\n• **Ácido fólico** — 400-800mcg/día (verduras, frijoles)\n• **Hierro** — 27mg/día (carne roja + vitamina C)\n• **Calcio** — 1000mg/día (lácteos, brócoli)\n• **Omega-3 / DHA** — 200mg/día (salmón, sardina, chía)\n• **Colina** — 450mg/día (3 huevos/día)\n\n**Evitar en el embarazo:**\n🚫 Alcohol — tolerancia cero\n🚫 Pescados grandes crudos (atún, tiburón)\n🚫 Quesos blandos no pasteurizados\n🚫 Más de 200mg de cafeína/día\n\n⚠️ ¡Siempre consulta a tu obstetra y nutricionista!`,
-          ru: `🤰 *Питание при беременности*\n\nЗдравствуйте, ${nome}! Питание во время беременности крайне важно.\n\n**Ключевые нутриенты:**\n• **Фолиевая кислота** — 400-800мкг/день (зелень, бобы)\n• **Железо** — 27мг/день (красное мясо + витамин С)\n• **Кальций** — 1000мг/день (молочные, брокколи)\n• **Омега-3 / DHA** — 200мг/день (лосось, сардина, чиа)\n• **Холин** — 450мг/день (3 яйца/день)\n\n**Избегать при беременности:**\n🚫 Алкоголь — полный запрет\n🚫 Сырая крупная рыба (тунец, акула)\n🚫 Мягкие непастеризованные сыры\n🚫 Более 200мг кофеина/день\n\n⚠️ Всегда консультируйтесь с врачом и нутрициологом!`
-        },
-        menstrual: {
-          pt: `🌸 *Nutrição no Período Menstrual*\n\n**Nutrientes prioritários:**\n• **Magnésio** — reduz cólicas (amêndoas, cacau, sementes)\n• **Ferro** — repõe perdas do fluxo (carnes + vitamina C)\n• **Ômega-3** — anti-inflamatório (sardinha, chia, linhaça)\n• **Vitamina B6** — alivia TPM (banana, batata-doce)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacau (magnésio + serotonina)\n✅ Espinafre + limão (ferro + absorção)\n✅ Gengibre e cúrcuma (anti-inflamatórios)\n✅ Abacate (gorduras boas + B6)\n\n**Evitar:**\n🚫 Cafeína excessiva (piora cólicas)\n🚫 Sal excessivo (aumenta inchaço)\n🚫 Açúcar refinado (piora humor)`,
-          en: `🌸 *Nutrition During Your Period*\n\n**Priority nutrients:**\n• **Magnesium** — reduces cramps (almonds, cocoa, seeds)\n• **Iron** — replenishes losses (meat + vitamin C)\n• **Omega-3** — anti-inflammatory (sardine, chia, flaxseed)\n• **Vitamin B6** — eases PMS (banana, sweet potato)\n\n**Recommended foods:**\n✅ 70%+ dark chocolate (magnesium + serotonin)\n✅ Spinach + lemon (iron + absorption)\n✅ Ginger and turmeric (anti-inflammatories)\n✅ Avocado (healthy fats + B6)\n\n**Avoid:**\n🚫 Excess caffeine (worsens cramps)\n🚫 Excess salt (increases bloating)\n🚫 Refined sugar (worsens mood)`,
-          es: `🌸 *Nutrición durante la Menstruación*\n\n**Nutrientes prioritarios:**\n• **Magnesio** — reduce cólicos (almendras, cacao, semillas)\n• **Hierro** — repone pérdidas (carnes + vitamina C)\n• **Omega-3** — antiinflamatorio (sardina, chía, lino)\n• **Vitamina B6** — alivia el SPM (banana, batata)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacao (magnesio + serotonina)\n✅ Espinacas + limón (hierro + absorción)\n✅ Jengibre y cúrcuma (antiinflamatorios)\n✅ Aguacate (grasas buenas + B6)\n\n**Evitar:**\n🚫 Exceso de cafeína (empeora cólicos)\n🚫 Exceso de sal (aumenta hinchazón)\n🚫 Azúcar refinada (empeora el humor)`,
-          ru: `🌸 *Питание во время менструации*\n\n**Приоритетные нутриенты:**\n• **Магний** — снижает спазмы (миндаль, какао, семена)\n• **Железо** — восполняет потери (мясо + витамин С)\n• **Омега-3** — противовоспалительное (сардина, чиа)\n• **Витамин B6** — облегчает ПМС (банан, батат)\n\n**Рекомендуемые продукты:**\n✅ Тёмный шоколад 70%+ (магний + серотонин)\n✅ Шпинат + лимон (железо + усвоение)\n✅ Имбирь и куркума (противовоспалительные)\n✅ Авокадо (полезные жиры + B6)\n\n**Избегать:**\n🚫 Избыток кофеина (усиливает спазмы)\n🚫 Избыток соли (увеличивает отёки)\n🚫 Рафинированный сахар (ухудшает настроение)`
-        },
-        proteina: {
-          pt: `💪 *Proteínas — Guia Completo*\n\nSua meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/dia**\n\n**Melhores fontes:**\n🥚 Ovos — 13g/2 unidades\n🍗 Frango — 31g/100g\n🐟 Atum — 29g/lata\n🥛 Iogurte grego — 17g/170g\n🫘 Feijão — 9g/100g\n\n**Dicas de distribuição:**\n• 4-5 refeições com 25-40g proteína cada\n• Pós-treino: 30-40g em até 45 min\n• Antes de dormir: caseína (cottage, iogurte)\n\n💊 Whey: ótimo complemento se não atingir a meta pela alimentação.`,
-          en: `💪 *Protein — Complete Guide*\n\nYour goal: **${calc.prot||Math.round((p.weight||70)*1.8)}g/day**\n\n**Best sources:**\n🥚 Eggs — 13g/2 units\n🍗 Chicken breast — 31g/100g\n🐟 Canned tuna — 29g/can\n🥛 Greek yogurt — 17g/170g\n🫘 Beans — 9g/100g\n\n**Distribution tips:**\n• 4-5 meals with 25-40g protein each\n• Post-workout: 30-40g within 45 min\n• Before bed: casein (cottage, yogurt)\n\n💊 Whey: great supplement if you can't hit your target through food alone.`,
-          es: `💪 *Proteínas — Guía Completa*\n\nTu meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/día**\n\n**Mejores fuentes:**\n🥚 Huevos — 13g/2 unidades\n🍗 Pechuga de pollo — 31g/100g\n🐟 Atún en lata — 29g/lata\n🥛 Yogur griego — 17g/170g\n🫘 Frijoles — 9g/100g\n\n**Consejos de distribución:**\n• 4-5 comidas con 25-40g proteína cada una\n• Post-entreno: 30-40g en 45 minutos\n• Antes de dormir: caseína (requesón, yogur)\n\n💊 Whey: excelente suplemento si no alcanzas tu meta con la alimentación.`,
-          ru: `💪 *Белок — Полное руководство*\n\nВаша цель: **${calc.prot||Math.round((p.weight||70)*1.8)}г/день**\n\n**Лучшие источники:**\n🥚 Яйца — 13г/2 штуки\n🍗 Куриная грудка — 31г/100г\n🐟 Консервированный тунец — 29г/банка\n🥛 Греческий йогурт — 17г/170г\n🫘 Бобовые — 9г/100г\n\n**Советы по распределению:**\n• 4-5 приёмов по 25-40г белка\n• После тренировки: 30-40г в течение 45 мин\n• Перед сном: казеин (творог, йогурт)\n\n💊 Сывороточный протеин: отлично подходит, если не достигаете нормы из пищи.`
-        },
-        emagrecer: {
-          pt: `🔥 *Estratégia de Emagrecimento*\n\nSeu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/dia\n\n**Estratégias comprovadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/dia) — preserva músculo\n2️⃣ Fibras (25-35g/dia) — saciedade prolongada\n3️⃣ Água: ${calc.agua||2100}ml/dia antes das refeições\n4️⃣ Carboidratos complexos (aveia, arroz integral, batata-doce)\n5️⃣ Sono de qualidade (cortisol alto = mais fome)\n\n**Evitar:**\n🚫 Déficit acima de 500kcal (perde músculo)\n🚫 Ultraprocessados\n🚫 Pular refeições`,
-          en: `🔥 *Weight Loss Strategy*\n\nYour TDEE: ~${calc.tdee||2200}kcal | Goal: ${calc.meta||1800}kcal\nDeficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/day\n\n**Proven strategies:**\n1️⃣ High protein (${calc.prot||Math.round((p.weight||70)*1.8)}g/day) — preserve muscle\n2️⃣ Fiber (25-35g/day) — extended satiety\n3️⃣ Water: ${calc.agua||2100}ml/day before meals\n4️⃣ Complex carbs (oats, brown rice, sweet potato)\n5️⃣ Quality sleep (high cortisol = more hunger)\n\n**Avoid:**\n🚫 Deficit over 500kcal (muscle loss)\n🚫 Ultra-processed foods\n🚫 Skipping meals`,
-          es: `🔥 *Estrategia para Adelgazar*\n\nTu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/día\n\n**Estrategias probadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/día) — preserva músculo\n2️⃣ Fibra (25-35g/día) — saciedad prolongada\n3️⃣ Agua: ${calc.agua||2100}ml/día antes de las comidas\n4️⃣ Carbohidratos complejos (avena, arroz integral)\n5️⃣ Sueño de calidad (cortisol alto = más hambre)\n\n**Evitar:**\n🚫 Déficit superior a 500kcal (pierde músculo)\n🚫 Alimentos ultraprocesados\n🚫 Saltarse comidas`,
-          ru: `🔥 *Стратегия похудения*\n\nВаш TDEE: ~${calc.tdee||2200}ккал | Цель: ${calc.meta||1800}ккал\nДефицит: ${(calc.tdee||2200)-(calc.meta||1800)}ккал/день\n\n**Проверенные стратегии:**\n1️⃣ Высокий белок (${calc.prot||Math.round((p.weight||70)*1.8)}г/день) — сохраняет мышцы\n2️⃣ Клетчатка (25-35г/день) — длительное насыщение\n3️⃣ Вода: ${calc.agua||2100}мл/день перед едой\n4️⃣ Сложные углеводы (овсянка, бурый рис)\n5️⃣ Качественный сон (высокий кортизол = больше голода)\n\n**Избегать:**\n🚫 Дефицит более 500ккал (потеря мышц)\n🚫 Ультра-обработанные продукты\n🚫 Пропуск приёмов пищи`
-        },
-        default: {
-          pt: `Olá, ${nome}! 🌿 Sou seu coach de nutrição e esportes. Posso te ajudar com:\n\n• 💪 Proteínas e ganho de massa\n• 🔥 Emagrecimento e déficit calórico\n• 💧 Hidratação ideal\n• 💊 Suplementação (whey, creatina, BCAA)\n• ⏱️ Jejum intermitente\n• 🏋️ Nutrição pré e pós-treino\n• 🤰 Alimentação na gestação\n• 🌸 Nutrição no período menstrual\n\nO que você gostaria de saber?`,
-          en: `Hello, ${nome}! 🌿 I'm your nutrition and sports coach. I can help you with:\n\n• 💪 Protein and muscle gain\n• 🔥 Weight loss and caloric deficit\n• 💧 Optimal hydration\n• 💊 Supplementation (whey, creatine, BCAA)\n• ⏱️ Intermittent fasting\n• 🏋️ Pre and post-workout nutrition\n• 🤰 Pregnancy nutrition\n• 🌸 Nutrition during your period\n\nWhat would you like to know?`,
-          es: `¡Hola, ${nome}! 🌿 Soy tu coach de nutrición y deportes. Puedo ayudarte con:\n\n• 💪 Proteínas y ganancia muscular\n• 🔥 Adelgazamiento y déficit calórico\n• 💧 Hidratación óptima\n• 💊 Suplementación (whey, creatina, BCAA)\n• ⏱️ Ayuno intermitente\n• 🏋️ Nutrición pre y post-entreno\n• 🤰 Alimentación en el embarazo\n• 🌸 Nutrición durante la menstruación\n\n¿Qué te gustaría saber?`,
-          ru: `Привет, ${nome}! 🌿 Я ваш коуч по питанию и спорту. Я помогу вам с:\n\n• 💪 Белком и набором мышечной массы\n• 🔥 Похудением и калорийным дефицитом\n• 💧 Оптимальной гидратацией\n• 💊 Добавками (протеин, креатин, BCAA)\n• ⏱️ Интервальным голоданием\n• 🏋️ Питанием до и после тренировки\n• 🤰 Питанием при беременности\n• 🌸 Питанием во время менструации\n\nЧто бы вы хотели узнать?`
-        }
-      };
-
-      // Match topic and return language-aware response
-      const getLangResp = (topic) => (responses[topic]?.[lang] || responses[topic]?.['pt'] || '');
-
-      // ── Gestante ─────────────────────────────
-      if(matches('gestante') || m.includes('gestant') || m.includes('grávid') || m.includes('gravidez') || m.includes('pregnant') || m.includes('embaraz') || m.includes('беремен')) {
-        resolve(getLangResp('gestante') || responses.gestante.pt);
-        return;
-      }
-
-      // ── Menstruação / Período ─────────────────
-      if(matches('menstrual') || m.includes('menstrual') || m.includes('período') || m.includes('cólica') || m.includes('colica') || m.includes('tpm') || m.includes('cramp') || m.includes('period') || m.includes('ayuno') || m.includes('менструац')) {
-        resolve(getLangResp('menstrual'));
-        return;
-      }
-
-      // ── Suplementos ───────────────────────────
-      if(m.includes('suplemento') || m.includes('whey') || m.includes('creatina') || m.includes('bcaa') || m.includes('proteína em pó') || m.includes('termogênico') || m.includes('pre-workout') || m.includes('pré-treino')) {
-        resolve(`💊 *Guia Completo de Suplementos*
-
-**WHEY PROTEIN**
-• Melhor horário: até 30 min após treino
-• Dose: 25-40g por dose
-• Tipos: Concentrado (+ econômico), Isolado (+ puro), Hidrolisado (+ absorção rápida)
-• Para quem: qualquer pessoa com dificuldade de atingir cota proteica
-
-**CREATINA MONOHIDRATADA**
-• Melhor custo-benefício: 3-5g/dia sempre (sem ciclar)
-• Não precisa fase de carga
-• Para quem: treinos de força, HIIT, explosão muscular
-• Resultados visíveis: 4-8 semanas
-
-**BCAA**
-• Dose: 5-10g antes ou durante treino
-• Honestidade: se você já consome whey suficiente, é pouco necessário
-• Mais útil em treinos em jejum
-
-**VITAMINA D + K2**
-• A maioria dos brasileiros tem deficiência
-• Dose: 2000-4000 UI/dia (conforme exame)
-• Fundamental para imunidade, ossos e hormônios
-
-**ÔMEGA-3**
-• 2g EPA+DHA/dia
-• Anti-inflamatório, saúde cardiovascular e cerebral
-• Tomar com refeição gordurosa para melhor absorção
-
-⚠️ Suplementos são complementos, não substituem alimentação equilibrada. Consulte um nutricionista para personalizar!`);
-        return;
-      }
-
-      // ── Pré e pós treino ─────────────────────
-      if(m.includes('treino') || m.includes('pré-treino') || m.includes('pre treino') || m.includes('pós-treino') || m.includes('musculação') || m.includes('academia')) {
-        resolve(`🏋️ *Nutrição para Treino*
-
-**PRÉ-TREINO (1-2h antes)**
-🍌 Carboidrato + proteína moderada
-• Frango + batata-doce
-• Ovo mexido + tapioca
-• Banana + pasta de amendoim
-• Arroz + feijão (treinos mais longos)
-⚡ Cafeína 200-400mg = ótimo pré-natural (café, chá verde)
-
-**DURANTE O TREINO**
-💧 Água: 500-700ml/hora de treino
-🍌 Acima de 90 min: banana ou maltodextrina
-
-**PÓS-TREINO (até 2h depois)**
-💪 PROTEÍNA + carbo rápido
-• Whey + banana
-• Frango + arroz branco
-• Ovo + pão integral
-• Iogurte grego + granola
-📊 Meta: 0.3-0.4g proteína/kg de peso logo após
-
-**Para ${nome} (${peso}kg):**
-Proteína pós-treino ideal: ~${Math.round(peso*0.35)}g
-Ex: ${Math.round(peso*0.35/25)} doses de whey ou ${Math.round(peso*0.35/31*100)}g de peito de frango`);
-        return;
-      }
-
-      // ── Emagrecimento ─────────────────────────
-      if(m.includes('emagrecer') || m.includes('perder peso') || m.includes('barriga') || m.includes('gordura') || m.includes('dieta') || m.includes('deficit') || (meta==='lose' && m.includes('como'))) {
-        const metaCal = calc.meta || 1600;
-        resolve(`🔥 *Estratégia de Emagrecimento para ${nome}*
-
-**Sua meta calórica:** ~${metaCal} kcal/dia
-(Déficit de ~400 kcal = ~1,5kg/mês de gordura)
-
-**As 5 regras de ouro:**
-1️⃣ Priorize proteína (2g/kg) — preserva músculo e sacia mais
-2️⃣ Reduza ultraprocessados, não os carboidratos integrais
-3️⃣ Coma de 3 em 3 horas — evita picos de fome
-4️⃣ Durma 7-8h — sono ruim aumenta grelina (hormônio da fome)
-5️⃣ Musculação > só cardio para emagrecer com saúde
-
-**Alimentos termogênicos naturais:**
-🌶️ Pimenta caiena, ☕ Café, 🫚 Azeite, 🫚 TCM
-🍵 Chá verde, 🫚 Gengibre, 🥥 Coco
-
-**Alimentos ELIMINAR:**
-❌ Refrigerantes e sucos industriais
-❌ Farinha branca e açúcar refinado
-❌ Frituras e fast food
-❌ Álcool (7 kcal/g, sem valor nutricional)
-
-**Cardápio exemplo ${metaCal} kcal:**
-☀️ Café: omelete (2 ovos) + café preto
-🌤️ Lanche: maçã + castanhas (30g)
-☀️ Almoço: frango (150g) + salada grande + 3 col arroz integral
-🌙 Jantar: peixe (150g) + legumes assados`);
-        return;
-      }
-
-      // ── Ganho de massa ────────────────────────
-      if(m.includes('massa') || m.includes('ganhar peso') || m.includes('ganho') || m.includes('bulking') || m.includes('hipertrofia') || (meta==='gain')) {
-        const metaCal = calc.meta || 2400;
-        resolve(`💪 *Estratégia de Ganho de Massa para ${nome}*
-
-**Sua meta calórica:** ~${metaCal} kcal/dia
-(Superávit de ~300 kcal = ganho limpo de músculo)
-
-**Distribuição de macros:**
-🥩 Proteína: ${Math.round(peso*2)}g/dia (${Math.round(peso*2*4)} kcal)
-🍚 Carboidratos: ${Math.round((metaCal - peso*2*4 - 70*9)/4)}g/dia
-🥑 Gorduras: ~70g/dia (${70*9} kcal)
-
-**Top alimentos para ganho limpo:**
-• 🥚 Ovos inteiros — proteína completa + colesterol bom
-• 🐔 Frango/Peru — proteína magra, versátil
-• 🐄 Carne vermelha magra — creatina natural + ferro
-• 🌾 Aveia — carbo de baixo índice glicêmico
-• 🍚 Arroz branco pós-treino — carbo de absorção rápida
-• 🥑 Abacate — gordura boa + calorias densas
-• 🥜 Pasta de amendoim — proteína + gordura boa
-• 🍠 Batata-doce — vitaminas + carbo para treino
-
-**Frequência alimentar:** 5-6 refeições por dia
-**Hidratação:** Mínimo ${Math.round(peso*35)}ml/dia`);
-        return;
-      }
-
-      // ── Jejum intermitente ────────────────────
-      if(m.includes('jejum') || m.includes('16:8') || m.includes('18:6') || m.includes('omad') || m.includes('janela')) {
-        resolve(`⏱️ *Jejum Intermitente — Guia Completo*
-
-**Protocolos mais usados:**
-
-🔹 **16:8** (mais popular)
-• Jejua 16h, come em janela de 8h
-• Ex: come 12h-20h, jejua 20h-12h
-• Ideal para iniciantes e lifestyle sustentável
-
-🔹 **18:6** (avançado)
-• Jejua 18h, come em janela de 6h
-• Ex: come 13h-19h
-• Resultados mais rápidos
-
-🔹 **OMAD** (extremo)
-• Uma refeição por dia
-• Apenas para experientes e com supervisão
-
-🔹 **5:2**
-• 5 dias normal, 2 dias com 500-600 kcal
-• Bom para quem tem dificuldade de restringir diário
-
-**O que pode durante o jejum:**
-✅ Água (deve beber bastante)
-✅ Café preto sem açúcar
-✅ Chá sem açúcar
-✅ Sal (ajuda na retenção de eletrólitos)
-
-**Dicas para o primeiro jejum:**
-1. Comece pelo 12:12 por 1 semana
-2. Progrida para 14:10 na semana 2
-3. Chegue ao 16:8 na semana 3
-4. O café da manhã pode ser apenas café preto
-
-⚠️ Gestantes, diabéticos e pessoas com histórico de distúrbios alimentares devem consultar médico antes!`);
-        return;
-      }
-
-      // ── Proteínas e macros ────────────────────
-      if(m.includes('proteína') || m.includes('proteina') || m.includes('macro') || m.includes('carboidrato') || m.includes('gordura boa')) {
-        resolve(`📊 *Macronutrientes — Guia Completo*
-
-**PROTEÍNAS** (4 kcal/g)
-• Função: construção muscular, saciedade, imunidade
-• Meta geral: 1,6-2,2g/kg/dia
-• Para ${nome} (${peso}kg): ${Math.round(peso*2)}-${Math.round(peso*2.2)}g/dia
-• Fontes: frango, ovos, peixe, carne magra, whey, iogurte grego, leguminosas
-
-**CARBOIDRATOS** (4 kcal/g)
-• Função: energia principal, especialmente para o cérebro
-• Prefira de baixo IG: aveia, arroz integral, batata-doce, frutas
-• Evite: açúcar refinado, farinha branca, ultraprocessados
-
-**GORDURAS BOAS** (9 kcal/g)
-• Função: hormônios, vitaminas lipossolúveis, saciedade
-• Boas fontes: azeite, abacate, castanhas, salmão, ovos
-• Evite: gordura trans, frituras, óleos vegetais refinados
-
-**Para ${nome}:**
-🥩 Proteína: ~${Math.round(peso*2)}g (${Math.round(peso*2*4)} kcal)
-🍚 Carboidratos: ~${calc.carbs||180}g (${Math.round((calc.carbs||180)*4)} kcal)
-🥑 Gorduras: ~${calc.fat||60}g (${Math.round((calc.fat||60)*9)} kcal)
-🔥 Total: ~${calc.meta||1800} kcal`);
-        return;
-      }
-
-      // ── Vitaminas e micronutrientes ───────────
-      if(m.includes('vitamina') || m.includes('mineral') || m.includes('ferro') || m.includes('cálcio') || m.includes('magnésio') || m.includes('zinco')) {
-        resolve(`🌿 *Vitaminas e Minerais Essenciais*
-
-**VITAMINA D** — O "hormônio do sol"
-• 80% dos brasileiros têm deficiência!
-• Fontes: sol (15-20 min/dia), ovos, peixes gordos
-• Suplementação: 2000-4000 UI/dia (verificar com exame)
-
-**FERRO**
-• Mulheres: 18mg/dia | Homens: 8mg/dia | Gestantes: 27mg/dia
-• Fontes animais (heme): carne vermelha, fígado, aves
-• Fontes vegetais (não-heme): feijão, lentilha, espinafre
-• 💡 Consuma com Vitamina C para melhor absorção!
-
-**CÁLCIO**
-• 1000-1200mg/dia
-• Fontes: leite, iogurte, queijo, brócolis, gergelim
-
-**MAGNÉSIO**
-• Fundamental para mais de 300 reações no corpo
-• Fontes: banana, abacate, castanhas, chocolate amargo
-• Ajuda no sono e reduz cólicas
-
-**ZINCO**
-• Imunidade, testosterona, cicatrização
-• Fontes: carne vermelha, frutos do mar, castanha de caju
-
-**ÔMEGA-3**
-• EPA+DHA: 1-2g/dia
-• Fontes: salmão, sardinha, atum, chia, linhaça
-• Poderoso anti-inflamatório natural`);
-        return;
-      }
-
-      // ── Diabetes / Glicemia ───────────────────
-      if(m.includes('diabet') || m.includes('glicemia') || m.includes('açúcar no sangue') || m.includes('insulin')) {
-        resolve(`🩺 *Nutrição para Diabetes e Controle Glicêmico*
-
-**Princípios fundamentais:**
-1. Priorize alimentos de **baixo índice glicêmico (IG)**
-2. Distribua os carboidratos ao longo do dia
-3. Nunca fique mais de 4h sem comer
-4. Combine carbo + proteína + gordura boa em cada refeição
-
-**Alimentos de BAIXO IG (seguros):**
-✅ Aveia, arroz integral, leguminosas
-✅ Vegetais em geral, folhas verdes
-✅ Frutas: maçã, pera, morango, frutas vermelhas
-✅ Proteínas magras: frango, peixe, ovos
-✅ Gorduras boas: azeite, abacate, castanhas
-
-**Alimentos de ALTO IG (evitar):**
-❌ Açúcar, mel, xaropes em excesso
-❌ Pão branco, arroz branco em excesso
-❌ Batata inglesa, mandioca em grande quantidade
-❌ Sucos de fruta (mesmo naturais)
-❌ Refrigerantes e bebidas adoçadas
-
-⚠️ IMPORTANTE: Diabetes requer acompanhamento médico e nutricional individualizado. As orientações acima são gerais. Consulte seu endocrinologista e nutricionista!`);
-        return;
-      }
-
-      // ── Água e hidratação ─────────────────────
-      if(m.includes('água') || m.includes('hidrat') || m.includes('beber') || m.includes('sede')) {
-        const aguaMeta = calc.aguaMl || Math.round((p.weight||70)*35);
-        resolve(`💧 *Hidratação Adequada*
-
-**Sua meta:** ${aguaMeta}ml/dia (~${Math.ceil(aguaMeta/250)} copos de 250ml)
-
-**Por que a água é tão importante:**
-• Regula temperatura corporal
-• Transporta nutrientes e oxigênio
-• Elimina toxinas pelos rins
-• Melhora desempenho físico e mental
-• Auxilia na perda de peso (reduz apetite)
-
-**Sinais de desidratação:**
-🟡 Urina amarela escura
-🟡 Dor de cabeça
-🟡 Cansaço sem motivo
-🟡 Dificuldade de concentração
-🔴 Urina laranja = desidratação grave
-
-**Dicas para beber mais água:**
-1. Comece o dia com 1 copo de água antes do café
-2. Beba 1 copo antes de cada refeição
-3. Tenha sempre uma garrafa visível
-4. Use o app para registrar cada copo ✅
-5. Chás sem açúcar também contam!
-
-**Atenção:** exercício intenso exige +500-700ml/hora de treino`);
-        return;
-      }
-
-      // ── Resposta geral inteligente ─────────────
-      const respostas = [
-        `Olá ${nome}! 👋 Sou seu Coach IA com conhecimento completo de nutrição e nutrição esportiva.
-
-Posso te ajudar com:
-
-🥗 **Emagrecimento** — déficit calórico, cardápio, estratégias
-💪 **Ganho de massa** — superávit, macros, treino
-⏱️ **Jejum intermitente** — protocolos e como começar
-🤰 **Nutrição gestante** — alimentos seguros e proibidos
-🩸 **Período menstrual** — como reduzir cólicas com alimentação
-💊 **Suplementos** — whey, creatina, vitaminas, o que funciona
-🏋️ **Pré e pós-treino** — quando e o que comer
-🩺 **Condições especiais** — diabetes, pressão, colesterol
-🌿 **Vitaminas e minerais** — deficiências e fontes
-
-O que você quer saber? Pode digitar ou usar os chips acima! 😊`,
-        `${nome}, ótima pergunta! Para te dar uma resposta mais precisa, me conta:
-
-• Seu objetivo atual: emagrecer, ganhar massa ou manter?
-• Você treina? Qual modalidade?
-• Tem alguma restrição alimentar ou condição de saúde?
-
-Com esses detalhes, posso montar um plano personalizado! 💪`,
-        `Baseado no seu perfil, ${nome}:
-
-📊 **Suas métricas:**
-• Meta calórica: ~${calc.meta||1800} kcal/dia
-• Proteína ideal: ~${Math.round((p.weight||70)*2)}g/dia
-• Água: ~${Math.round((p.weight||70)*35)}ml/dia
-
-🎯 **Foco para ${meta==='lose'?'emagrecimento':meta==='gain'?'ganho de massa':'manutenção'}:**
-${meta==='lose'?'Déficit de 400 kcal + priorizar proteína (2g/kg) + reduzir ultraprocessados':meta==='gain'?'Superávit de 300 kcal + 5-6 refeições/dia + whey pós-treino':'Manter as calorias da TDEE + variação alimentar + monitoramento semanal'}
-
-Quer um cardápio detalhado? Me diga!`,
-      ];
-      resolve(respostas[Math.floor(Math.random()*respostas.length)]);
-    }, 1000 + Math.random()*1000);
-  });
-}
 
 
 
@@ -6044,7 +5353,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Load data from Supabase
         if (!APP.profile) APP.profile = { name: APP.user.name, weight:78, height:175, age:30, gender:'m', goal:'lose', activity:'mod', restrictions:[] };
         APP.calc = calcProfile(APP.profile);
-        APP.meals = MOCK_MEALS();
+        APP.meals = [];
 
         // Sync from Supabase in background
         syncFromSupabase(user.id).then(() => {
@@ -6075,6 +5384,163 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   });
 });
+
+window.startLiveScanner = async function() {
+  const statusEl = document.getElementById('scan-live-status');
+  const viewport = document.getElementById('quagga-viewport');
+  if (!viewport) return;
+  const setStatus = (msg, color) => {
+    if (statusEl) { statusEl.innerHTML = msg; if(color) statusEl.style.color = color; }
+  };
+  setStatus('⏳ Verificando câmera...');
+  try {
+    const test = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+    test.getTracks().forEach(t=>t.stop());
+  } catch(e) {
+    const msgs = {
+      NotAllowedError: /iPhone|iPad/.test(navigator.userAgent)
+        ? '❌ Permita câmera em: Config → Safari → Câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>'
+        : '❌ Câmera bloqueada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar modo Foto</a>',
+      NotFoundError: '❌ Câmera não encontrada neste dispositivo.',
+    };
+    setStatus(msgs[e.name] || '❌ Câmera indisponível. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+    return;
+  }
+  setStatus('⏳ Carregando leitor...');
+  if (typeof Quagga === 'undefined') {
+    await new Promise((res,rej) => {
+      const sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+      sc.onload = res; sc.onerror = rej;
+      document.head.appendChild(sc);
+    }).catch(() => { setStatus('❌ Falha ao carregar leitor. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)'); });
+    if (typeof Quagga === 'undefined') return;
+  }
+  viewport.style.cssText = 'width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
+  setStatus('📷 Iniciando câmera...');
+  Quagga.init({
+    inputStream: { name:'Live', type:'LiveStream', target:viewport,
+      constraints:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}} },
+    locator: { patchSize:'medium', halfSample:true },
+    numOfWorkers: Math.min(navigator.hardwareConcurrency||2,4),
+    frequency: 10,
+    decoder: { readers:['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'] },
+    locate: true,
+  }, function(err) {
+    if (err) { setStatus('❌ Falha ao iniciar. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>','var(--red)'); return; }
+    Quagga.start();
+    SCAN.quaggaRunning = true;
+    setTimeout(() => {
+      const v = viewport.querySelector('video');
+      if (v) { v.style.cssText='width:100%!important;height:100%!important;object-fit:cover!important'; window._activeCamStream=v.srcObject; }
+    }, 500);
+    setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
+  });
+  let lastCode='', lastTime=0;
+  Quagga.onDetected(function(r) {
+    const code = r && r.codeResult && r.codeResult.code;
+    if (!code || code.length < 4) return;
+    const now = Date.now();
+    if (code===lastCode && now-lastTime<2500) return;
+    lastCode=code; lastTime=now;
+    if (navigator.vibrate) navigator.vibrate([80,40,80]);
+    stopLiveScanner();
+    doScan(code);
+  });
+};
+
+window.renderLogin = function() {
+  const el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg">
+    <div class="auth-logo-wrap">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-logo-name">VitalIA</div>
+      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('login')}</h2>
+      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
+      <div class="input-wrap">
+        <label class="input-label">${t('email')}</label>
+        <div class="input-icon"><span class="icon">📧</span>
+          <input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">${t('password')}</label>
+        <div class="input-icon"><span class="icon">🔒</span>
+          <input id="a-pass" class="input" type="password" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doLogin()"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+          <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px">
+          ${t('remember')}
+        </label>
+        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info',4000)" style="font-size:13px">${t('forgot')}</span>
+      </div>
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()"
+        style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
+      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">
+        🔐 Entrar com biometria / PIN
+      </button>
+      <div class="divider">
+        <div class="divider-line"></div><div class="divider-text">${t('or_continue')}</div><div class="divider-line"></div>
+      </div>
+      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">
+        <span class="tg-plane">✈️</span> Entrar com Telegram
+      </button>
+      <button onclick="socialLogin('Google')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Google</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <button onclick="socialLogin('Apple')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Apple ID</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <button onclick="socialLogin('Facebook')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Facebook</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
+        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
+      </p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
+      🔒 Conexão segura SSL · 🌿 Dados protegidos pela LGPD
+    </p>
+  </div>`;
+};
+
+window.socialLogin = function(provider) {
+  const icons = {
+    Google: '<svg width="40" height="40" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
+    Apple: '<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
+    Facebook: '<svg width="40" height="40" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
+  };
+  openModal('Entrar com ' + provider, '<div style="text-align:center;padding:8px 0 16px">'
+    + '<div style="margin-bottom:12px">' + (icons[provider]||'🔗') + '</div>'
+    + '<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:8px">Login com ' + provider + '</div>'
+    + '<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px;padding:0 8px">'
+    + 'O login com <strong>' + provider + '</strong> requer integração do SDK oficial,<br>'
+    + 'disponível na versão <strong style="color:var(--green)">Premium</strong>.<br><br>'
+    + 'Use as opções abaixo para entrar agora:</div>'
+    + '<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px;font-size:15px">✉️ Entrar com Email e Senha</button>'
+    + '<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>'
+    + '</div>');
+};
+
 </script>
 
 <!-- ══════════════════════════════════════════════
@@ -6176,7 +5642,7 @@ window.tryBiometric = async function() {
           if (!APP.profile) APP.profile = {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
           APP.calc = calcProfile(APP.profile);
           APP.water = APP.water || 0;
-          APP.meals = APP.meals?.length ? APP.meals : MOCK_MEALS();
+          APP.meals = [];
           APP.session = 'bio_' + Date.now();
           save('v_session', APP.session);
           if (APP.user?.id) await syncFromSupabase(APP.user.id).catch(()=>{});
@@ -6210,47 +5676,28 @@ window.tryBiometric = async function() {
 window.stopLiveScanner = function() {
   // Para Quagga
   if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
-    try { 
+    try {
       Quagga.offDetected && Quagga.offDetected();
       Quagga.offProcessed && Quagga.offProcessed();
-      Quagga.stop(); 
-    } catch(e) { console.warn('Quagga stop:', e); }
+      Quagga.stop();
+    } catch(e) { console.warn('Quagga stop:', e.message); }
     SCAN.quaggaRunning = false;
   }
-  
-  // Para todos os streams de video na página
-  const allVideos = document.querySelectorAll('video');
-  allVideos.forEach(v => {
+  // Para todos os streams de vídeo da página
+  document.querySelectorAll('video').forEach(v => {
     try {
       if (v.srcObject) {
-        v.srcObject.getTracks().forEach(t => t.stop());
+        v.srcObject.getTracks().forEach(t => { try { t.stop(); } catch(e){} });
         v.srcObject = null;
-        v.load();
       }
     } catch(e) {}
   });
-  
-  // Para streams via navigator.mediaDevices ativas
-  if (window._activeCameraStream) {
-    try { window._activeCameraStream.getTracks().forEach(t => t.stop()); } catch(e) {}
-    window._activeCameraStream = null;
+  // Para stream rastreado
+  if (window._activeCamStream) {
+    try { window._activeCamStream.getTracks().forEach(t => t.stop()); } catch(e) {}
+    window._activeCamStream = null;
   }
-  
-  // Muda para modo manual
   SCAN.mode = 'manual';
-  
-  // Só re-renderiza se estiver na tela do scanner
-  if (APP.tab === 'scanner') {
-    const body = document.getElementById('app-body');
-    if (body) {
-      const screen = document.createElement('div');
-      screen.className = 'screen active fade-in';
-      screen.innerHTML = renderScanner();
-      body.innerHTML = '';
-      body.appendChild(screen);
-    }
-    toast('📷 Câmera parada','info',1500);
-  }
 };
 
 // Intercepta getUserMedia para rastrear streams
@@ -6505,839 +5952,87 @@ window.sendCoach = async function(txt) {
 // 6. COACH RENDER — Layout melhorado com TTS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 window.renderCoach = function() {
-  const p = APP.profile || {name:'Usuário'};
-  if (!APP.coachMsgs.length) {
-    APP.coachMsgs = [{
-      role:'ai',
-      text: t('coach_greeting', p.name?.split(' ')[0] || 'Você'),
-      time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
-    }];
+  const p = APP.profile||{name:'Usuário'};
+  const fn = (p.name||'Você').split(' ')[0];
+  if (!APP.coachMsgs||!APP.coachMsgs.length) {
+    APP.coachMsgs = [{role:'ai',text:t('coach_greeting',fn),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}];
   }
-  
-  const suggs = [
-    '💪 Proteínas — como aumentar?',
-    '🔥 Cardápio para emagrecer',
-    '💧 Quanto devo beber de água?',
-    '🤰 Sou gestante, o que comer?',
-    '🌸 Nutrição no período menstrual',
-    '🏋️ Pré e pós-treino ideal',
-    '💊 Suplementos — o que tomar?',
-    '⏱️ Jejum intermitente — como fazer?',
-    '🥗 Receita rápida saudável',
-    '📊 Analise meu perfil atual',
-  ];
-  
-  return `<div class="coach-wrap">
-  <div class="coach-header">
-    <button onclick="navigate('more')" class="btn btn-ghost" style="font-size:18px;padding:4px">←</button>
-    <div class="coach-avatar">🤖<div class="online-dot"></div></div>
-    <div style="flex:1">
-      <div style="font-size:14px;font-weight:700">Coach IA Nutri</div>
-      <div style="font-size:11px;color:var(--green)">${t('coach_online')} · Powered by Claude</div>
-    </div>
-    <div style="display:flex;gap:6px">
-      <button onclick="toggleVoiceMode()" id="voice-mode-btn" title="Modo voz" style="background:transparent;border:1px solid var(--border2);border-radius:10px;padding:5px 8px;cursor:pointer;font-size:14px;color:var(--text2)">🎙️</button>
-      <button onclick="APP.coachMsgs=[];navigate('coach')" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>
-    </div>
-  </div>
-  
-  <div class="coach-sugg" id="coach-sugg-row">
-    ${suggs.map(s=>`<button class="coach-sugg-chip" onclick="sendCoach(\`${s}\`)">${s}</button>`).join('')}
-  </div>
-  
-  <div class="coach-msgs" id="coach-msgs">
-    ${APP.coachMsgs.map((m,i) => m.role === 'ai' ? 
-      `<div class="msg-wrap ai">
-        <div class="msg-bubble">${(m.text||'').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
-        <div style="margin-top:4px;display:flex;gap:6px">
-          <button onclick="speakText(\`${(m.text||'').replace(/`/g,"'").replace(/\n/g,' ').substring(0,300)}\`)" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>
-        </div>
-        <div class="msg-time">${m.time||''}</div>
-      </div>` :
-      `<div class="msg-wrap user">
-        ${m.audio ? `<div class="coach-audio-msg"><button class="audio-play-btn" onclick="playAudioMsg()">▶</button><div><div style="font-size:11px;font-weight:700">Áudio</div><div style="font-size:10px;color:var(--text3)">${m.text||'...'}</div></div></div>` :
-        `<div class="msg-bubble">${m.text||''}</div>`}
-        <div class="msg-time">${m.time||''}</div>
-      </div>`
-    ).join('')}
-  </div>
-  
-  <div class="recording-indicator" id="rec-indicator">
-    <div class="rec-dot"></div> Gravando... solte para enviar
-  </div>
-  
-  <div class="coach-input-wrap" id="coach-input-area">
-    <button class="coach-mic" id="mic-btn" title="Segurar para gravar áudio"
-      onmousedown="startRecording()" onmouseup="stopRecording()"
-      ontouchstart="event.preventDefault();startRecording()" 
-      ontouchend="event.preventDefault();stopRecording()">🎤</button>
-    <textarea class="coach-textarea" id="coach-input" 
-      placeholder="Digite ou use o microfone..." rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCoach()}"
-      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
-    <button class="coach-send" onclick="sendCoach()" title="Enviar mensagem">➤</button>
-  </div>
-  </div>`;
-};
-
-// Modo voz — toggle viva-voz
-let voiceModeActive = false;
-window.toggleVoiceMode = function() {
-  voiceModeActive = !voiceModeActive;
-  const btn = document.getElementById('voice-mode-btn');
-  if (btn) {
-    btn.style.background = voiceModeActive ? 'rgba(34,197,94,.2)' : 'transparent';
-    btn.style.color = voiceModeActive ? 'var(--green)' : 'var(--text2)';
-    btn.style.borderColor = voiceModeActive ? 'var(--green)' : 'var(--border2)';
-  }
-  toast(voiceModeActive ? '🔊 Modo voz ativado — respostas serão lidas' : '🔇 Modo voz desativado', 'info', 2000);
-};
-
-// Override do speakText para suporte completo
-window.speakText = function(text) {
-  if (!window.speechSynthesis) { 
-    toast('TTS não suportado neste dispositivo','info'); 
-    return; 
-  }
-  window.speechSynthesis.cancel();
-  const cleanText = text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').substring(0, 400);
-  const utt = new SpeechSynthesisUtterance(cleanText);
-  
-  // Configura idioma
-  const langMap = {pt:'pt-BR', en:'en-US', es:'es-ES', ru:'ru-RU'};
-  utt.lang = langMap[APP.lang || 'pt'] || 'pt-BR';
-  utt.rate = 0.92;
-  utt.pitch = 1.05;
-  utt.volume = 1.0;
-  
-  // Aguarda vozes carregarem
-  const setVoice = () => {
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.lang === utt.lang && v.localService) ||
-                      voices.find(v => v.lang.startsWith(APP.lang || 'pt')) ||
-                      voices[0];
-    if (preferred) utt.voice = preferred;
-    window.speechSynthesis.speak(utt);
+  const suggs = ['💪 Como aumentar proteínas?','🔥 Cardápio para emagrecer','💧 Meta de água diária','🤰 Sou gestante, o que comer?','🌸 Período menstrual — o que comer?','🏋️ Pré e pós-treino','💊 Suplementos essenciais','⏱️ Como fazer jejum 16:8?'];
+  const renderMsg = (m,i) => {
+    if (m.role==='ai') {
+      const safe=(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      return '<div class="msg-wrap ai"><div class="msg-bubble">'+safe+'</div>'
+        +'<div style="display:flex;gap:6px;margin-top:6px">'
+        +'<button data-idx="'+i+'" onclick="speakCoachText(parseInt(this.dataset.idx))" '
+        +'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
+        +'</div><div class="msg-time">'+(m.time||'')+'</div></div>';
+    }
+    const safe=(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if (m.audio) return '<div class="msg-wrap user"><div class="coach-audio-msg"><div class="audio-play-btn">🎤</div><div><div style="font-size:11px;font-weight:700">Áudio</div><div style="font-size:10px;color:var(--text3)">'+safe.substring(0,50)+'</div></div></div><div class="msg-time">'+(m.time||'')+'</div></div>';
+    return '<div class="msg-wrap user"><div class="msg-bubble">'+safe+'</div><div class="msg-time">'+(m.time||'')+'</div></div>';
   };
-  
-  if (window.speechSynthesis.getVoices().length > 0) {
-    setVoice();
-  } else {
-    window.speechSynthesis.onvoiceschanged = setVoice;
-    window.speechSynthesis.speak(utt);
-  }
-  
-  toast('🔊 Reproduzindo...','info', 2000);
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 7. BOTÕES SOCIAL LOGIN — Verde metálico
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-window.renderLogin = function() {
-  const el = document.getElementById('auth-screen');
-  el.innerHTML = `<div class="auth-bg">
-    <div class="auth-logo-wrap">
-      <div class="auth-logo">🌿</div>
-      <div class="auth-logo-name">VitalIA</div>
-      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
-    </div>
-    <div class="auth-card">
-      <h2 class="auth-title">${t('login')}</h2>
-      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada saudável.</p>
-      
-      <div class="input-wrap">
-        <label class="input-label">${t('email')}</label>
-        <div class="input-icon"><span class="icon">📧</span><input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">${t('password')}</label>
-        <div class="input-icon"><span class="icon">🔒</span><input id="a-pass" class="input" type="password" placeholder="••••••••" autocomplete="current-password"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
-          <input type="checkbox" id="a-remember" style="accent-color:var(--green)"> ${t('remember')}
-        </label>
-        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info')" style="font-size:13px">${t('forgot')}</span>
-      </div>
-      
-      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
-      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:16px">
-        🔐 Entrar com biometria / PIN
-      </button>
-      
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">${t('or_continue')}</div>
-        <div class="divider-line"></div>
-      </div>
-      
-      <!-- Botão Telegram -->
-      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:10px">
-        <span class="tg-plane">✈️</span> Entrar com Telegram
-      </button>
-      
-      <!-- Google -->
-      <button onclick="socialLogin('Google')" style="
-        display:flex;align-items:center;gap:12px;padding:13px 16px;
-        border-radius:12px;
-        border:1.5px solid rgba(34,197,94,.5);
-        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
-        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
-        transition:all .2s;color:var(--text);
-        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
-        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        <span style="flex:1;text-align:left">Google</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      
-      <!-- Apple ID -->
-      <button onclick="socialLogin('Apple')" style="
-        display:flex;align-items:center;gap:12px;padding:13px 16px;
-        border-radius:12px;
-        border:1.5px solid rgba(34,197,94,.5);
-        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
-        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
-        transition:all .2s;color:var(--text);
-        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        <span style="flex:1;text-align:left">Apple ID</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      
-      <!-- Facebook -->
-      <button onclick="socialLogin('Facebook')" style="
-        display:flex;align-items:center;gap:12px;padding:13px 16px;
-        border-radius:12px;
-        border:1.5px solid rgba(34,197,94,.5);
-        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
-        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
-        transition:all .2s;color:var(--text);
-        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        <span style="flex:1;text-align:left">Facebook</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      
-      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
-        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
-      </p>
-    </div>
-    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
-      🔒 Login seguro · 🌿 Dados protegidos pela LGPD
-    </p>
-  </div>`;
-};
-
-// CSS extra para efeito verde luminoso nos botões sociais
-const extraCSS = document.createElement('style');
-extraCSS.textContent = `
-  .social-green-btn:hover, .social-green-btn:active {
-    border-color:rgba(34,197,94,.8) !important;
-    background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(22,163,74,.12)) !important;
-    box-shadow:0 0 20px rgba(34,197,94,.3),inset 0 1px 0 rgba(34,197,94,.3) !important;
-    transform:translateY(-1px);
-  }
-  #coach-input:focus {
-    border-color:var(--green) !important;
-    outline:none !important;
-    background:var(--surface) !important;
-  }
-  .coach-send:disabled { opacity:0.5; cursor:not-allowed; }
-  
-  /* Fix receitas — garante que clique funcione */
-  .recipe-card { cursor:pointer !important; user-select:none; }
-  .recipe-card:active { opacity:0.9; transform:scale(0.99); }
-  
-  /* Verde metálico brilhante */
-  @keyframes greenGlow {
-    0%,100% { box-shadow:0 0 8px rgba(34,197,94,.2); }
-    50% { box-shadow:0 0 20px rgba(34,197,94,.4),0 0 40px rgba(34,197,94,.1); }
-  }
-  .auth-card button[onclick*="socialLogin"] {
-    animation:greenGlow 3s ease-in-out infinite;
-  }
-  .auth-card button[onclick*="socialLogin"]:hover {
-    animation:none;
-    box-shadow:0 0 25px rgba(34,197,94,.5) !important;
-    transform:translateY(-1px);
-  }
-`;
-document.head.appendChild(extraCSS);
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 8. INTEGRAÇÕES — Cards ativados visualmente
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-window.renderIntegrations = function() {
-  const sections = [
-    {cat:'⌚ Wearables & Saúde',items:[
-      {name:'Apple Health',icon:'🍎',connected:false,status:'Aguardando iOS',desc:'Passos, calorias, sono, frequência cardíaca'},
-      {name:'Google Fit',icon:'🟢',connected:true,status:'Ativo',desc:'Atividade, exercícios e frequência cardíaca'},
-      {name:'Samsung Health',icon:'🔵',connected:false,status:'Disponível',desc:'Sono, estresse, SpO2, passos'},
-      {name:'Garmin Connect',icon:'🟠',connected:false,status:'Disponível',desc:'Treinos detalhados e GPS'},
-      {name:'Fitbit',icon:'🐦',connected:false,status:'Disponível',desc:'Saúde completa, sono e exercícios'},
-      {name:'Balança Bluetooth',icon:'⚖️',connected:false,status:'Disponível',desc:'Sincroniza peso automaticamente via BT'},
-    ]},
-    {cat:'🧪 Dados Nutricionais',items:[
-      {name:'Nutritionix API',icon:'📊',connected:true,status:'Ativo',desc:'800k+ alimentos com dados nutricionais completos'},
-      {name:'Open Food Facts',icon:'🌍',connected:true,status:'Ativo',desc:'400M+ produtos escaneados globalmente'},
-      {name:'Edamam API',icon:'🥗',connected:false,status:'Config. pendente',desc:'Análise nutricional de receitas e ingredientes'},
-      {name:'USDA FoodData',icon:'🇺🇸',connected:false,status:'Disponível',desc:'Base oficial do Departamento de Agricultura EUA'},
-    ]},
-    {cat:'🤖 Inteligência Artificial',items:[
-      {name:'Claude (Anthropic)',icon:'🤖',connected:true,status:'Ativo — Coach IA',desc:'Coach de nutrição e análise personalizada'},
-      {name:'Google Vision AI',icon:'👁️',connected:false,status:'Em desenvolvimento',desc:'Reconhecimento automático de alimentos por foto'},
-      {name:'OpenAI Whisper',icon:'🎤',connected:false,status:'Em desenvolvimento',desc:'Transcrição de voz para texto (áudio → coach)'},
-    ]},
-    {cat:'🔔 Notificações',items:[
-      {name:'Push Notification',icon:'📱',connected:true,status:'Ativo',desc:'Lembretes nativos no dispositivo'},
-      {name:'Telegram Bot',icon:'✈️',connected:!!(APP.telegram?.connected),status:APP.telegram?.connected ? '✅ @'+APP.telegram.username : 'Não configurado',desc:'Lembretes, comandos e relatórios via Telegram'},
-      {name:'WhatsApp (Twilio)',icon:'💬',connected:false,status:'Premium',desc:'Mensagens via WhatsApp Business API'},
-      {name:'Email (SendGrid)',icon:'📧',connected:false,status:'Config. pendente',desc:'Resumo semanal e conquistas por email'},
-    ]},
-    {cat:'💳 Pagamentos',items:[
-      {name:'Pix (Banco Central)',icon:'🟢',connected:true,status:'Ativo',desc:'Pagamento instantâneo brasileiro'},
-      {name:'Stripe',icon:'💳',connected:false,status:'Config. pendente',desc:'Cartão de crédito/débito internacional'},
-      {name:'Apple Pay',icon:'🍎',connected:false,status:'Aguardando iOS',desc:'Pagamento nativo iOS'},
-      {name:'Google Pay',icon:'🇬',connected:false,status:'Disponível',desc:'Pagamento nativo Android'},
-    ]},
-    {cat:'🔐 Login Social',items:[
-      {name:'Google OAuth 2.0',icon:'🇬',connected:false,status:'Config. pendente',desc:'Login com conta Google'},
-      {name:'Apple Sign In',icon:'🍎',connected:false,status:'Aguardando Apple',desc:'Login com Apple ID'},
-      {name:'Telegram Login',icon:'✈️',connected:!!(APP.telegram?.connected),status:APP.telegram?.connected ? '✅ Ativo' : 'Disponível',desc:'Login e autenticação via Telegram'},
-      {name:'Facebook Login',icon:'📘',connected:false,status:'Config. pendente',desc:'Login com conta Facebook'},
-    ]},
-  ];
-  
-  const totalActive = sections.flatMap(s=>s.items).filter(i=>i.connected).length;
-  const total = sections.flatMap(s=>s.items).length;
-  
-  return `
-  <div class="screen-header"><div class="screen-title">🔗 Integrações</div></div>
-  
-  <!-- Status geral -->
-  <div style="padding:0 16px;margin-bottom:12px">
-    <div style="background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(56,189,248,.05));border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px">
-      <div style="font-size:32px">🔗</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:700">${totalActive} de ${total} integrações ativas</div>
-        <div style="height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:6px 0">
-          <div style="height:100%;width:${Math.round((totalActive/total)*100)}%;background:var(--gradient);border-radius:99px;transition:width .8s"></div>
-        </div>
-        <div style="font-size:11px;color:var(--text2)">${Math.round((totalActive/total)*100)}% configurado</div>
-      </div>
-    </div>
-  </div>
-  
-  ${sections.map(s=>`
-    <div class="section-title">${s.cat}</div>
-    <div style="padding:0 16px;margin-bottom:8px">
-      ${s.items.map(item=>`
-      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;
-        background:${item.connected?'rgba(34,197,94,.04)':'var(--surface)'};
-        border:1px solid ${item.connected?'rgba(34,197,94,.25)':'var(--border)'};
-        border-radius:var(--radius-sm);margin-bottom:6px;
-        transition:all .2s;cursor:pointer"
-        onclick="toast('${item.connected ? '✅ ' + item.name + ' está ativo' : '🔌 Configurando ' + item.name + '...'}','${item.connected?'success':'info'}')">
-        <div style="font-size:22px;width:32px;text-align:center">${item.icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px">
-            ${item.name}
-            ${item.connected ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;display:inline-block"></span>' : ''}
-          </div>
-          <div style="font-size:11px;color:var(--text3);margin-top:1px">${item.desc}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div style="font-size:10px;font-weight:700;color:${item.connected?'var(--green)':'var(--text3)'};white-space:nowrap">${item.status}</div>
-          ${item.connected ? '' : `<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();toast('Abrindo configuração de ${item.name}...','info')" style="font-size:10px;padding:3px 8px;margin-top:3px">Ativar</button>`}
-        </div>
-      </div>`).join('')}
-    </div>
-  `).join('')}
-  <div style="height:8px"></div>`;
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 9. ATTACH COACH — Scroll e foco
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-window.attachCoach = function(screen) {
-  const msgs = screen.querySelector('#coach-msgs');
-  if (msgs) {
-    setTimeout(() => {
-      msgs.scrollTop = msgs.scrollHeight;
-    }, 100);
-  }
-  // Foca o textarea
-  const input = screen.querySelector('#coach-input');
-  if (input) {
-    setTimeout(() => input.focus(), 200);
-  }
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 10. NAVEGAÇÃO — Renderiza tela de receitas corretamente
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// Garante que REC.openRecipe começa como null
-if (typeof REC !== 'undefined' && REC.openRecipe === undefined) {
-  REC.openRecipe = null;
-}
-
-// Fix: toggleFilter para receitas
-window.toggleFilter = function(f) {
-  if (!REC.filter) REC.filter = [];
-  const idx = REC.filter.indexOf(f);
-  if (idx >= 0) REC.filter.splice(idx, 1); 
-  else REC.filter.push(f);
-  navigate('recipes');
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 11. GRAVAÇÃO DE ÁUDIO — Corrigida
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let _mediaRecorder = null;
-let _audioChunks = [];
-let _recordingTimer = null;
-
-window.startRecording = async function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-    _audioChunks = [];
-    
-    const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
-      ? {mimeType:'audio/webm;codecs=opus'} 
-      : {};
-    _mediaRecorder = new MediaRecorder(stream, options);
-    
-    _mediaRecorder.ondataavailable = e => {
-      if (e.data && e.data.size > 0) _audioChunks.push(e.data);
-    };
-    
-    _mediaRecorder.start(100);
-    
-    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
-    if (rec) rec.style.display = 'flex';
-    
-    // Auto-stop depois de 30 segundos
-    _recordingTimer = setTimeout(() => {
-      if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
-        window.stopRecording();
-      }
-    }, 30000);
-    
-  } catch(e) {
-    console.error('Mic error:', e);
-    if (e.name === 'NotAllowedError') {
-      toast('❌ Permita acesso ao microfone nas configurações do navegador', 'error', 5000);
-    } else {
-      toast('❌ Microfone não disponível: ' + e.message, 'error');
-    }
-  }
-};
-
-window.stopRecording = function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  
-  clearTimeout(_recordingTimer);
-  
-  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
-  if (rec) rec.style.display = 'none';
-  
-  if (!_mediaRecorder || _mediaRecorder.state === 'inactive') return;
-  
-  _mediaRecorder.stop();
-  
-  _mediaRecorder.onstop = async () => {
-    // Para o stream
-    _mediaRecorder.stream?.getTracks().forEach(t => t.stop());
-    
-    const blob = new Blob(_audioChunks, {type: _mediaRecorder.mimeType || 'audio/webm'});
-    if (blob.size < 1000) { 
-      toast('Gravação muito curta. Tente novamente.', 'info'); 
-      return; 
-    }
-    
-    // Simula transcrição (Whisper API seria aqui)
-    toast('🎤 Processando áudio...', 'info', 2000);
-    
-    const transcriptions = [
-      'Quais alimentos são ricos em proteína para ganho muscular?',
-      'Como devo me alimentar antes e depois do treino?',
-      'Qual é o cardápio ideal para emagrecer 5 quilos?',
-      'Tenho dificuldade em tomar água, como melhorar?',
-      'O que é melhor: whey protein concentrado ou isolado?',
-      'Como reduzir as cólicas menstruais com alimentação?',
-      'Estou grávida, o que devo priorizar na dieta?',
-    ];
-    
-    await new Promise(r => setTimeout(r, 1500));
-    
-    const transcribed = transcriptions[Math.floor(Math.random() * transcriptions.length)];
-    
-    const time = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs.push({role:'user', text:`🎤 ${transcribed}`, time, audio: true});
-    APP.coachLoading = true;
-    
-    const msgsEl = document.getElementById('coach-msgs');
-    if (msgsEl) {
-      const userBubble = document.createElement('div');
-      userBubble.className = 'msg-wrap user';
-      userBubble.innerHTML = `<div class="coach-audio-msg">
-        <div class="audio-play-btn">🎤</div>
-        <div><div style="font-size:11px;font-weight:700">Áudio enviado</div><div style="font-size:10px;color:var(--text3)">"${transcribed.substring(0,50)}..."</div></div>
-      </div><div class="msg-time">${time}</div>`;
-      msgsEl.appendChild(userBubble);
-      
-      const typingEl = document.createElement('div');
-      typingEl.id = 'coach-typing';
-      typingEl.className = 'msg-wrap ai';
-      typingEl.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
-      msgsEl.appendChild(typingEl);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-    }
-    
-    const resp = await getNutriCoachResponse(transcribed);
-    const aiTime = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs.push({role:'ai', text:resp, time:aiTime, tts:true});
-    
-    const typing = document.getElementById('coach-typing');
-    if (typing) typing.remove();
-    
-    if (msgsEl) {
-      const aiBubble = document.createElement('div');
-      aiBubble.className = 'msg-wrap ai fade-in';
-      aiBubble.innerHTML = `<div class="msg-bubble">${resp.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
-        <div style="margin-top:4px;display:flex;gap:6px">
-          <button onclick="speakText(\`${resp.replace(/`/g,"'").replace(/\n/g,' ').substring(0,300)}\`)" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>
-        </div>
-        <div class="msg-time">${aiTime}</div>`;
-      msgsEl.appendChild(aiBubble);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      
-      // Auto-speak se modo voz ativo
-      if (voiceModeActive) {
-        setTimeout(() => speakText(resp), 500);
-      }
-    }
-    
-    APP.coachLoading = false;
-    addXP(8);
-  };
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 12. AUDIT — Override de navigate para garantir cleanup
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const _origNavigate = window.navigate;
+  return '<div class="coach-wrap">'
+    +'<div class="coach-header">'
+    +'<button onclick="navigate(\'more\')" class="btn btn-ghost" style="font-size:20px;padding:4px 8px">←</button>'
+    +'<div class="coach-avatar">🤖<div class="online-dot"></div></div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">Coach IA Nutri</div><div style="font-size:11px;color:var(--green)">Online · Claude AI</div></div>'
+    +'<button id="voice-mode-btn" onclick="window._voiceMode=!window._voiceMode;var c=window._voiceMode;this.style.background=c?\'rgba(34,197,94,.2)`:\'transparent\';this.style.color=c?\'var(--green)`:\'var(--text2)\';this.style.borderColor=c?\'var(--green)`:\'var(--border2)\';toast(c?\'🔊 Modo viva-voz ativado`:\'🔇 Modo voz desativado\',\'info\',2000)" style="background:transparent;border:1px solid var(--border2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text2);margin-right:4px;transition:all .2s;font-family:var(--font-body)" title="Modo viva-voz">🎙️</button>'
+    +'<button onclick="APP.coachMsgs=[];navigate(\'coach\')" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>'
+    +'</div>'
+    +'<div class="coach-sugg">'+suggs.map(s=>'<button class="coach-sugg-chip" onclick="sendCoach(\''+s.replace(/'/g,"\\'")+'\')" >'+s+'</button>').join('')+'</div>'
+    +'<div class="coach-msgs" id="coach-msgs">'+APP.coachMsgs.map((m,i)=>renderMsg(m,i)).join('')+'</div>'
+    +'<div class="recording-indicator" id="rec-indicator"><div class="rec-dot"></div> Gravando... solte para enviar</div>'
+    +'<div class="coach-input-wrap" id="coach-input-wrap">'
+    +'<button class="coach-mic" id="mic-btn" title="Manter pressionado para gravar" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="event.preventDefault();startRecording()" ontouchend="event.preventDefault();stopRecording()">🎤</button>'
+    +'<textarea class="coach-textarea" id="coach-input" placeholder="Pergunte sobre nutrição, dieta, saúde..." rows="1" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();window.sendCoach&&window.sendCoach()}" oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
+    +'<button class="coach-send" onclick="window.sendCoach&&window.sendCoach()" title="Enviar">➤</button>'
+    +'</div></div>';
 window.navigate = function(tab) {
-  // Para câmera ao sair do scanner
+  // Cleanup ao sair do scanner
   if (APP.tab === 'scanner' && tab !== 'scanner') {
-    stopLiveScanner();
+    try { stopLiveScanner(); } catch(e) {}
   }
-  // Para TTS ao mudar de tela
+  // Para TTS ao trocar tela
   if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
+    try { window.speechSynthesis.cancel(); } catch(e) {}
   }
-  // Para jejum ao sair
-  if (tab !== 'fasting' && FAST?.interval) {
+  // Para fasting timer se sair da tela
+  if (tab !== 'fasting' && typeof FAST !== 'undefined' && FAST.interval) {
     clearInterval(FAST.interval);
     FAST.interval = null;
   }
-  _origNavigate(tab);
-};
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 13. RE-RENDERIZA LOGIN se já estiver na tela
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// Aplica os patches assim que o DOM estiver pronto
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    // Se a tela de auth estiver visível, re-renderiza com o novo login
-    const authScreen = document.getElementById('auth-screen');
-    if (authScreen && authScreen.classList.contains('active')) {
-      if (APP.authStep === 'login') renderLogin();
-    }
-    
-    // Garante REC.openRecipe como null
-    if (typeof REC !== 'undefined') REC.openRecipe = null;
-    
-    console.log('✅ VitalIA Patches v2.1.0 aplicados com sucesso');
-    console.log('Fixes: biometria, scanner, receitas, coach IA, botões sociais, integrações');
-  }, 500);
-});
-
-// Aplica imediatamente se DOM já carregou
-if (document.readyState !== 'loading') {
-  setTimeout(() => {
-    if (typeof REC !== 'undefined') REC.openRecipe = null;
-    const authScreen = document.getElementById('auth-screen');
-    if (authScreen && authScreen.classList.contains('active') && APP.authStep === 'login') {
-      renderLogin();
-    }
-    console.log('✅ VitalIA Patches v2.1.0 ready');
-  }, 300);
-}
-
-</script>
-<script>
-// ══════════════════════════════════════════════════════
-// PATCH EXTRA v2.2.0 — Fixes adicionais
-// ══════════════════════════════════════════════════════
-
-// FIX: Coach IA — textarea clicável e funcional
-document.addEventListener('click', function(e) {
-  const ta = document.getElementById('coach-input');
-  if (ta) {
-    ta.style.pointerEvents = 'auto';
-    ta.style.zIndex = '10';
-    ta.style.position = 'relative';
-  }
-});
-
-// FIX: Análise de foto — detecta se é alimento de verdade
-const _origAnalyzeFood = window.analyzeFood;
-window.analyzeFood = function(desc) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      // Avisa que a análise é simulada e pode errar
-      const result = {
-        name: 'Refeição fotografada',
-        emoji: '🍽️',
-        cal: Math.floor(300 + Math.random()*400),
-        prot: Math.floor(15 + Math.random()*30),
-        carb: Math.floor(20 + Math.random()*60),
-        fat: Math.floor(5 + Math.random()*25),
-        score: Math.floor(5 + Math.random()*5),
-        gi: Math.floor(35 + Math.random()*40),
-        nutrition: {sodium:'280mg',calcium:'65mg',iron:'1.8mg',vitA:'120µg',vitC:'18mg',b12:'0.8µg'},
-        msg: '⚠️ Análise estimada por IA — pode não ser 100% precisa. Para análise exata, descreva os ingredientes manualmente usando o botão "Descrever".'
-      };
-      resolve(result);
-    }, 1500);
-  });
-};
-
-window._voiceMode = false; // Modo viva-voz
-
-// FIX: Botão ⋯ do menu — garante visibilidade verde
-(function fixMoreBtn() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .nav-item:last-child .nav-icon {
-      color: var(--green) !important;
-      font-size: 20px !important;
-      font-weight: 900 !important;
-      letter-spacing: 2px !important;
-    }
-    .nav-item:last-child .nav-label {
-      color: var(--text3);
-    }
-    .nav-item:last-child.active .nav-label {
-      color: var(--green);
-    }
-    /* Coach textarea — sempre clicável */
-    .coach-textarea {
-      pointer-events: auto !important;
-      z-index: 10 !important;
-      position: relative !important;
-      -webkit-user-select: text !important;
-      user-select: text !important;
-    }
-    .coach-input-wrap {
-      pointer-events: auto !important;
-      z-index: 10 !important;
-    }
-    /* Scanner modo ao vivo — altura mínima */
-    #quagga-viewport {
-      min-height: 240px !important;
-      background: #000 !important;
-    }
-    #quagga-viewport video {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
-// FIX: Coach — garante que o input funciona após render
-const _origAttachCoach = window.attachCoach;
-window.attachCoach = function(screen) {
-  if (_origAttachCoach) _origAttachCoach(screen);
-  
-  // Aguarda render e ativa textarea
-  setTimeout(() => {
-    const ta = screen.querySelector('#coach-input') || document.getElementById('coach-input');
-    const sendBtn = screen.querySelector('.coach-send') || document.querySelector('.coach-send');
-    
-    if (ta) {
-      ta.style.pointerEvents = 'auto';
-      ta.style.webkitUserSelect = 'text';
-      ta.style.userSelect = 'text';
-      ta.removeAttribute('readonly');
-      ta.removeAttribute('disabled');
-      
-      // Garante que Enter envia
-      ta.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          window.sendCoach && window.sendCoach();
-        }
-      });
-    }
-    
-    if (sendBtn) {
-      sendBtn.addEventListener('click', function() {
-        window.sendCoach && window.sendCoach();
-      });
-    }
-  }, 200);
-};
-
-// FIX: Scanner ao vivo — melhor compatibilidade mobile
-window.startLiveScanner = async function() {
-  const statusEl = document.getElementById('scan-live-status');
-  const viewport = document.getElementById('quagga-viewport');
-  if (!viewport) return;
-
-  // Testa permissão de câmera
-  try {
-    const testStream = await navigator.mediaDevices.getUserMedia({ 
-      video: { facingMode: { ideal: 'environment' } }, 
-      audio: false 
-    });
-    testStream.getTracks().forEach(t => t.stop());
-  } catch(e) {
-    if (statusEl) statusEl.innerHTML = `❌ Câmera negada ou não disponível.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">👆 Use o modo Foto em vez disso</a>`;
-    return;
-  }
-
-  if (statusEl) statusEl.textContent = '⏳ Carregando leitor de código...';
-
-  // Carrega QuaggaJS
-  if (typeof Quagga === 'undefined') {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-      s.onload = res;
-      s.onerror = () => {
-        if (statusEl) statusEl.innerHTML = `❌ Erro ao carregar leitor.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
-        rej();
-      };
-      document.head.appendChild(s);
-    }).catch(() => null);
-    if (typeof Quagga === 'undefined') return;
-  }
-
-  if (statusEl) statusEl.textContent = '📷 Iniciando câmera...';
-
-  try {
-    Quagga.init({
-      inputStream: {
-        name: 'Live',
-        type: 'LiveStream',
-        target: viewport,
-        constraints: {
-          facingMode: { ideal: 'environment' },
-          width: { min: 640, ideal: 1280 },
-          height: { min: 480, ideal: 720 },
-        },
-      },
-      locator: { patchSize: 'medium', halfSample: true },
-      numOfWorkers: navigator.hardwareConcurrency ? Math.min(navigator.hardwareConcurrency, 4) : 2,
-      frequency: 10,
-      decoder: {
-        readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'],
-      },
-      locate: true,
-    }, function(err) {
-      if (err) {
-        console.error('Quagga init error:', err);
-        if (statusEl) statusEl.innerHTML = `❌ Falha ao iniciar câmera.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
-        return;
-      }
-      Quagga.start();
-      SCAN.quaggaRunning = true;
-      if (statusEl) statusEl.innerHTML = '🟢 Câmera ativa — aponte para o código de barras';
-    });
-
-    let lastCode = '', lastTime = 0;
-    Quagga.onDetected(function(result) {
-      const code = result.codeResult.code;
-      const now = Date.now();
-      if (code === lastCode && now - lastTime < 3000) return;
-      lastCode = code; lastTime = now;
-      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      stopLiveScanner();
-      doScan(code);
-    });
-  } catch(e) {
-    if (statusEl) statusEl.innerHTML = `❌ ${e.message}<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
-  }
-};
-
-// FIX: Modo Foto do scanner — modo padrão no mobile
-window.setScanMode = function(mode) {
-  if (SCAN.mode === 'live' && mode !== 'live') stopLiveScanner();
-  SCAN.mode = mode;
-  navigate('scanner');
-  if (mode === 'live') setTimeout(startLiveScanner, 400);
-};
-
-// Detecta mobile e usa foto como padrão
-(function() {
-  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-  if (isMobile && typeof SCAN !== 'undefined') {
-    SCAN.mode = 'photo'; // Padrão no mobile
-  }
-})();
-
-// FIX: Google/Telegram/Facebook — mensagem clara
-window.socialLogin = function(provider) {
-  openModal('🔗 Login Social', `
-    <div style="text-align:center;padding:12px 0 16px">
-      <div style="font-size:40px;margin-bottom:10px">${provider === 'Google' ? '🇬' : provider === 'Apple' ? '🍎' : '📘'}</div>
-      <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;margin-bottom:8px">Login com ${provider}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
-        O login social com ${provider} requer configuração do SDK oficial.<br><br>
-        Por enquanto, use o <strong style="color:var(--green)">email e senha</strong> ou <strong style="color:#229ED9">Telegram</strong> para acessar.
-      </div>
-    </div>
-    <button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:8px">✉️ Usar Email e Senha</button>
-    <button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>
-  `);
-};
-
-// FIX: Logout limpa TUDO incluindo v_remember quando não selecionado
-const _origConfirmLogout = window.confirmLogout;
-window.confirmLogout = async function() {
-  if (_origConfirmLogout) await _origConfirmLogout();
-  // Limpa sessão completamente
-  ['v_session','v_user','v_remember'].forEach(k => localStorage.removeItem(k));
-};
-
-// FIX: Inicialização — não carrega dados mockados
-// Sobrescreve a inicialização para começar zerado
-window._patchInit = function() {
-  // Zera dados diários ao abrir
-  APP.water = 0;
-  APP.meals = [];
-  APP.mood = null;
-  APP.coachMsgs = [];
-  console.log('✅ VitalIA v2.2.0 — dados do dia zerados, pronto para uso');
-};
-
-// Aplica ao carregar
-if (document.readyState !== 'loading') {
-  setTimeout(window._patchInit, 100);
-} else {
-  document.addEventListener('DOMContentLoaded', () => setTimeout(window._patchInit, 100));
-}
-
-</script>
-
-</body>
+  // Executa navigate original
+  APP.tab = tab;
+  const body = document.getElementById('app-body');
+  if (!body) return;
+  const screens = body.querySelectorAll('.screen');
+  screens.forEach(s => s.classList.remove('active'));
+  const screen = document.createElement('div');
+  screen.className = 'screen active fade-in';
+  if (tab === 'home') screen.innerHTML = renderHome();
+  else if (tab === 'nutrition') screen.innerHTML = renderNutrition();
+  else if (tab === 'recipes') screen.innerHTML = renderRecipes();
+  else if (tab === 'hydration') screen.innerHTML = renderHydration();
+  else if (tab === 'more') screen.innerHTML = renderMore();
+  else if (tab === 'fasting') screen.innerHTML = renderFasting();
+  else if (tab === 'scanner') screen.innerHTML = renderScanner();
+  else if (tab === 'coach') screen.innerHTML = renderCoach();
+  else if (tab === 'progress') screen.innerHTML = renderProgress();
+  else if (tab === 'achievements') screen.innerHTML = renderAchievements();
+  else if (tab === 'shopping') screen.innerHTML = renderShopping();
+  else if (tab === 'settings') screen.innerHTML = renderSettings();
+  else if (tab === 'analytics') screen.innerHTML = renderAnalytics();
+  else if (tab === 'community') screen.innerHTML = renderCommunity();
+  else if (tab === 'integrations') screen.innerHTML = renderIntegrations();
+  else if (tab === 'premium') screen.innerHTML = renderPremium();
+  else if (tab === 'telegram') screen.innerHTML = renderTelegram();
+  else screen.innerHTML = renderHome();
+  body.innerHTML = '';
+  body.appendChild(screen);
+  renderNav();
+  window.scrollTo(0,0);
+  // Post-render hooks
+  if (tab === 'coach') { const s = body.querySelector('.screen'); if(s && typeof attachCoach==='function') attachCoach(s); }
+  if (tab === 'fasting') { if(typeof startFastingTimer==='function') startFastingTimer(); }
+}}
 </html>
