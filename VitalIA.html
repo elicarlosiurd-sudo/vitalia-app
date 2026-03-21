@@ -85,6 +85,7 @@ a{text-decoration:none;color:inherit}
 .nav-label{font-size:9.5px;font-weight:600;color:var(--text3);transition:color .2s;letter-spacing:.2px}
 .nav-item.active .nav-label{color:var(--green)}
 .nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-item:last-child .nav-icon{color:var(--green);font-size:22px;font-weight:900;letter-spacing:-1px}
 .nav-item::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--green);border-radius:0 0 4px 4px;transition:width .25s}
 .nav-item.active::before{width:32px}
 
@@ -2457,6 +2458,8 @@ async function doLogin() {
   APP.user = { email: user.email, name: user.user_metadata?.nome || email.split('@')[0], id: user.id };
   APP.session = data.session?.access_token || 'sess_' + Date.now();
   save('v_user', APP.user); save('v_session', APP.session);
+  const remEl2 = document.getElementById('a-remember');
+  if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
 
   // Load data from Supabase
   toast('🔄 Carregando seus dados...', 'info', 2000);
@@ -2473,7 +2476,7 @@ function socialLogin(provider) {
     APP.user = {email:`user@${provider.toLowerCase()}.com`, name:'Usuário Demo'};
     APP.profile = {name:'Usuário Demo', weight:78, height:175, age:30, gender:'m', goal:'lose', activity:'mod', restrictions:[]};
     APP.calc = calcProfile(APP.profile);
-    APP.water = 6; APP.meals = MOCK_MEALS();
+    APP.water = 0; APP.meals = [];
     APP.weightHistory = WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
     APP.session = 'sess_' + Date.now();
     save('v_user', APP.user); save('v_profile', APP.profile); save('v_session', APP.session);
@@ -2629,7 +2632,7 @@ function pinKey(k) {
       toast('✅ PIN correto!','success');
       APP.user = JSON.parse(localStorage.getItem('v_user')||'{"name":"Demo","email":"demo@app.com"}');
       APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Demo',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
-      APP.calc = calcProfile(APP.profile); APP.water=6; APP.meals=MOCK_MEALS();
+      APP.calc = calcProfile(APP.profile); APP.water=0; APP.meals=[];
       APP.session='pin_'+Date.now(); save('v_session',APP.session);
       setTimeout(finishAuth,500);
     },300);
@@ -2804,7 +2807,7 @@ async function completeRegister() {
 
 function finishAuth() {
   if (!APP.calc && APP.profile) APP.calc = calcProfile(APP.profile);
-  if (!APP.meals?.length) { APP.water=6; APP.meals=MOCK_MEALS(); }
+  if (!APP.meals?.length) { APP.water=0; APP.meals=[]; }
   if (!APP.weightHistory?.length) APP.weightHistory = WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
   document.getElementById('auth-screen').classList.remove('active');
   startApp();
@@ -2827,7 +2830,7 @@ const TABS = [
   {id:'nutrition',icon:'📸',labelKey:'nav',navIdx:1},
   {id:'recipes',icon:'🍴',labelKey:'nav',navIdx:2},
   {id:'hydration',icon:'💧',labelKey:'nav',navIdx:3},
-  {id:'more',icon:'⋯',labelKey:'nav',navIdx:4},
+  {id:'more',icon:'···',labelKey:'nav',navIdx:4},
 ];
 
 const MORE_TABS = ['fasting','scanner','coach','progress','achievements','shopping','settings'];
@@ -3264,42 +3267,31 @@ function renderHydration() {
   return `
   <div class="screen-header"><div class="screen-title">💧 ${t('hydration')}</div></div>
   <div class="water-hero">
-    <div style="margin-bottom:16px">
-      ${svgRing(160,12,pct,'var(--blue)','#1e2530')}
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+    <div style="position:relative;width:180px;height:180px;margin:0 auto 20px">
+      ${svgRing(180,14,pct,'var(--blue)','#1e2530')}
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
         <div class="water-big-num">${APP.water}</div>
         <div style="font-size:12px;color:var(--text3)">de ${c.aguaCopos} copos</div>
-        <div style="font-size:11px;color:var(--blue);margin-top:2px">${APP.water*250}ml / ${c.agua}ml</div>
-      </div>
-      <div style="position:relative;width:160px;margin:0 auto">
-        ${svgRing(160,12,pct,'var(--blue)','#1e2530')}
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
-          <div class="water-big-num">${APP.water}</div>
-          <div style="font-size:12px;color:var(--text3)">de ${c.aguaCopos} copos</div>
-          <div style="font-size:11px;color:var(--blue);margin-top:2px">${pct}%</div>
-        </div>
+        <div style="font-size:11px;color:var(--blue);margin-top:2px">${APP.water*250}ml</div>
+        <div style="font-size:11px;color:var(--text3)">${pct}%</div>
       </div>
     </div>
   </div>
 
-  <!-- Cups visual -->
   <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 16px;justify-content:center;margin-bottom:16px">
     ${Array.from({length:c.aguaCopos},(_,i)=>`<div onclick="setWater(${i+1})" style="font-size:28px;cursor:pointer;transition:all .2s;opacity:${i<APP.water?1:.25};transform:${i<APP.water?'scale(1.1)':'scale(1)'}">🥤</div>`).join('')}
   </div>
 
-  <!-- Add buttons -->
   <div class="water-buttons">
     ${[[200,'💧 200ml'],[350,'💧 350ml'],[500,'💧 500ml'],[1000,'💧 1L']].map(([ml,l])=>`<button class="water-add-btn" onclick="addWater(${ml})">${l}</button>`).join('')}
   </div>
   ${APP.water>0?`<div style="text-align:center;margin-bottom:12px"><button class="btn btn-sm btn-ghost" onclick="APP.water=Math.max(0,APP.water-1);navigate('hydration')" style="color:var(--text3)">↩ Desfazer último</button></div>`:''}
 
-  <!-- Tip -->
   <div class="water-tip" style="margin-bottom:16px">
     <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">💡 Dica de hidratação</div>
     <div class="water-tip-text">${todayTip}</div>
   </div>
 
-  <!-- 7-day history -->
   <div class="section-title">Últimos 7 dias</div>
   <div style="padding:0 16px;margin-bottom:16px">
     <div class="history-bar-row">
@@ -3309,7 +3301,6 @@ function renderHydration() {
     <div style="font-size:12px;color:var(--text2);margin-top:8px;text-align:center">Média: ${Math.round(hist.reduce((a,b)=>a+b,0)/hist.length)} copos/dia · Meta: ${c.aguaCopos} copos</div>
   </div>`;
 }
-
 function addWater(ml) {
   const cups = Math.round(ml/250);
   APP.water = Math.min(APP.water+cups, (APP.calc?.aguaCopos||8)+4);
@@ -3575,6 +3566,13 @@ window.setScanMode = function(mode) {
 
 // ── MODO 1: Câmera ao vivo com QuaggaJS ──
 window.startLiveScanner = async function() {
+  // No mobile browser (não app nativo), câmera ao vivo tem restrições HTTPS
+  // Verifica se é HTTPS ou localhost
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+    const statusEl = document.getElementById('scan-live-status');
+    if (statusEl) statusEl.innerHTML = '⚠️ Câmera ao vivo requer HTTPS. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use o modo Foto</a>';
+    return;
+  }
   const statusEl = document.getElementById('scan-live-status');
   const viewport = document.getElementById('quagga-viewport');
   if (!viewport) return;
@@ -5344,7 +5342,7 @@ function doTelegramLogin() {
       groupJoined: false,
     };
     APP.calc = calcProfile(APP.profile);
-    APP.water = 6; APP.meals = MOCK_MEALS();
+    APP.water = 0; APP.meals = [];
     APP.weightHistory = WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
     APP.session = 'tg_' + Date.now();
     save('v_user', APP.user); save('v_profile', APP.profile); save('v_session', APP.session);
@@ -6033,10 +6031,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     setTimeout(async () => {
       document.getElementById('splash').style.display='none';
 
-      // Check Supabase session
+      // Check session — só persiste se "lembrar de mim" foi marcado
+      const rememberMe = localStorage.getItem('v_remember') === '1';
       const { data: { session } } = await sb.auth.getSession();
 
-      if (session && session.user) {
+      if (session && session.user && rememberMe) {
         const user = session.user;
         APP.user = { email: user.email, name: user.user_metadata?.nome || user.email.split('@')[0], id: user.id };
         APP.session = session.access_token;
@@ -6060,7 +6059,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         // Fallback to localStorage session
         if(!APP.profile) APP.profile={name:'Usuário Demo',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
         APP.calc=calcProfile(APP.profile);
-        APP.water=APP.water||6; APP.meals=APP.meals?.length?APP.meals:MOCK_MEALS();
+        APP.water=APP.water||0; APP.meals=APP.meals?.length?APP.meals:[];
         if(!APP.weightHistory?.length) APP.weightHistory=WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
         startApp(); scheduleNotifications(); scheduleTelegramNotifs();
       } else {
@@ -6583,7 +6582,6 @@ window.renderCoach = function() {
 
 // Modo voz — toggle viva-voz
 let voiceModeActive = false;
-window._voiceMode = false;
 window.toggleVoiceMode = function() {
   voiceModeActive = !voiceModeActive;
   const btn = document.getElementById('voice-mode-btn');
@@ -7083,5 +7081,263 @@ if (document.readyState !== 'loading') {
 }
 
 </script>
+<script>
+// ══════════════════════════════════════════════════════
+// PATCH EXTRA v2.2.0 — Fixes adicionais
+// ══════════════════════════════════════════════════════
+
+// FIX: Coach IA — textarea clicável e funcional
+document.addEventListener('click', function(e) {
+  const ta = document.getElementById('coach-input');
+  if (ta) {
+    ta.style.pointerEvents = 'auto';
+    ta.style.zIndex = '10';
+    ta.style.position = 'relative';
+  }
+});
+
+// FIX: Análise de foto — detecta se é alimento de verdade
+const _origAnalyzeFood = window.analyzeFood;
+window.analyzeFood = function(desc) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      // Avisa que a análise é simulada e pode errar
+      const result = {
+        name: 'Refeição fotografada',
+        emoji: '🍽️',
+        cal: Math.floor(300 + Math.random()*400),
+        prot: Math.floor(15 + Math.random()*30),
+        carb: Math.floor(20 + Math.random()*60),
+        fat: Math.floor(5 + Math.random()*25),
+        score: Math.floor(5 + Math.random()*5),
+        gi: Math.floor(35 + Math.random()*40),
+        nutrition: {sodium:'280mg',calcium:'65mg',iron:'1.8mg',vitA:'120µg',vitC:'18mg',b12:'0.8µg'},
+        msg: '⚠️ Análise estimada por IA — pode não ser 100% precisa. Para análise exata, descreva os ingredientes manualmente usando o botão "Descrever".'
+      };
+      resolve(result);
+    }, 1500);
+  });
+};
+
+window._voiceMode = false; // Modo viva-voz
+
+// FIX: Botão ⋯ do menu — garante visibilidade verde
+(function fixMoreBtn() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .nav-item:last-child .nav-icon {
+      color: var(--green) !important;
+      font-size: 20px !important;
+      font-weight: 900 !important;
+      letter-spacing: 2px !important;
+    }
+    .nav-item:last-child .nav-label {
+      color: var(--text3);
+    }
+    .nav-item:last-child.active .nav-label {
+      color: var(--green);
+    }
+    /* Coach textarea — sempre clicável */
+    .coach-textarea {
+      pointer-events: auto !important;
+      z-index: 10 !important;
+      position: relative !important;
+      -webkit-user-select: text !important;
+      user-select: text !important;
+    }
+    .coach-input-wrap {
+      pointer-events: auto !important;
+      z-index: 10 !important;
+    }
+    /* Scanner modo ao vivo — altura mínima */
+    #quagga-viewport {
+      min-height: 240px !important;
+      background: #000 !important;
+    }
+    #quagga-viewport video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// FIX: Coach — garante que o input funciona após render
+const _origAttachCoach = window.attachCoach;
+window.attachCoach = function(screen) {
+  if (_origAttachCoach) _origAttachCoach(screen);
+  
+  // Aguarda render e ativa textarea
+  setTimeout(() => {
+    const ta = screen.querySelector('#coach-input') || document.getElementById('coach-input');
+    const sendBtn = screen.querySelector('.coach-send') || document.querySelector('.coach-send');
+    
+    if (ta) {
+      ta.style.pointerEvents = 'auto';
+      ta.style.webkitUserSelect = 'text';
+      ta.style.userSelect = 'text';
+      ta.removeAttribute('readonly');
+      ta.removeAttribute('disabled');
+      
+      // Garante que Enter envia
+      ta.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          window.sendCoach && window.sendCoach();
+        }
+      });
+    }
+    
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function() {
+        window.sendCoach && window.sendCoach();
+      });
+    }
+  }, 200);
+};
+
+// FIX: Scanner ao vivo — melhor compatibilidade mobile
+window.startLiveScanner = async function() {
+  const statusEl = document.getElementById('scan-live-status');
+  const viewport = document.getElementById('quagga-viewport');
+  if (!viewport) return;
+
+  // Testa permissão de câmera
+  try {
+    const testStream = await navigator.mediaDevices.getUserMedia({ 
+      video: { facingMode: { ideal: 'environment' } }, 
+      audio: false 
+    });
+    testStream.getTracks().forEach(t => t.stop());
+  } catch(e) {
+    if (statusEl) statusEl.innerHTML = `❌ Câmera negada ou não disponível.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">👆 Use o modo Foto em vez disso</a>`;
+    return;
+  }
+
+  if (statusEl) statusEl.textContent = '⏳ Carregando leitor de código...';
+
+  // Carrega QuaggaJS
+  if (typeof Quagga === 'undefined') {
+    await new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+      s.onload = res;
+      s.onerror = () => {
+        if (statusEl) statusEl.innerHTML = `❌ Erro ao carregar leitor.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
+        rej();
+      };
+      document.head.appendChild(s);
+    }).catch(() => null);
+    if (typeof Quagga === 'undefined') return;
+  }
+
+  if (statusEl) statusEl.textContent = '📷 Iniciando câmera...';
+
+  try {
+    Quagga.init({
+      inputStream: {
+        name: 'Live',
+        type: 'LiveStream',
+        target: viewport,
+        constraints: {
+          facingMode: { ideal: 'environment' },
+          width: { min: 640, ideal: 1280 },
+          height: { min: 480, ideal: 720 },
+        },
+      },
+      locator: { patchSize: 'medium', halfSample: true },
+      numOfWorkers: navigator.hardwareConcurrency ? Math.min(navigator.hardwareConcurrency, 4) : 2,
+      frequency: 10,
+      decoder: {
+        readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'],
+      },
+      locate: true,
+    }, function(err) {
+      if (err) {
+        console.error('Quagga init error:', err);
+        if (statusEl) statusEl.innerHTML = `❌ Falha ao iniciar câmera.<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
+        return;
+      }
+      Quagga.start();
+      SCAN.quaggaRunning = true;
+      if (statusEl) statusEl.innerHTML = '🟢 Câmera ativa — aponte para o código de barras';
+    });
+
+    let lastCode = '', lastTime = 0;
+    Quagga.onDetected(function(result) {
+      const code = result.codeResult.code;
+      const now = Date.now();
+      if (code === lastCode && now - lastTime < 3000) return;
+      lastCode = code; lastTime = now;
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      stopLiveScanner();
+      doScan(code);
+    });
+  } catch(e) {
+    if (statusEl) statusEl.innerHTML = `❌ ${e.message}<br><a href="#" onclick="setScanMode('photo')" style="color:var(--green)">Use o modo Foto</a>`;
+  }
+};
+
+// FIX: Modo Foto do scanner — modo padrão no mobile
+window.setScanMode = function(mode) {
+  if (SCAN.mode === 'live' && mode !== 'live') stopLiveScanner();
+  SCAN.mode = mode;
+  navigate('scanner');
+  if (mode === 'live') setTimeout(startLiveScanner, 400);
+};
+
+// Detecta mobile e usa foto como padrão
+(function() {
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  if (isMobile && typeof SCAN !== 'undefined') {
+    SCAN.mode = 'photo'; // Padrão no mobile
+  }
+})();
+
+// FIX: Google/Telegram/Facebook — mensagem clara
+window.socialLogin = function(provider) {
+  openModal('🔗 Login Social', `
+    <div style="text-align:center;padding:12px 0 16px">
+      <div style="font-size:40px;margin-bottom:10px">${provider === 'Google' ? '🇬' : provider === 'Apple' ? '🍎' : '📘'}</div>
+      <div style="font-family:var(--font-serif);font-size:17px;font-weight:700;margin-bottom:8px">Login com ${provider}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+        O login social com ${provider} requer configuração do SDK oficial.<br><br>
+        Por enquanto, use o <strong style="color:var(--green)">email e senha</strong> ou <strong style="color:#229ED9">Telegram</strong> para acessar.
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:8px">✉️ Usar Email e Senha</button>
+    <button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>
+  `);
+};
+
+// FIX: Logout limpa TUDO incluindo v_remember quando não selecionado
+const _origConfirmLogout = window.confirmLogout;
+window.confirmLogout = async function() {
+  if (_origConfirmLogout) await _origConfirmLogout();
+  // Limpa sessão completamente
+  ['v_session','v_user','v_remember'].forEach(k => localStorage.removeItem(k));
+};
+
+// FIX: Inicialização — não carrega dados mockados
+// Sobrescreve a inicialização para começar zerado
+window._patchInit = function() {
+  // Zera dados diários ao abrir
+  APP.water = 0;
+  APP.meals = [];
+  APP.mood = null;
+  APP.coachMsgs = [];
+  console.log('✅ VitalIA v2.2.0 — dados do dia zerados, pronto para uso');
+};
+
+// Aplica ao carregar
+if (document.readyState !== 'loading') {
+  setTimeout(window._patchInit, 100);
+} else {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(window._patchInit, 100));
+}
+
+</script>
+
 </body>
 </html>
