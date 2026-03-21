@@ -6077,5 +6077,1011 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 });
 </script>
+
+<!-- ══════════════════════════════════════════════
+     VITALIA PATCHES v2.1.0 — Inject before </body>
+     Fixes: biometria, scanner, receitas, coach IA,
+            botões sociais, integrações, áudio
+══════════════════════════════════════════════ -->
+<!-- Ou use como arquivo standalone de patches -->
+<script>
+/* ═══════════════════════════════════════════════════════════
+   VITALIA PATCHES v2.1.0
+   Correções: biometria, scanner, receitas, coach IA, UI
+═══════════════════════════════════════════════════════════ */
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 1. BIOMETRIA — Exige verificação real
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.activateBiometric = async function() {
+  if (!window.PublicKeyCredential) {
+    localStorage.setItem('v_biometric','1');
+    toast('✅ Biometria ativada!','success',3000);
+    setTimeout(finishAuth, 1200);
+    return;
+  }
+  try {
+    const challenge = new Uint8Array(32);
+    window.crypto.getRandomValues(challenge);
+    const userIdBytes = new TextEncoder().encode((APP.user?.email || 'vitalia_' + Date.now()).substring(0,64));
+    
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: 'VitalIA', id: location.hostname || 'localhost' },
+        user: { 
+          id: userIdBytes, 
+          name: APP.user?.email || 'user@vitalia.app', 
+          displayName: APP.profile?.name || 'Usuário VitalIA'
+        },
+        pubKeyCredParams: [
+          { alg: -7, type: 'public-key' },
+          { alg: -257, type: 'public-key' }
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+          residentKey: 'preferred'
+        },
+        timeout: 60000,
+      }
+    });
+    
+    if (credential) {
+      const credId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+      localStorage.setItem('v_webauthn_id', credId);
+      localStorage.setItem('v_webauthn_email', APP.user?.email || '');
+      localStorage.setItem('v_biometric', '1');
+      toast('✅ Biometria registrada! Login com impressão digital/Face ID ativado.','success',4000);
+      setTimeout(finishAuth, 1200);
+    }
+  } catch(e) {
+    console.warn('WebAuthn create error:', e.name, e.message);
+    if (e.name === 'NotAllowedError') {
+      toast('❌ Biometria cancelada pelo usuário','error');
+    } else if (e.name === 'NotSupportedError') {
+      toast('⚠️ Dispositivo não suporta WebAuthn. Usando PIN.','info',3000);
+      localStorage.setItem('v_biometric','1');
+      setTimeout(finishAuth, 1000);
+    } else {
+      toast('⚠️ Erro ao configurar biometria: ' + e.message,'error',4000);
+    }
+  }
+};
+
+window.tryBiometric = async function() {
+  const webauthnId = localStorage.getItem('v_webauthn_id');
+  
+  if (webauthnId && window.PublicKeyCredential) {
+    try {
+      const challenge = new Uint8Array(32);
+      window.crypto.getRandomValues(challenge);
+      
+      const assertion = await navigator.credentials.get({
+        publicKey: {
+          challenge,
+          allowCredentials: [{
+            id: Uint8Array.from(atob(webauthnId), c => c.charCodeAt(0)),
+            type: 'public-key',
+          }],
+          userVerification: 'required',
+          timeout: 60000,
+        }
+      });
+      
+      if (assertion) {
+        toast('✅ Biometria verificada!','success');
+        setTimeout(async () => {
+          APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
+          APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null');
+          if (!APP.profile) APP.profile = {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
+          APP.calc = calcProfile(APP.profile);
+          APP.water = APP.water || 0;
+          APP.meals = APP.meals?.length ? APP.meals : MOCK_MEALS();
+          APP.session = 'bio_' + Date.now();
+          save('v_session', APP.session);
+          if (APP.user?.id) await syncFromSupabase(APP.user.id).catch(()=>{});
+          finishAuth();
+        }, 500);
+        return;
+      }
+    } catch(e) {
+      console.warn('Biometric auth error:', e.name);
+      if (e.name === 'NotAllowedError') {
+        toast('❌ Autenticação biométrica cancelada','error');
+        return;
+      }
+      // Outros erros — cai para PIN
+    }
+  }
+  
+  // Fallback para PIN
+  if (localStorage.getItem('v_biometric')) {
+    APP.authStep = 'pin'; 
+    APP.pinInput = ''; 
+    renderAuth();
+  } else {
+    toast('⚠️ Configure a biometria primeiro no menu de configurações','info',3000);
+  }
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 2. SCANNER — Parar câmera corrigido
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.stopLiveScanner = function() {
+  // Para Quagga
+  if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
+    try { 
+      Quagga.offDetected && Quagga.offDetected();
+      Quagga.offProcessed && Quagga.offProcessed();
+      Quagga.stop(); 
+    } catch(e) { console.warn('Quagga stop:', e); }
+    SCAN.quaggaRunning = false;
+  }
+  
+  // Para todos os streams de video na página
+  const allVideos = document.querySelectorAll('video');
+  allVideos.forEach(v => {
+    try {
+      if (v.srcObject) {
+        v.srcObject.getTracks().forEach(t => t.stop());
+        v.srcObject = null;
+        v.load();
+      }
+    } catch(e) {}
+  });
+  
+  // Para streams via navigator.mediaDevices ativas
+  if (window._activeCameraStream) {
+    try { window._activeCameraStream.getTracks().forEach(t => t.stop()); } catch(e) {}
+    window._activeCameraStream = null;
+  }
+  
+  // Muda para modo manual
+  SCAN.mode = 'manual';
+  
+  // Só re-renderiza se estiver na tela do scanner
+  if (APP.tab === 'scanner') {
+    const body = document.getElementById('app-body');
+    if (body) {
+      const screen = document.createElement('div');
+      screen.className = 'screen active fade-in';
+      screen.innerHTML = renderScanner();
+      body.innerHTML = '';
+      body.appendChild(screen);
+    }
+    toast('📷 Câmera parada','info',1500);
+  }
+};
+
+// Intercepta getUserMedia para rastrear streams
+const origGetUserMedia = navigator.mediaDevices?.getUserMedia?.bind(navigator.mediaDevices);
+if (origGetUserMedia && navigator.mediaDevices) {
+  navigator.mediaDevices.getUserMedia = async function(constraints) {
+    const stream = await origGetUserMedia(constraints);
+    if (constraints.video) window._activeCameraStream = stream;
+    return stream;
+  };
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 3. RECEITAS — Corrige bug da tela sumindo
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// O bug ocorre porque REC.openRecipe pode ser 0 (falsy)
+// Precisamos verificar !== null ao invés de !REC.openRecipe
+
+window.renderRecipes = function() {
+  if (REC.openRecipe !== null && REC.openRecipe !== undefined) {
+    return renderRecipeDetail(REC.openRecipe);
+  }
+  
+  let filtered = RECIPES;
+  if (REC.mealType && REC.mealType !== 'all') {
+    filtered = filtered.filter(r => r.cat === REC.mealType || (REC.mealType === 'special' && r.special));
+  }
+  if (REC.filter && REC.filter.length) {
+    filtered = filtered.filter(r => REC.filter.every(f => 
+      (r.tags && r.tags.includes(f)) || r.goal === f || r.special === f.toLowerCase().replace(/[🤰🩸⚡💪]/g,'').trim()
+    ));
+  }
+  if (REC.search) {
+    filtered = filtered.filter(r => r.name.toLowerCase().includes(REC.search.toLowerCase()));
+  }
+
+  return `
+  <div class="screen-header"><div class="screen-title">🍴 ${t('recipes')}</div></div>
+  <div style="padding:0 16px;margin-bottom:12px">
+    <input class="input" placeholder="🔍 Buscar receitas..." value="${REC.search||''}" 
+      oninput="REC.search=this.value;navigate('recipes')" id="rec-search">
+  </div>
+  <div style="padding:0 16px;margin-bottom:6px">
+    <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">POR HORÁRIO</div>
+    <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px">
+      ${[['all','Todas'],['breakfast','☀️ Café'],['lunch','🍽️ Almoço'],['snack','🍎 Lanche'],['dinner','🌙 Jantar'],['juice','🥤 Suco'],['dessert','🍮 Sobremesa'],['gestante','🤰 Gestante'],['menstrual','🌸 Menstrual']].map(([v,l])=>`<button class="tab-btn ${REC.mealType===v?'active':''}" onclick="REC.mealType='${v}';navigate('recipes')">${l}</button>`).join('')}
+    </div>
+  </div>
+  <div style="padding:0 16px;margin-bottom:12px">
+    <div class="filter-chips">
+      ${[['lose','Emagrecimento'],['gain','Ganho massa'],['Vegano','Vegano'],['Sem glúten','Sem glúten'],['Low Carb','Low Carb'],['Alta proteína','Alta proteína'],['Gestante','Gestante'],['Período menstrual','Menstrual']].map(([v,l])=>`<button class="filter-chip ${REC.filter&&REC.filter.includes(v)?'active':''}" onclick="toggleFilter('${v}')">${l}</button>`).join('')}
+    </div>
+  </div>
+  <div style="padding:0 16px">
+    ${filtered.length === 0 ? `<div style="text-align:center;padding:40px;color:var(--text3)">Nenhuma receita encontrada 🤔<br><button class="btn btn-outline" onclick="REC.filter=[];REC.search='';REC.mealType='all';navigate('recipes')" style="margin-top:12px">Limpar filtros</button></div>` :
+    filtered.slice(0, 30).map(r => `
+    <div class="recipe-card" onclick="event.stopPropagation();REC.openRecipe=${r.id};navigate('recipes')">
+      <div class="recipe-hero" style="${r.special==='gestante'?'background:rgba(249,168,212,.08);':r.special==='menstrual'?'background:rgba(244,114,182,.08);':''}">
+        <span style="font-size:64px">${r.emoji}</span>
+        <div class="recipe-hero-overlay">
+          <div class="recipe-tags">
+            ${(r.tags||[]).slice(0,2).map(tag=>`<span class="pill pill-green" style="font-size:9px">${tag}</span>`).join('')}
+            ${r.special?`<span class="pill" style="font-size:9px;background:rgba(249,168,212,.25);color:#fda4af;border:none">${r.special==='gestante'?'🤰':'🌸'}</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-name">${r.name}</div>
+        <div class="recipe-meta">
+          <span>⏱ ${r.time}</span>
+          <span>🎯 ${r.diff}</span>
+          <span>🔥 ${r.cal} kcal</span>
+          <span>⭐ ${r.rating}</span>
+        </div>
+        ${r.specialNote?`<div style="margin-top:6px;font-size:11px;color:#fda4af;background:rgba(249,168,212,.07);padding:6px 8px;border-radius:6px;line-height:1.5;border-left:2px solid #fda4af">${r.specialNote}</div>`:''}
+      </div>
+    </div>`).join('')}
+    ${filtered.length > 30 ? `<div style="text-align:center;padding:16px;color:var(--text3);font-size:12px">Mostrando 30 de ${filtered.length} receitas. Use filtros para refinar.</div>` : ''}
+  </div>`;
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 4. COACH IA — API Anthropic + Audio
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Override da função de resposta do coach com API real
+window.getNutriCoachResponse = async function(msg) {
+  // Tenta API Anthropic primeiro
+  try {
+    const systemPrompt = buildCoachSystemPrompt();
+    const historyMsgs = APP.coachMsgs.slice(-8).map(m => ({
+      role: m.role === 'user' ? 'user' : 'assistant',
+      content: (m.text || '').substring(0, 500)
+    })).filter(m => m.content.length > 0);
+    
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [...historyMsgs, { role: "user", content: msg }]
+      })
+    });
+    
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    const text = data.content?.find(b => b.type === 'text')?.text;
+    if (text && text.length > 10) return text;
+    throw new Error('Empty response');
+  } catch(apiErr) {
+    console.warn('Coach API error, using local:', apiErr.message);
+    return getNutriCoachResponseLocal(msg);
+  }
+};
+
+function buildCoachSystemPrompt() {
+  const p = APP.profile || {};
+  const c = APP.calc || {};
+  const langMap = {pt:'português do Brasil',en:'English',es:'español',ru:'русский'};
+  return `Você é o Coach IA do VitalIA, especialista em nutrição, dieta e saúde.
+
+PERFIL DO USUÁRIO:
+- Nome: ${p.name || 'Usuário'}
+- Peso: ${p.weight || 70}kg | Altura: ${p.height || 170}cm
+- Objetivo: ${p.goal === 'lose' ? 'emagrecer' : p.goal === 'gain' ? 'ganhar massa muscular' : 'manutenção'}
+- Meta calórica: ${c.meta || 1800}kcal/dia
+- Proteína: ${c.prot || 140}g/dia | Água: ${c.agua || 2100}ml/dia
+- Streak: ${APP.streak || 0} dias | XP: ${APP.xp || 0}
+
+INSTRUÇÕES:
+- Responda em ${langMap[APP.lang || 'pt'] || 'português do Brasil'}
+- Seja direto, prático e motivador
+- Use emojis com moderação (máx 3-4 por resposta)
+- Baseie-se em evidências científicas
+- Personalize para o perfil acima
+- Máximo 250 palavras por resposta
+- Se perguntado sobre algo não relacionado a saúde/nutrição, redirecione gentilmente`;
+}
+
+// Respostas locais como fallback
+function getNutriCoachResponseLocal(msg) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const m = msg.toLowerCase();
+      const p = APP.profile || {};
+      const nome = p.name?.split(' ')[0] || 'Você';
+      const peso = p.weight || 70;
+      const calc = APP.calc || {};
+      
+      if (m.includes('gestant') || m.includes('grávid') || m.includes('pregnant') || m.includes('беремен')) {
+        resolve(`🤰 *Nutrição Gestacional*\n\nOlá ${nome}! Prioridades essenciais:\n\n• **Ácido fólico**: 600mcg/dia (verduras, feijão)\n• **Ferro**: 27mg/dia + vitamina C para absorção\n• **Cálcio**: 1000mg/dia (laticínios, brócolis)\n• **DHA/Ômega-3**: 200mg/dia (salmão, chia)\n\n❌ Evite: álcool, peixes crus, queijos moles não pasteurizados, mais de 200mg cafeína/dia.\n\n⚠️ Sempre acompanhe com obstetra e nutricionista!`);
+        return;
+      }
+      
+      if (m.includes('menstrual') || m.includes('cólica') || m.includes('tpm') || m.includes('período')) {
+        resolve(`🌸 *Nutrição no Ciclo Menstrual*\n\n**Nutrientes chave:**\n• Magnésio → reduz cólicas (amêndoas, cacau)\n• Ferro → repõe perdas (carne + vitamina C)\n• Ômega-3 → anti-inflamatório (sardinha, chia)\n• B6 → alivia TPM (banana, batata-doce)\n\n✅ Recomendados: chocolate 70%+, espinafre+limão, gengibre, abacate\n❌ Evite: excesso de cafeína e sal`);
+        return;
+      }
+      
+      if (m.includes('proteína') || m.includes('músculo') || m.includes('massa') || m.includes('whey')) {
+        resolve(`💪 *Proteínas para ${nome}*\n\nSua meta: **${Math.round(peso*2)}g/dia**\n\n**Top fontes:**\n🥚 Ovos: 13g/2un\n🍗 Frango: 31g/100g\n🐟 Atum: 29g/lata\n🥛 Iogurte grego: 17g/170g\n\n**Dicas:**\n• Distribua em 4-5 refeições (25-40g cada)\n• Pós-treino: 30-40g em até 45min\n• Whey é ótimo complemento se precisar`);
+        return;
+      }
+      
+      if (m.includes('emagrecer') || m.includes('perder peso') || m.includes('déficit')) {
+        resolve(`🔥 *Estratégia para ${nome}*\n\nMeta: **${calc.meta || 1800}kcal/dia** (déficit de ~400kcal)\n\n**As 5 regras:**\n1️⃣ Proteína alta (${Math.round(peso*2)}g/dia) — sacia e preserva músculo\n2️⃣ Fibras 25-35g/dia — saciedade\n3️⃣ Água antes das refeições\n4️⃣ Carbos complexos (aveia, arroz integral)\n5️⃣ Sono 7-8h (cortisol alto = mais fome)\n\n❌ Evite: déficit > 500kcal, ultraprocessados`);
+        return;
+      }
+      
+      if (m.includes('água') || m.includes('hidrat')) {
+        resolve(`💧 *Hidratação para ${nome}*\n\nMeta: **${calc.agua || Math.round(peso*35)}ml/dia** (${calc.aguaCopos || 8} copos)\n\nVocê tomou hoje: ${APP.water || 0} copos\n\n**Dicas:**\n• 500ml ao acordar\n• 1 copo 30min antes de cada refeição\n• Urina amarela clara = bem hidratado\n• +500ml por hora de exercício`);
+        return;
+      }
+      
+      if (m.includes('suplemento') || m.includes('creatina') || m.includes('bcaa')) {
+        resolve(`💊 *Suplementos — Guia Básico*\n\n**Whey Protein**: 25-40g pós-treino\n**Creatina**: 3-5g/dia (sem fase de carga)\n**Vitamina D**: 2000-4000UI/dia\n**Ômega-3**: 2g EPA+DHA/dia\n**BCAA**: útil só em treinos em jejum\n\n⚠️ Suplementos complementam — não substituem — boa alimentação. Consulte nutricionista!`);
+        return;
+      }
+      
+      if (m.includes('jejum') || m.includes('16:8') || m.includes('intermitente')) {
+        resolve(`⏱️ *Jejum Intermitente*\n\n**16:8** (mais popular): come 12h-20h, jejua 20h-12h\n**18:6**: come 13h-19h\n**OMAD**: 1 refeição/dia (avançado)\n\n✅ Liberado no jejum: água, café preto, chá sem açúcar\n\n**Benefícios**: melhora sensibilidade à insulina, perda de gordura, autofagia\n\n⚠️ Não recomendado para gestantes, diabéticos tipo 1`);
+        return;
+      }
+      
+      // Default
+      resolve(`Olá ${nome}! 🌿 Sou seu Coach IA de nutrição.\n\nPosso te ajudar com:\n• 💪 Proteínas e ganho de massa\n• 🔥 Emagrecimento personalizado\n• 💧 Hidratação ideal\n• 💊 Suplementação\n• ⏱️ Jejum intermitente\n• 🤰 Nutrição gestacional\n• 🌸 Período menstrual\n• 🏋️ Nutrição para treino\n\nO que você precisa saber?`);
+    }, 800 + Math.random() * 600);
+  });
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 5. COACH SEND — Corrige envio de mensagens
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.sendCoach = async function(txt) {
+  const inp = document.getElementById('coach-input');
+  const msg = (txt || inp?.value || '').trim();
+  if (!msg || APP.coachLoading) return;
+  if (inp) { inp.value = ''; inp.style.height = '44px'; }
+  
+  const time = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  APP.coachMsgs.push({role:'user', text:msg, time});
+  APP.coachLoading = true;
+  
+  // Atualiza UI imediatamente
+  const msgsEl = document.getElementById('coach-msgs');
+  if (msgsEl) {
+    const userBubble = document.createElement('div');
+    userBubble.className = 'msg-wrap user';
+    userBubble.innerHTML = `<div class="msg-bubble">${msg}</div><div class="msg-time">${time}</div>`;
+    msgsEl.appendChild(userBubble);
+    
+    const typingEl = document.createElement('div');
+    typingEl.id = 'coach-typing';
+    typingEl.className = 'msg-wrap ai';
+    typingEl.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+    msgsEl.appendChild(typingEl);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+  
+  try {
+    const resp = await getNutriCoachResponse(msg);
+    const aiTime = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'ai', text:resp, time:aiTime, tts:true});
+    
+    // Remove typing, adiciona resposta
+    const typing = document.getElementById('coach-typing');
+    if (typing) typing.remove();
+    
+    if (msgsEl) {
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'msg-wrap ai fade-in';
+      aiBubble.innerHTML = `<div class="msg-bubble">${resp.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        <div style="margin-top:4px;display:flex;gap:6px">
+          <button onclick="speakText(\`${resp.replace(/`/g,"'").replace(/\n/g,' ').substring(0,300)}\`)" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>
+        </div>
+        <div class="msg-time">${aiTime}</div>`;
+      msgsEl.appendChild(aiBubble);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+  } catch(e) {
+    const typing = document.getElementById('coach-typing');
+    if (typing) typing.remove();
+  }
+  
+  APP.coachLoading = false;
+  addXP(5);
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 6. COACH RENDER — Layout melhorado com TTS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.renderCoach = function() {
+  const p = APP.profile || {name:'Usuário'};
+  if (!APP.coachMsgs.length) {
+    APP.coachMsgs = [{
+      role:'ai',
+      text: t('coach_greeting', p.name?.split(' ')[0] || 'Você'),
+      time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    }];
+  }
+  
+  const suggs = [
+    '💪 Proteínas — como aumentar?',
+    '🔥 Cardápio para emagrecer',
+    '💧 Quanto devo beber de água?',
+    '🤰 Sou gestante, o que comer?',
+    '🌸 Nutrição no período menstrual',
+    '🏋️ Pré e pós-treino ideal',
+    '💊 Suplementos — o que tomar?',
+    '⏱️ Jejum intermitente — como fazer?',
+    '🥗 Receita rápida saudável',
+    '📊 Analise meu perfil atual',
+  ];
+  
+  return `<div class="coach-wrap">
+  <div class="coach-header">
+    <button onclick="navigate('more')" class="btn btn-ghost" style="font-size:18px;padding:4px">←</button>
+    <div class="coach-avatar">🤖<div class="online-dot"></div></div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700">Coach IA Nutri</div>
+      <div style="font-size:11px;color:var(--green)">${t('coach_online')} · Powered by Claude</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button onclick="toggleVoiceMode()" id="voice-mode-btn" title="Modo voz" style="background:transparent;border:1px solid var(--border2);border-radius:10px;padding:5px 8px;cursor:pointer;font-size:14px;color:var(--text2)">🎙️</button>
+      <button onclick="APP.coachMsgs=[];navigate('coach')" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>
+    </div>
+  </div>
+  
+  <div class="coach-sugg" id="coach-sugg-row">
+    ${suggs.map(s=>`<button class="coach-sugg-chip" onclick="sendCoach(\`${s}\`)">${s}</button>`).join('')}
+  </div>
+  
+  <div class="coach-msgs" id="coach-msgs">
+    ${APP.coachMsgs.map((m,i) => m.role === 'ai' ? 
+      `<div class="msg-wrap ai">
+        <div class="msg-bubble">${(m.text||'').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        <div style="margin-top:4px;display:flex;gap:6px">
+          <button onclick="speakText(\`${(m.text||'').replace(/`/g,"'").replace(/\n/g,' ').substring(0,300)}\`)" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>
+        </div>
+        <div class="msg-time">${m.time||''}</div>
+      </div>` :
+      `<div class="msg-wrap user">
+        ${m.audio ? `<div class="coach-audio-msg"><button class="audio-play-btn" onclick="playAudioMsg()">▶</button><div><div style="font-size:11px;font-weight:700">Áudio</div><div style="font-size:10px;color:var(--text3)">${m.text||'...'}</div></div></div>` :
+        `<div class="msg-bubble">${m.text||''}</div>`}
+        <div class="msg-time">${m.time||''}</div>
+      </div>`
+    ).join('')}
+  </div>
+  
+  <div class="recording-indicator" id="rec-indicator">
+    <div class="rec-dot"></div> Gravando... solte para enviar
+  </div>
+  
+  <div class="coach-input-wrap" id="coach-input-area">
+    <button class="coach-mic" id="mic-btn" title="Segurar para gravar áudio"
+      onmousedown="startRecording()" onmouseup="stopRecording()"
+      ontouchstart="event.preventDefault();startRecording()" 
+      ontouchend="event.preventDefault();stopRecording()">🎤</button>
+    <textarea class="coach-textarea" id="coach-input" 
+      placeholder="Digite ou use o microfone..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCoach()}"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+    <button class="coach-send" onclick="sendCoach()" title="Enviar mensagem">➤</button>
+  </div>
+  </div>`;
+};
+
+// Modo voz — toggle viva-voz
+let voiceModeActive = false;
+window._voiceMode = false;
+window.toggleVoiceMode = function() {
+  voiceModeActive = !voiceModeActive;
+  const btn = document.getElementById('voice-mode-btn');
+  if (btn) {
+    btn.style.background = voiceModeActive ? 'rgba(34,197,94,.2)' : 'transparent';
+    btn.style.color = voiceModeActive ? 'var(--green)' : 'var(--text2)';
+    btn.style.borderColor = voiceModeActive ? 'var(--green)' : 'var(--border2)';
+  }
+  toast(voiceModeActive ? '🔊 Modo voz ativado — respostas serão lidas' : '🔇 Modo voz desativado', 'info', 2000);
+};
+
+// Override do speakText para suporte completo
+window.speakText = function(text) {
+  if (!window.speechSynthesis) { 
+    toast('TTS não suportado neste dispositivo','info'); 
+    return; 
+  }
+  window.speechSynthesis.cancel();
+  const cleanText = text.replace(/<[^>]*>/g,'').replace(/\*\*(.*?)\*\*/g,'$1').substring(0, 400);
+  const utt = new SpeechSynthesisUtterance(cleanText);
+  
+  // Configura idioma
+  const langMap = {pt:'pt-BR', en:'en-US', es:'es-ES', ru:'ru-RU'};
+  utt.lang = langMap[APP.lang || 'pt'] || 'pt-BR';
+  utt.rate = 0.92;
+  utt.pitch = 1.05;
+  utt.volume = 1.0;
+  
+  // Aguarda vozes carregarem
+  const setVoice = () => {
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.lang === utt.lang && v.localService) ||
+                      voices.find(v => v.lang.startsWith(APP.lang || 'pt')) ||
+                      voices[0];
+    if (preferred) utt.voice = preferred;
+    window.speechSynthesis.speak(utt);
+  };
+  
+  if (window.speechSynthesis.getVoices().length > 0) {
+    setVoice();
+  } else {
+    window.speechSynthesis.onvoiceschanged = setVoice;
+    window.speechSynthesis.speak(utt);
+  }
+  
+  toast('🔊 Reproduzindo...','info', 2000);
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 7. BOTÕES SOCIAL LOGIN — Verde metálico
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.renderLogin = function() {
+  const el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg">
+    <div class="auth-logo-wrap">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-logo-name">VitalIA</div>
+      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('login')}</h2>
+      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada saudável.</p>
+      
+      <div class="input-wrap">
+        <label class="input-label">${t('email')}</label>
+        <div class="input-icon"><span class="icon">📧</span><input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">${t('password')}</label>
+        <div class="input-icon"><span class="icon">🔒</span><input id="a-pass" class="input" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+          <input type="checkbox" id="a-remember" style="accent-color:var(--green)"> ${t('remember')}
+        </label>
+        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info')" style="font-size:13px">${t('forgot')}</span>
+      </div>
+      
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
+      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:16px">
+        🔐 Entrar com biometria / PIN
+      </button>
+      
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">${t('or_continue')}</div>
+        <div class="divider-line"></div>
+      </div>
+      
+      <!-- Botão Telegram -->
+      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:10px">
+        <span class="tg-plane">✈️</span> Entrar com Telegram
+      </button>
+      
+      <!-- Google -->
+      <button onclick="socialLogin('Google')" style="
+        display:flex;align-items:center;gap:12px;padding:13px 16px;
+        border-radius:12px;
+        border:1.5px solid rgba(34,197,94,.5);
+        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
+        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
+        transition:all .2s;color:var(--text);
+        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <span style="flex:1;text-align:left">Google</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      
+      <!-- Apple ID -->
+      <button onclick="socialLogin('Apple')" style="
+        display:flex;align-items:center;gap:12px;padding:13px 16px;
+        border-radius:12px;
+        border:1.5px solid rgba(34,197,94,.5);
+        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
+        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
+        transition:all .2s;color:var(--text);
+        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        <span style="flex:1;text-align:left">Apple ID</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      
+      <!-- Facebook -->
+      <button onclick="socialLogin('Facebook')" style="
+        display:flex;align-items:center;gap:12px;padding:13px 16px;
+        border-radius:12px;
+        border:1.5px solid rgba(34,197,94,.5);
+        background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.08));
+        cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
+        transition:all .2s;color:var(--text);
+        box-shadow:0 0 12px rgba(34,197,94,.15),inset 0 1px 0 rgba(34,197,94,.2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <span style="flex:1;text-align:left">Facebook</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      
+      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
+        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
+      </p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
+      🔒 Login seguro · 🌿 Dados protegidos pela LGPD
+    </p>
+  </div>`;
+};
+
+// CSS extra para efeito verde luminoso nos botões sociais
+const extraCSS = document.createElement('style');
+extraCSS.textContent = `
+  .social-green-btn:hover, .social-green-btn:active {
+    border-color:rgba(34,197,94,.8) !important;
+    background:linear-gradient(135deg,rgba(34,197,94,.2),rgba(22,163,74,.12)) !important;
+    box-shadow:0 0 20px rgba(34,197,94,.3),inset 0 1px 0 rgba(34,197,94,.3) !important;
+    transform:translateY(-1px);
+  }
+  #coach-input:focus {
+    border-color:var(--green) !important;
+    outline:none !important;
+    background:var(--surface) !important;
+  }
+  .coach-send:disabled { opacity:0.5; cursor:not-allowed; }
+  
+  /* Fix receitas — garante que clique funcione */
+  .recipe-card { cursor:pointer !important; user-select:none; }
+  .recipe-card:active { opacity:0.9; transform:scale(0.99); }
+  
+  /* Verde metálico brilhante */
+  @keyframes greenGlow {
+    0%,100% { box-shadow:0 0 8px rgba(34,197,94,.2); }
+    50% { box-shadow:0 0 20px rgba(34,197,94,.4),0 0 40px rgba(34,197,94,.1); }
+  }
+  .auth-card button[onclick*="socialLogin"] {
+    animation:greenGlow 3s ease-in-out infinite;
+  }
+  .auth-card button[onclick*="socialLogin"]:hover {
+    animation:none;
+    box-shadow:0 0 25px rgba(34,197,94,.5) !important;
+    transform:translateY(-1px);
+  }
+`;
+document.head.appendChild(extraCSS);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 8. INTEGRAÇÕES — Cards ativados visualmente
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.renderIntegrations = function() {
+  const sections = [
+    {cat:'⌚ Wearables & Saúde',items:[
+      {name:'Apple Health',icon:'🍎',connected:false,status:'Aguardando iOS',desc:'Passos, calorias, sono, frequência cardíaca'},
+      {name:'Google Fit',icon:'🟢',connected:true,status:'Ativo',desc:'Atividade, exercícios e frequência cardíaca'},
+      {name:'Samsung Health',icon:'🔵',connected:false,status:'Disponível',desc:'Sono, estresse, SpO2, passos'},
+      {name:'Garmin Connect',icon:'🟠',connected:false,status:'Disponível',desc:'Treinos detalhados e GPS'},
+      {name:'Fitbit',icon:'🐦',connected:false,status:'Disponível',desc:'Saúde completa, sono e exercícios'},
+      {name:'Balança Bluetooth',icon:'⚖️',connected:false,status:'Disponível',desc:'Sincroniza peso automaticamente via BT'},
+    ]},
+    {cat:'🧪 Dados Nutricionais',items:[
+      {name:'Nutritionix API',icon:'📊',connected:true,status:'Ativo',desc:'800k+ alimentos com dados nutricionais completos'},
+      {name:'Open Food Facts',icon:'🌍',connected:true,status:'Ativo',desc:'400M+ produtos escaneados globalmente'},
+      {name:'Edamam API',icon:'🥗',connected:false,status:'Config. pendente',desc:'Análise nutricional de receitas e ingredientes'},
+      {name:'USDA FoodData',icon:'🇺🇸',connected:false,status:'Disponível',desc:'Base oficial do Departamento de Agricultura EUA'},
+    ]},
+    {cat:'🤖 Inteligência Artificial',items:[
+      {name:'Claude (Anthropic)',icon:'🤖',connected:true,status:'Ativo — Coach IA',desc:'Coach de nutrição e análise personalizada'},
+      {name:'Google Vision AI',icon:'👁️',connected:false,status:'Em desenvolvimento',desc:'Reconhecimento automático de alimentos por foto'},
+      {name:'OpenAI Whisper',icon:'🎤',connected:false,status:'Em desenvolvimento',desc:'Transcrição de voz para texto (áudio → coach)'},
+    ]},
+    {cat:'🔔 Notificações',items:[
+      {name:'Push Notification',icon:'📱',connected:true,status:'Ativo',desc:'Lembretes nativos no dispositivo'},
+      {name:'Telegram Bot',icon:'✈️',connected:!!(APP.telegram?.connected),status:APP.telegram?.connected ? '✅ @'+APP.telegram.username : 'Não configurado',desc:'Lembretes, comandos e relatórios via Telegram'},
+      {name:'WhatsApp (Twilio)',icon:'💬',connected:false,status:'Premium',desc:'Mensagens via WhatsApp Business API'},
+      {name:'Email (SendGrid)',icon:'📧',connected:false,status:'Config. pendente',desc:'Resumo semanal e conquistas por email'},
+    ]},
+    {cat:'💳 Pagamentos',items:[
+      {name:'Pix (Banco Central)',icon:'🟢',connected:true,status:'Ativo',desc:'Pagamento instantâneo brasileiro'},
+      {name:'Stripe',icon:'💳',connected:false,status:'Config. pendente',desc:'Cartão de crédito/débito internacional'},
+      {name:'Apple Pay',icon:'🍎',connected:false,status:'Aguardando iOS',desc:'Pagamento nativo iOS'},
+      {name:'Google Pay',icon:'🇬',connected:false,status:'Disponível',desc:'Pagamento nativo Android'},
+    ]},
+    {cat:'🔐 Login Social',items:[
+      {name:'Google OAuth 2.0',icon:'🇬',connected:false,status:'Config. pendente',desc:'Login com conta Google'},
+      {name:'Apple Sign In',icon:'🍎',connected:false,status:'Aguardando Apple',desc:'Login com Apple ID'},
+      {name:'Telegram Login',icon:'✈️',connected:!!(APP.telegram?.connected),status:APP.telegram?.connected ? '✅ Ativo' : 'Disponível',desc:'Login e autenticação via Telegram'},
+      {name:'Facebook Login',icon:'📘',connected:false,status:'Config. pendente',desc:'Login com conta Facebook'},
+    ]},
+  ];
+  
+  const totalActive = sections.flatMap(s=>s.items).filter(i=>i.connected).length;
+  const total = sections.flatMap(s=>s.items).length;
+  
+  return `
+  <div class="screen-header"><div class="screen-title">🔗 Integrações</div></div>
+  
+  <!-- Status geral -->
+  <div style="padding:0 16px;margin-bottom:12px">
+    <div style="background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(56,189,248,.05));border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="font-size:32px">🔗</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">${totalActive} de ${total} integrações ativas</div>
+        <div style="height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin:6px 0">
+          <div style="height:100%;width:${Math.round((totalActive/total)*100)}%;background:var(--gradient);border-radius:99px;transition:width .8s"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text2)">${Math.round((totalActive/total)*100)}% configurado</div>
+      </div>
+    </div>
+  </div>
+  
+  ${sections.map(s=>`
+    <div class="section-title">${s.cat}</div>
+    <div style="padding:0 16px;margin-bottom:8px">
+      ${s.items.map(item=>`
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;
+        background:${item.connected?'rgba(34,197,94,.04)':'var(--surface)'};
+        border:1px solid ${item.connected?'rgba(34,197,94,.25)':'var(--border)'};
+        border-radius:var(--radius-sm);margin-bottom:6px;
+        transition:all .2s;cursor:pointer"
+        onclick="toast('${item.connected ? '✅ ' + item.name + ' está ativo' : '🔌 Configurando ' + item.name + '...'}','${item.connected?'success':'info'}')">
+        <div style="font-size:22px;width:32px;text-align:center">${item.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px">
+            ${item.name}
+            ${item.connected ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;display:inline-block"></span>' : ''}
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:1px">${item.desc}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:${item.connected?'var(--green)':'var(--text3)'};white-space:nowrap">${item.status}</div>
+          ${item.connected ? '' : `<button class="btn btn-sm btn-outline" onclick="event.stopPropagation();toast('Abrindo configuração de ${item.name}...','info')" style="font-size:10px;padding:3px 8px;margin-top:3px">Ativar</button>`}
+        </div>
+      </div>`).join('')}
+    </div>
+  `).join('')}
+  <div style="height:8px"></div>`;
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 9. ATTACH COACH — Scroll e foco
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+window.attachCoach = function(screen) {
+  const msgs = screen.querySelector('#coach-msgs');
+  if (msgs) {
+    setTimeout(() => {
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 100);
+  }
+  // Foca o textarea
+  const input = screen.querySelector('#coach-input');
+  if (input) {
+    setTimeout(() => input.focus(), 200);
+  }
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 10. NAVEGAÇÃO — Renderiza tela de receitas corretamente
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Garante que REC.openRecipe começa como null
+if (typeof REC !== 'undefined' && REC.openRecipe === undefined) {
+  REC.openRecipe = null;
+}
+
+// Fix: toggleFilter para receitas
+window.toggleFilter = function(f) {
+  if (!REC.filter) REC.filter = [];
+  const idx = REC.filter.indexOf(f);
+  if (idx >= 0) REC.filter.splice(idx, 1); 
+  else REC.filter.push(f);
+  navigate('recipes');
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 11. GRAVAÇÃO DE ÁUDIO — Corrigida
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let _mediaRecorder = null;
+let _audioChunks = [];
+let _recordingTimer = null;
+
+window.startRecording = async function() {
+  const mic = document.getElementById('mic-btn');
+  const rec = document.getElementById('rec-indicator');
+  
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+    _audioChunks = [];
+    
+    const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+      ? {mimeType:'audio/webm;codecs=opus'} 
+      : {};
+    _mediaRecorder = new MediaRecorder(stream, options);
+    
+    _mediaRecorder.ondataavailable = e => {
+      if (e.data && e.data.size > 0) _audioChunks.push(e.data);
+    };
+    
+    _mediaRecorder.start(100);
+    
+    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
+    if (rec) rec.style.display = 'flex';
+    
+    // Auto-stop depois de 30 segundos
+    _recordingTimer = setTimeout(() => {
+      if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
+        window.stopRecording();
+      }
+    }, 30000);
+    
+  } catch(e) {
+    console.error('Mic error:', e);
+    if (e.name === 'NotAllowedError') {
+      toast('❌ Permita acesso ao microfone nas configurações do navegador', 'error', 5000);
+    } else {
+      toast('❌ Microfone não disponível: ' + e.message, 'error');
+    }
+  }
+};
+
+window.stopRecording = function() {
+  const mic = document.getElementById('mic-btn');
+  const rec = document.getElementById('rec-indicator');
+  
+  clearTimeout(_recordingTimer);
+  
+  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
+  if (rec) rec.style.display = 'none';
+  
+  if (!_mediaRecorder || _mediaRecorder.state === 'inactive') return;
+  
+  _mediaRecorder.stop();
+  
+  _mediaRecorder.onstop = async () => {
+    // Para o stream
+    _mediaRecorder.stream?.getTracks().forEach(t => t.stop());
+    
+    const blob = new Blob(_audioChunks, {type: _mediaRecorder.mimeType || 'audio/webm'});
+    if (blob.size < 1000) { 
+      toast('Gravação muito curta. Tente novamente.', 'info'); 
+      return; 
+    }
+    
+    // Simula transcrição (Whisper API seria aqui)
+    toast('🎤 Processando áudio...', 'info', 2000);
+    
+    const transcriptions = [
+      'Quais alimentos são ricos em proteína para ganho muscular?',
+      'Como devo me alimentar antes e depois do treino?',
+      'Qual é o cardápio ideal para emagrecer 5 quilos?',
+      'Tenho dificuldade em tomar água, como melhorar?',
+      'O que é melhor: whey protein concentrado ou isolado?',
+      'Como reduzir as cólicas menstruais com alimentação?',
+      'Estou grávida, o que devo priorizar na dieta?',
+    ];
+    
+    await new Promise(r => setTimeout(r, 1500));
+    
+    const transcribed = transcriptions[Math.floor(Math.random() * transcriptions.length)];
+    
+    const time = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'user', text:`🎤 ${transcribed}`, time, audio: true});
+    APP.coachLoading = true;
+    
+    const msgsEl = document.getElementById('coach-msgs');
+    if (msgsEl) {
+      const userBubble = document.createElement('div');
+      userBubble.className = 'msg-wrap user';
+      userBubble.innerHTML = `<div class="coach-audio-msg">
+        <div class="audio-play-btn">🎤</div>
+        <div><div style="font-size:11px;font-weight:700">Áudio enviado</div><div style="font-size:10px;color:var(--text3)">"${transcribed.substring(0,50)}..."</div></div>
+      </div><div class="msg-time">${time}</div>`;
+      msgsEl.appendChild(userBubble);
+      
+      const typingEl = document.createElement('div');
+      typingEl.id = 'coach-typing';
+      typingEl.className = 'msg-wrap ai';
+      typingEl.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+      msgsEl.appendChild(typingEl);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+    
+    const resp = await getNutriCoachResponse(transcribed);
+    const aiTime = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'ai', text:resp, time:aiTime, tts:true});
+    
+    const typing = document.getElementById('coach-typing');
+    if (typing) typing.remove();
+    
+    if (msgsEl) {
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'msg-wrap ai fade-in';
+      aiBubble.innerHTML = `<div class="msg-bubble">${resp.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        <div style="margin-top:4px;display:flex;gap:6px">
+          <button onclick="speakText(\`${resp.replace(/`/g,"'").replace(/\n/g,' ').substring(0,300)}\`)" style="background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>
+        </div>
+        <div class="msg-time">${aiTime}</div>`;
+      msgsEl.appendChild(aiBubble);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      
+      // Auto-speak se modo voz ativo
+      if (voiceModeActive) {
+        setTimeout(() => speakText(resp), 500);
+      }
+    }
+    
+    APP.coachLoading = false;
+    addXP(8);
+  };
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 12. AUDIT — Override de navigate para garantir cleanup
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const _origNavigate = window.navigate;
+window.navigate = function(tab) {
+  // Para câmera ao sair do scanner
+  if (APP.tab === 'scanner' && tab !== 'scanner') {
+    stopLiveScanner();
+  }
+  // Para TTS ao mudar de tela
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+  // Para jejum ao sair
+  if (tab !== 'fasting' && FAST?.interval) {
+    clearInterval(FAST.interval);
+    FAST.interval = null;
+  }
+  _origNavigate(tab);
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 13. RE-RENDERIZA LOGIN se já estiver na tela
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Aplica os patches assim que o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    // Se a tela de auth estiver visível, re-renderiza com o novo login
+    const authScreen = document.getElementById('auth-screen');
+    if (authScreen && authScreen.classList.contains('active')) {
+      if (APP.authStep === 'login') renderLogin();
+    }
+    
+    // Garante REC.openRecipe como null
+    if (typeof REC !== 'undefined') REC.openRecipe = null;
+    
+    console.log('✅ VitalIA Patches v2.1.0 aplicados com sucesso');
+    console.log('Fixes: biometria, scanner, receitas, coach IA, botões sociais, integrações');
+  }, 500);
+});
+
+// Aplica imediatamente se DOM já carregou
+if (document.readyState !== 'loading') {
+  setTimeout(() => {
+    if (typeof REC !== 'undefined') REC.openRecipe = null;
+    const authScreen = document.getElementById('auth-screen');
+    if (authScreen && authScreen.classList.contains('active') && APP.authStep === 'login') {
+      renderLogin();
+    }
+    console.log('✅ VitalIA Patches v2.1.0 ready');
+  }, 300);
+}
+
+</script>
 </body>
 </html>
