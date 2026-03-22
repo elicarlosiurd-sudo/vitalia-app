@@ -579,6 +579,55 @@ a{text-decoration:none;color:inherit}
 #quagga-viewport canvas{position:absolute!important;top:0!important;left:0!important;}
 .coach-textarea{pointer-events:auto!important;-webkit-user-select:text!important;user-select:text!important;cursor:text!important;}
 
+
+/* Coach textarea — responsiva ao toque sem focus forçado */
+.coach-textarea {
+  pointer-events: auto !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+  -webkit-tap-highlight-color: rgba(34,197,94,.2);
+  touch-action: manipulation;
+}
+.coach-textarea:focus {
+  border-color: var(--green) !important;
+  background: var(--surface) !important;
+  outline: none !important;
+}
+/* Botão mic e send - touch-friendly */
+.coach-mic, .coach-send {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Nav ··· verde */
+.nav-item:last-child .nav-icon {
+  color: #22c55e !important;
+  font-size: 22px !important;
+  letter-spacing: 4px !important;
+  font-weight: 900 !important;
+}
+/* Social login verde */
+.social-green-btn {
+  display:flex;align-items:center;gap:12px;padding:13px 16px;
+  border-radius:12px;border:1.5px solid rgba(34,197,94,.5);
+  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
+  cursor:pointer;font-size:14px;font-weight:600;width:100%;
+  margin-bottom:10px;color:var(--text);font-family:var(--font-body);
+  transition:all .25s;animation:greenPulse 3s ease-in-out infinite;
+  touch-action: manipulation;
+}
+.social-green-btn:hover,.social-green-btn:active {
+  animation:none;box-shadow:0 0 24px rgba(34,197,94,.6);
+  border-color:rgba(34,197,94,.9);
+}
+@keyframes greenPulse {
+  0%,100%{box-shadow:0 0 6px rgba(34,197,94,.2);}
+  50%{box-shadow:0 0 20px rgba(34,197,94,.5),0 0 40px rgba(34,197,94,.1);}
+}
+/* Scanner */
+#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
+#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
+
 </style>
 </head>
 <body>
@@ -3984,21 +4033,71 @@ function renderCoach() {
 }
 
 function attachCoach(screen) {
+  // Scroll para o fim das mensagens
   const msgs = screen.querySelector('#coach-msgs');
-  if(msgs) setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,100);
+  if(msgs) setTimeout(function(){msgs.scrollTop=msgs.scrollHeight;},100);
+  // NÃO forçamos focus() — no Android isso bloqueia o teclado
+  // O usuário toca na textarea quando quiser digitar
 }
 
 window.sendCoach = async function(txt) {
-  const inp = document.getElementById('coach-input');
-  const msg = txt || inp?.value?.trim();
-  if(!msg||APP.coachLoading) return;
-  if(inp) inp.value='';
-  const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'user',text:msg,time});
-  APP.coachLoading=true; navigate('coach');
-  const resp = await getNutriCoachResponse(msg);
-  APP.coachMsgs.push({role:'ai',text:resp,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),tts:true});
-  APP.coachLoading=false; addXP(5); navigate('coach');
+  var inp = document.getElementById('coach-input');
+  var msg = (txt || (inp && inp.value) || '').trim();
+  if (!msg || APP.coachLoading) return;
+  if (inp) {
+    inp.value = '';
+    inp.style.height = '44px';
+    // SEM focus() automático — causa bloqueio de teclado no Android
+  }
+  var ts = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  APP.coachMsgs = APP.coachMsgs || [];
+  APP.coachMsgs.push({role:'user', text:msg, time:ts});
+  APP.coachLoading = true;
+  var msgsEl = document.getElementById('coach-msgs');
+  if (msgsEl) {
+    var safe = msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var ub = document.createElement('div');
+    ub.className = 'msg-wrap user fade-in';
+    ub.innerHTML = '<div class="msg-bubble">' + safe + '</div>'
+      + '<div class="msg-time">' + ts + '</div>';
+    msgsEl.appendChild(ub);
+    var tb = document.createElement('div');
+    tb.id = 'coach-typing'; tb.className = 'msg-wrap ai';
+    tb.innerHTML = '<div class="msg-bubble"><div class="typing-dots">'
+      + '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>'
+      + '</div></div>';
+    msgsEl.appendChild(tb);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+  var resp = '';
+  try { resp = await getNutriCoachResponse(msg); }
+  catch(e) { resp = 'Desculpe, tente novamente! 🙏'; }
+  var tsR = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+  APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
+  var typing = document.getElementById('coach-typing');
+  if (typing) typing.remove();
+  if (msgsEl) {
+    var idx = APP.coachMsgs.length - 1;
+    var safeR = resp
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\n/g,'<br>')
+      .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    var ab = document.createElement('div');
+    ab.className = 'msg-wrap ai fade-in';
+    ab.innerHTML = '<div class="msg-bubble">' + safeR + '</div>'
+      + '<div style="display:flex;gap:6px;margin-top:6px">'
+      + '<button data-idx="' + idx + '" onclick="speakText(this.dataset.idx)" '
+      + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);'
+      + 'border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;'
+      + 'color:var(--green);font-family:var(--font-body);touch-action:manipulation">🔊 Ouvir</button>'
+      + '</div>'
+      + '<div class="msg-time">' + tsR + '</div>';
+    msgsEl.appendChild(ab);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    if (window._voiceMode) { try { speakText(idx); } catch(e) {} }
+  }
+  APP.coachLoading = false;
+  if (typeof addXP === 'function') addXP(5);
 };
 
 window.playAudioMsg = function(audioSrc) {
@@ -6175,6 +6274,19 @@ function checkBirthdayReminder() {
    START
 ═══════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', async () => {
+  // VERIFICAÇÃO DE PROTOCOLO — câmera e microfone exigem HTTPS
+  if (location.protocol === 'file:' || location.protocol === 'content:') {
+    document.getElementById('splash').innerHTML = '<div style="padding:40px;text-align:center;color:#f0f6fc;font-family:sans-serif">'
+      + '<div style="font-size:48px;margin-bottom:16px">⚠️</div>'
+      + '<div style="font-size:20px;font-weight:700;color:#f97316;margin-bottom:12px">Arquivo aberto localmente</div>'
+      + '<div style="font-size:14px;line-height:1.7;color:#8b949e;margin-bottom:24px">'
+      + 'Câmera, microfone e banco de dados <strong style="color:#f87171">não funcionam</strong> quando o arquivo é aberto direto do celular.<br><br>'
+      + 'Acesse pelo link oficial do GitHub Pages:</div>'
+      + '<a href="https://elicarlosiurd-sudo.github.io" style="display:inline-block;background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;font-weight:700;padding:14px 24px;border-radius:12px;text-decoration:none;font-size:15px">🌐 Abrir no GitHub Pages</a>'
+      + '<div style="margin-top:16px;font-size:12px;color:#484f58">elicarlosiurd-sudo.github.io</div>'
+      + '</div>';
+    return;
+  }
   applyTheme();
   if(!LANG[APP.lang]) APP.lang='pt';
 
