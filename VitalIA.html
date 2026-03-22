@@ -6241,47 +6241,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 <!-- Ou use como arquivo standalone de patches -->
 
 
-</bod<script>
-// 1. CORREÇÃO DAS RECEITAS (Remove a receita fantasma e arruma a busca)
-window.RECIPES = window.RECIPES.filter(r => r !== undefined && r !== null);
-window.getRecipeList = function() { return renderRecipeList(); };
-
-// 2. CORREÇÃO DO TECLADO DO COACH IA (Remove o foco automático que travava o tablet)
-window.attachCoach = function(screen) {
-  setTimeout(function() {
-    var msgs = document.getElementById('coach-msgs');
-    if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    APP.coachLoading = false; // Destrava o botão caso tenha dado erro
-  }, 150);
-};
-
-// 3. CORREÇÃO DA TELA PRETA E AVISO DO SCANNER
-window.stopLiveScanner = function() {
-  if (typeof SCAN !== 'undefined' && SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
-    try { Quagga.stop(); } catch(e) {}
-    SCAN.quaggaRunning = false;
-  }
-  document.querySelectorAll('video').forEach(function(v) {
-    try { if (v.srcObject) { v.srcObject.getTracks().forEach(t => t.stop()); v.srcObject = null; } } catch(e) {}
-  });
-  if (window._activeCamStream) {
-    try { window._activeCamStream.getTracks().forEach(t => t.stop()); } catch(e) {}
-    window._activeCamStream = null;
-  }
-  if (typeof SCAN !== 'undefined') SCAN.mode = 'manual';
-  // Aviso "Câmera parada" foi removido daqui!
-};
-
-// Força o vídeo do scanner a tocar no Android/iOS (remove tela preta)
-setInterval(function() {
-  var v = document.querySelector('#quagga-viewport video');
-  if (v && !v.hasAttribute('autoplay')) {
-    v.setAttribute('playsinline', 'true');
-    v.setAttribute('autoplay', 'true');
-    v.setAttribute('muted', 'true');
-    v.muted = true;
-    v.play().catch(e => console.log('Aguardando permissão de vídeo...'));
-  }
-}, 500);
-</script>y>
+</body>
 </html>
