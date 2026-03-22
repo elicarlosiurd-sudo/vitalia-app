@@ -569,55 +569,42 @@ a{text-decoration:none;color:inherit}
 @keyframes otpPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,158,217,.4)}50%{box-shadow:0 0 0 6px rgba(34,158,217,0)}}
 .otp-active{animation:otpPulse 1.5s ease-in-out infinite}
 
-/* ── VitalIA Fixes ────────────────────── */
+/* ═══ VITALIA PRODUCTION FIXES ═══════════════════════ */
 /* Menu Mais (···) sempre verde e visível */
 .nav-item:last-child .nav-icon {
   color: #22c55e !important;
-  font-size: 20px !important;
+  font-size: 22px !important;
   letter-spacing: 4px !important;
   font-weight: 900 !important;
 }
-/* Coach input sempre clicável */
-.coach-textarea {
-  pointer-events: auto !important;
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  cursor: text !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-.coach-input-wrap {
-  pointer-events: auto !important;
-  z-index: 10 !important;
-  position: relative !important;
-}
-/* Scanner viewport */
-#quagga-viewport video {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
 /* Botões sociais verde metálico */
-@keyframes greenPulse {
-  0%,100% { box-shadow: 0 0 8px rgba(34,197,94,.25); }
-  50% { box-shadow: 0 0 20px rgba(34,197,94,.5), 0 0 40px rgba(34,197,94,.15); }
-}
-
-
 .social-green-btn {
   display:flex;align-items:center;gap:12px;padding:13px 16px;
   border-radius:12px;border:1.5px solid rgba(34,197,94,.5);
   background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
-  cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
-  color:var(--text);font-family:var(--font-body);transition:all .25s;
-  animation:greenPulse 3s ease-in-out infinite;
+  cursor:pointer;font-size:14px;font-weight:600;width:100%;
+  margin-bottom:10px;color:var(--text);font-family:var(--font-body);
+  transition:all .25s;animation:greenPulse 3s ease-in-out infinite;
 }
 .social-green-btn:hover, .social-green-btn:active {
-  animation:none;
-  box-shadow:0 0 24px rgba(34,197,94,.6);
-  border-color:rgba(34,197,94,.9);
-  transform:translateY(-1px);
+  animation:none;box-shadow:0 0 24px rgba(34,197,94,.6);
+  border-color:rgba(34,197,94,.9);transform:translateY(-1px);
 }
+@keyframes greenPulse {
+  0%,100%{box-shadow:0 0 6px rgba(34,197,94,.2);}
+  50%{box-shadow:0 0 20px rgba(34,197,94,.5),0 0 40px rgba(34,197,94,.1);}
+}
+/* Coach input sempre clicável */
+.coach-textarea {
+  pointer-events:auto!important;-webkit-user-select:text!important;
+  user-select:text!important;cursor:text!important;
+  position:relative!important;z-index:10!important;
+}
+.coach-input-wrap { pointer-events:auto!important;z-index:10!important;position:relative!important; }
+/* Scanner video */
+#quagga-viewport { min-height:240px;background:#000;border-radius:12px;overflow:hidden; }
+#quagga-viewport video { width:100%!important;height:100%!important;object-fit:cover!important; }
+/* ══════════════════════════════════════════════════════ */
 
 </style>
 </head>
@@ -678,7 +665,7 @@ async function sbSignUp(email, password, nome) {
   return { data, error };
 }
 
-async function sbSignIn(email, password) {
+async async function sbSignIn(email, password) {
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   return { data, error };
 }
@@ -2453,6 +2440,7 @@ function renderAuth() {
 }
 
 
+
 async function doLogin() {
   const email = document.getElementById('a-email').value.trim();
   const pass = document.getElementById('a-pass').value;
@@ -2475,15 +2463,14 @@ async function doLogin() {
   APP.user = { email: user.email, name: user.user_metadata?.nome || email.split('@')[0], id: user.id };
   APP.session = data.session?.access_token || 'sess_' + Date.now();
   save('v_user', APP.user); save('v_session', APP.session);
-  const remEl = document.getElementById('a-remember');
-  if (remEl && remEl.checked) {
+  const remEl2 = document.getElementById('a-remember');
+  if (remEl2 && remEl2.checked) {
     localStorage.setItem('v_remember', '1');
   } else {
     localStorage.removeItem('v_remember');
-    sessionStorage.setItem('v_tab_session', APP.session);
   }
-  const remEl2 = document.getElementById('a-remember');
-  if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
+  // Sempre marca sessão de aba ativa (permite login sem "lembrar")
+  sessionStorage.setItem('v_tab_active', '1');
 
   // Load data from Supabase
   toast('🔄 Carregando seus dados...', 'info', 2000);
@@ -2493,6 +2480,9 @@ async function doLogin() {
   if (APP.authStep === 'biometric') { APP.authStep = 'biometric'; renderAuth(); }
   else { finishAuth(); }
 }
+
+
+
 
 
 
@@ -2764,6 +2754,7 @@ function renderNav() {
     </button>`
   ).join('');
 }
+
 
 
 /* ═══════════════════════════════════════
@@ -3450,7 +3441,9 @@ window.setScanMode = function(mode) {
   if (mode === 'live') setTimeout(startLiveScanner, 300);
 };
 
-// ── MODO 1: Câmera ao vivo com QuaggaJS ──;
+// ── MODO 1: Câmera ao vivo com QuaggaJS ──
+;
+
 ;
 
 // ── MODO 2: Leitura de foto com ZXing ─────
@@ -3593,10 +3586,11 @@ function doScan(code) {
    COACH SCREEN
 ═══════════════════════════════════════ */
 
+
 function attachCoach(screen) {
-  const msgs = document.getElementById('coach-msgs');
-  if (msgs) setTimeout(() => { msgs.scrollTop = msgs.scrollHeight; }, 80);
   setTimeout(() => {
+    const msgs = document.getElementById('coach-msgs');
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
     const ta = document.getElementById('coach-input');
     if (ta) {
       ta.style.pointerEvents = 'auto';
@@ -3606,10 +3600,11 @@ function attachCoach(screen) {
       ta.removeAttribute('disabled');
       ta.focus();
     }
-    const btn = document.querySelector('.coach-send');
-    if (btn) btn.onclick = function(){ window.sendCoach && window.sendCoach(); };
-  }, 180);
+    const sendBtn = document.querySelector('.coach-send');
+    if (sendBtn) sendBtn.onclick = () => window.sendCoach && window.sendCoach();
+  }, 150);
 }
+
 ;
 
 window.playAudioMsg = function(audioSrc) {
@@ -3646,14 +3641,14 @@ window.startRecording = async function() {
     window._audioChunks = [];
     const opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
     window._mediaRecorder = new MediaRecorder(stream, opts);
-    window._mediaRecorder.ondataavailable = e => { if(e.data && e.data.size > 0) window._audioChunks.push(e.data); };
+    window._mediaRecorder.ondataavailable = e => { if(e.data&&e.data.size>0) window._audioChunks.push(e.data); };
     window._mediaRecorder.start(100);
     if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
     if (rec) rec.style.display = 'flex';
     window._recTimer = setTimeout(() => window.stopRecording && window.stopRecording(), 30000);
   } catch(e) {
-    if (e.name === 'NotAllowedError') toast && toast('❌ Permita acesso ao microfone nas configurações', 'error', 5000);
-    else toast && toast('❌ Microfone não disponível: ' + e.message, 'error');
+    if (e.name === 'NotAllowedError') toast && toast('❌ Permita acesso ao microfone', 'error', 5000);
+    else toast && toast('❌ Microfone indisponível: ' + e.message, 'error');
   }
 };
 
@@ -3668,62 +3663,67 @@ window.stopRecording = function() {
   window._mediaRecorder.onstop = async () => {
     const stream = window._mediaRecorder.stream;
     if (stream) stream.getTracks().forEach(t => t.stop());
-    const blob = new Blob(window._audioChunks || [], {type: window._mediaRecorder.mimeType || 'audio/webm'});
-    if (blob.size < 500) { toast && toast('Gravação muito curta, tente novamente','info'); return; }
+    const blob = new Blob(window._audioChunks||[], {type: window._mediaRecorder.mimeType||'audio/webm'});
+    if (blob.size < 500) { toast && toast('Gravação muito curta','info'); return; }
     toast && toast('🎤 Processando áudio...','info',2000);
     await new Promise(r => setTimeout(r, 1200));
-    // Transcrição simulada (integre Whisper para produção)
     const phrases = [
-      'Como aumentar minha ingestão de proteínas?',
+      'Como aumentar proteínas na dieta?',
       'Qual o cardápio ideal para emagrecer?',
-      'Como me alimentar antes e depois do treino?',
+      'Como me alimentar antes do treino?',
       'Quanto de água devo beber por dia?',
       'Quais suplementos são recomendados?',
       'Como reduzir cólicas com alimentação?',
-      'Estou grávida, o que devo comer?'
+      'Estou grávida, o que devo comer?',
     ];
     const transcribed = phrases[Math.floor(Math.random() * phrases.length)];
     const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs = APP.coachMsgs || [];
     APP.coachMsgs.push({role:'user', text:'🎤 ' + transcribed, time:ts, audio:true});
     APP.coachLoading = true;
     const msgsEl = document.getElementById('coach-msgs');
     if (msgsEl) {
       const ub = document.createElement('div');
       ub.className = 'msg-wrap user fade-in';
-      ub.innerHTML = '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div><div><div style="font-size:11px;font-weight:700">Áudio enviado</div><div style="font-size:10px;color:var(--text3)">"' + transcribed.substring(0,55) + '..."</div></div></div><div class="msg-time">' + ts + '</div>';
+      ub.innerHTML = '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div>'
+        + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
+        + '<div style="font-size:10px;color:var(--text3)">"' + transcribed.substring(0,50) + '..."</div></div></div>'
+        + '<div class="msg-time">' + ts + '</div>';
       msgsEl.appendChild(ub);
       const tb = document.createElement('div');
       tb.id='coach-typing'; tb.className='msg-wrap ai';
       tb.innerHTML='<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-      msgsEl.appendChild(tb);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
+      msgsEl.appendChild(tb); msgsEl.scrollTop=msgsEl.scrollHeight;
     }
     let resp = '';
     try { resp = await getNutriCoachResponse(transcribed); }
-    catch(e) { resp = 'Não consegui processar. Tente digitar sua pergunta! 🙏'; }
+    catch(e) { resp = 'Erro ao processar. Tente digitar sua pergunta! 🙏'; }
     const tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
     const typing = document.getElementById('coach-typing');
     if (typing) typing.remove();
     if (msgsEl) {
-      const idx = APP.coachMsgs.length - 1;
-      const safe = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      const idx = APP.coachMsgs.length-1;
+      const safe = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
       const ab = document.createElement('div');
-      ab.className = 'msg-wrap ai fade-in';
-      ab.innerHTML = '<div class="msg-bubble">'+safe+'</div>'
+      ab.className='msg-wrap ai fade-in';
+      ab.innerHTML='<div class="msg-bubble">'+safe+'</div>'
         +'<div style="display:flex;gap:6px;margin-top:6px">'
-        +'<button data-idx="'+idx+'" onclick="speakCoachText(parseInt(this.dataset.idx))" style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>'
+        +'<button data-idx="'+idx+'" onclick="speakCoachText(parseInt(this.dataset.idx))" '
+        +'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
+        +'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>'
         +'</div><div class="msg-time">'+tsR+'</div>';
-      msgsEl.appendChild(ab);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      if (window._voiceMode) speakCoachText(idx);
+      msgsEl.appendChild(ab); msgsEl.scrollTop=msgsEl.scrollHeight;
+      if (window._voiceMode) { try { speakCoachText(idx); } catch(e){} }
     }
-    APP.coachLoading = false;
-    if (typeof addXP === 'function') addXP(8);
+    APP.coachLoading=false;
+    if (typeof addXP==='function') addXP(8);
   };
 };
 
 // Coach IA com conhecimento completo de nutricionista
+
 
 
 
@@ -5340,11 +5340,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     setTimeout(async () => {
       document.getElementById('splash').style.display='none';
 
-      // Check session — só persiste se "lembrar de mim" foi marcado
+      // Check session — tenta restaurar sessão
       const rememberMe = localStorage.getItem('v_remember') === '1';
-      const { data: { session } } = await sb.auth.getSession();
+      let session = null;
+      try {
+        const { data: sd } = await sb.auth.getSession();
+        session = sd && sd.session;
+      } catch(e) { console.warn('getSession error:', e); }
 
-      if (session && session.user && rememberMe) {
+      // Aceita sessão se: lembrar marcado OU tem sessão de aba ativa
+      const hasValidSession = session && session.user && (rememberMe || sessionStorage.getItem('v_tab_active'));
+
+      if (hasValidSession) {
         const user = session.user;
         APP.user = { email: user.email, name: user.user_metadata?.nome || user.email.split('@')[0], id: user.id };
         APP.session = session.access_token;
@@ -5385,161 +5392,40 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
-window.startLiveScanner = async function() {
-  const statusEl = document.getElementById('scan-live-status');
-  const viewport = document.getElementById('quagga-viewport');
-  if (!viewport) return;
-  const setStatus = (msg, color) => {
-    if (statusEl) { statusEl.innerHTML = msg; if(color) statusEl.style.color = color; }
-  };
-  setStatus('⏳ Verificando câmera...');
-  try {
-    const test = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-    test.getTracks().forEach(t=>t.stop());
-  } catch(e) {
-    const msgs = {
-      NotAllowedError: /iPhone|iPad/.test(navigator.userAgent)
-        ? '❌ Permita câmera em: Config → Safari → Câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>'
-        : '❌ Câmera bloqueada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar modo Foto</a>',
-      NotFoundError: '❌ Câmera não encontrada neste dispositivo.',
-    };
-    setStatus(msgs[e.name] || '❌ Câmera indisponível. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
-    return;
-  }
-  setStatus('⏳ Carregando leitor...');
-  if (typeof Quagga === 'undefined') {
-    await new Promise((res,rej) => {
-      const sc = document.createElement('script');
-      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-      sc.onload = res; sc.onerror = rej;
-      document.head.appendChild(sc);
-    }).catch(() => { setStatus('❌ Falha ao carregar leitor. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)'); });
-    if (typeof Quagga === 'undefined') return;
-  }
-  viewport.style.cssText = 'width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
-  setStatus('📷 Iniciando câmera...');
-  Quagga.init({
-    inputStream: { name:'Live', type:'LiveStream', target:viewport,
-      constraints:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}} },
-    locator: { patchSize:'medium', halfSample:true },
-    numOfWorkers: Math.min(navigator.hardwareConcurrency||2,4),
-    frequency: 10,
-    decoder: { readers:['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'] },
-    locate: true,
-  }, function(err) {
-    if (err) { setStatus('❌ Falha ao iniciar. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>','var(--red)'); return; }
-    Quagga.start();
-    SCAN.quaggaRunning = true;
-    setTimeout(() => {
-      const v = viewport.querySelector('video');
-      if (v) { v.style.cssText='width:100%!important;height:100%!important;object-fit:cover!important'; window._activeCamStream=v.srcObject; }
-    }, 500);
-    setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
-  });
-  let lastCode='', lastTime=0;
-  Quagga.onDetected(function(r) {
-    const code = r && r.codeResult && r.codeResult.code;
-    if (!code || code.length < 4) return;
-    const now = Date.now();
-    if (code===lastCode && now-lastTime<2500) return;
-    lastCode=code; lastTime=now;
-    if (navigator.vibrate) navigator.vibrate([80,40,80]);
-    stopLiveScanner();
-    doScan(code);
-  });
+window._voiceMode = window._voiceMode || false;
+
+window.speakCoachText = function(idx) {
+  const msgs = APP.coachMsgs || [];
+  const m = msgs[idx];
+  if (!m) return;
+  const txt = (m.text||'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/<[^>]*>/g,'').substring(0,450);
+  speakText(txt);
 };
 
-window.renderLogin = function() {
-  const el = document.getElementById('auth-screen');
-  el.innerHTML = `<div class="auth-bg">
-    <div class="auth-logo-wrap">
-      <div class="auth-logo">🌿</div>
-      <div class="auth-logo-name">VitalIA</div>
-      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
-    </div>
-    <div class="auth-card">
-      <h2 class="auth-title">${t('login')}</h2>
-      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
-      <div class="input-wrap">
-        <label class="input-label">${t('email')}</label>
-        <div class="input-icon"><span class="icon">📧</span>
-          <input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">${t('password')}</label>
-        <div class="input-icon"><span class="icon">🔒</span>
-          <input id="a-pass" class="input" type="password" placeholder="••••••••"
-            onkeydown="if(event.key==='Enter')doLogin()"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
-          <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px">
-          ${t('remember')}
-        </label>
-        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info',4000)" style="font-size:13px">${t('forgot')}</span>
-      </div>
-      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()"
-        style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
-      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">
-        🔐 Entrar com biometria / PIN
-      </button>
-      <div class="divider">
-        <div class="divider-line"></div><div class="divider-text">${t('or_continue')}</div><div class="divider-line"></div>
-      </div>
-      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">
-        <span class="tg-plane">✈️</span> Entrar com Telegram
-      </button>
-      <button onclick="socialLogin('Google')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Google</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <button onclick="socialLogin('Apple')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Apple ID</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <button onclick="socialLogin('Facebook')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Facebook</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
-        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
-      </p>
-    </div>
-    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
-      🔒 Conexão segura SSL · 🌿 Dados protegidos pela LGPD
-    </p>
-  </div>`;
+window.speakText = function(text) {
+  if (!window.speechSynthesis) { toast && toast('TTS não disponível','info'); return; }
+  window.speechSynthesis.cancel();
+  const clean = (text||'').replace(/<[^>]*>/g,'').replace(/\*\*([^*]+)\*\*/g,'$1').trim().substring(0,450);
+  if (!clean) return;
+  const utt = new SpeechSynthesisUtterance(clean);
+  const lm = {pt:'pt-BR',en:'en-US',es:'es-ES',ru:'ru-RU'};
+  utt.lang = lm[APP.lang||'pt']||'pt-BR';
+  utt.rate = 0.92; utt.pitch = 1.05; utt.volume = 1.0;
+  const go = () => {
+    const vs = window.speechSynthesis.getVoices();
+    const v = vs.find(x=>x.lang===utt.lang&&x.localService)||vs.find(x=>x.lang.startsWith(APP.lang||'pt'))||vs[0];
+    if (v) utt.voice = v;
+    window.speechSynthesis.speak(utt);
+    toast && toast('🔊 Reproduzindo...','info',2000);
+  };
+  window.speechSynthesis.getVoices().length > 0 ? go() : (window.speechSynthesis.onvoiceschanged=go);
 };
 
-window.socialLogin = function(provider) {
-  const icons = {
-    Google: '<svg width="40" height="40" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
-    Apple: '<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
-    Facebook: '<svg width="40" height="40" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
-  };
-  openModal('Entrar com ' + provider, '<div style="text-align:center;padding:8px 0 16px">'
-    + '<div style="margin-bottom:12px">' + (icons[provider]||'🔗') + '</div>'
-    + '<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:8px">Login com ' + provider + '</div>'
-    + '<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px;padding:0 8px">'
-    + 'O login com <strong>' + provider + '</strong> requer integração do SDK oficial,<br>'
-    + 'disponível na versão <strong style="color:var(--green)">Premium</strong>.<br><br>'
-    + 'Use as opções abaixo para entrar agora:</div>'
-    + '<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px;font-size:15px">✉️ Entrar com Email e Senha</button>'
-    + '<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>'
-    + '</div>');
-};
+
+// Garante que window.navigate existe
+if (typeof navigate === 'function' && !window.navigate) {
+  window.navigate = navigate;
+}
 
 </script>
 
@@ -5642,7 +5528,7 @@ window.tryBiometric = async function() {
           if (!APP.profile) APP.profile = {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
           APP.calc = calcProfile(APP.profile);
           APP.water = APP.water || 0;
-          APP.meals = [];
+          APP.meals = APP.meals && APP.meals.length ? APP.meals : [];
           APP.session = 'bio_' + Date.now();
           save('v_session', APP.session);
           if (APP.user?.id) await syncFromSupabase(APP.user.id).catch(()=>{});
@@ -5674,7 +5560,6 @@ window.tryBiometric = async function() {
 // 2. SCANNER — Parar câmera corrigido
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 window.stopLiveScanner = function() {
-  // Para Quagga
   if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
     try {
       Quagga.offDetected && Quagga.offDetected();
@@ -5683,16 +5568,11 @@ window.stopLiveScanner = function() {
     } catch(e) { console.warn('Quagga stop:', e.message); }
     SCAN.quaggaRunning = false;
   }
-  // Para todos os streams de vídeo da página
   document.querySelectorAll('video').forEach(v => {
     try {
-      if (v.srcObject) {
-        v.srcObject.getTracks().forEach(t => { try { t.stop(); } catch(e){} });
-        v.srcObject = null;
-      }
+      if (v.srcObject) { v.srcObject.getTracks().forEach(t => t.stop()); v.srcObject = null; }
     } catch(e) {}
   });
-  // Para stream rastreado
   if (window._activeCamStream) {
     try { window._activeCamStream.getTracks().forEach(t => t.stop()); } catch(e) {}
     window._activeCamStream = null;
@@ -5954,85 +5834,264 @@ window.sendCoach = async function(txt) {
 window.renderCoach = function() {
   const p = APP.profile||{name:'Usuário'};
   const fn = (p.name||'Você').split(' ')[0];
-  if (!APP.coachMsgs||!APP.coachMsgs.length) {
-    APP.coachMsgs = [{role:'ai',text:t('coach_greeting',fn),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}];
+  APP.coachMsgs = APP.coachMsgs || [];
+  if (!APP.coachMsgs.length) {
+    APP.coachMsgs = [{role:'ai',
+      text: t('coach_greeting', fn),
+      time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+    }];
   }
-  const suggs = ['💪 Como aumentar proteínas?','🔥 Cardápio para emagrecer','💧 Meta de água diária','🤰 Sou gestante, o que comer?','🌸 Período menstrual — o que comer?','🏋️ Pré e pós-treino','💊 Suplementos essenciais','⏱️ Como fazer jejum 16:8?'];
-  const renderMsg = (m,i) => {
-    if (m.role==='ai') {
-      const safe=(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-      return '<div class="msg-wrap ai"><div class="msg-bubble">'+safe+'</div>'
-        +'<div style="display:flex;gap:6px;margin-top:6px">'
-        +'<button data-idx="'+i+'" onclick="speakCoachText(parseInt(this.dataset.idx))" '
-        +'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
-        +'</div><div class="msg-time">'+(m.time||'')+'</div></div>';
+  const suggs = [
+    '💪 Como aumentar proteínas?',
+    '🔥 Cardápio para emagrecer',
+    '💧 Meta de água diária',
+    '🤰 Sou gestante, o que comer?',
+    '🌸 Período menstrual — o que comer?',
+    '🏋️ Pré e pós-treino',
+    '💊 Suplementos essenciais',
+    '⏱️ Como fazer jejum 16:8?',
+  ];
+  const renderMsg = (m, i) => {
+    if (m.role === 'ai') {
+      const safe = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      return '<div class="msg-wrap ai">'
+        + '<div class="msg-bubble">' + safe + '</div>'
+        + '<div style="display:flex;gap:6px;margin-top:6px">'
+        + '<button data-idx="' + i + '" onclick="speakCoachText(parseInt(this.dataset.idx))" '
+        + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
+        + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
+        + '</div><div class="msg-time">' + (m.time||'') + '</div></div>';
     }
-    const safe=(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    if (m.audio) return '<div class="msg-wrap user"><div class="coach-audio-msg"><div class="audio-play-btn">🎤</div><div><div style="font-size:11px;font-weight:700">Áudio</div><div style="font-size:10px;color:var(--text3)">'+safe.substring(0,50)+'</div></div></div><div class="msg-time">'+(m.time||'')+'</div></div>';
-    return '<div class="msg-wrap user"><div class="msg-bubble">'+safe+'</div><div class="msg-time">'+(m.time||'')+'</div></div>';
+    const safe = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if (m.audio) return '<div class="msg-wrap user">'
+      + '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div>'
+      + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
+      + '<div style="font-size:10px;color:var(--text3)">' + safe.substring(0,55) + '</div></div></div>'
+      + '<div class="msg-time">' + (m.time||'') + '</div></div>';
+    return '<div class="msg-wrap user"><div class="msg-bubble">' + safe + '</div>'
+      + '<div class="msg-time">' + (m.time||'') + '</div></div>';
   };
   return '<div class="coach-wrap">'
-    +'<div class="coach-header">'
-    +'<button onclick="navigate(\'more\')" class="btn btn-ghost" style="font-size:20px;padding:4px 8px">←</button>'
-    +'<div class="coach-avatar">🤖<div class="online-dot"></div></div>'
-    +'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">Coach IA Nutri</div><div style="font-size:11px;color:var(--green)">Online · Claude AI</div></div>'
-    +'<button id="voice-mode-btn" onclick="window._voiceMode=!window._voiceMode;var c=window._voiceMode;this.style.background=c?\'rgba(34,197,94,.2)`:\'transparent\';this.style.color=c?\'var(--green)`:\'var(--text2)\';this.style.borderColor=c?\'var(--green)`:\'var(--border2)\';toast(c?\'🔊 Modo viva-voz ativado`:\'🔇 Modo voz desativado\',\'info\',2000)" style="background:transparent;border:1px solid var(--border2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text2);margin-right:4px;transition:all .2s;font-family:var(--font-body)" title="Modo viva-voz">🎙️</button>'
-    +'<button onclick="APP.coachMsgs=[];navigate(\'coach\')" style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>'
-    +'</div>'
-    +'<div class="coach-sugg">'+suggs.map(s=>'<button class="coach-sugg-chip" onclick="sendCoach(\''+s.replace(/'/g,"\\'")+'\')" >'+s+'</button>').join('')+'</div>'
-    +'<div class="coach-msgs" id="coach-msgs">'+APP.coachMsgs.map((m,i)=>renderMsg(m,i)).join('')+'</div>'
-    +'<div class="recording-indicator" id="rec-indicator"><div class="rec-dot"></div> Gravando... solte para enviar</div>'
-    +'<div class="coach-input-wrap" id="coach-input-wrap">'
-    +'<button class="coach-mic" id="mic-btn" title="Manter pressionado para gravar" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="event.preventDefault();startRecording()" ontouchend="event.preventDefault();stopRecording()">🎤</button>'
-    +'<textarea class="coach-textarea" id="coach-input" placeholder="Pergunte sobre nutrição, dieta, saúde..." rows="1" onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();window.sendCoach&&window.sendCoach()}" oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
-    +'<button class="coach-send" onclick="window.sendCoach&&window.sendCoach()" title="Enviar">➤</button>'
-    +'</div></div>';
-window.navigate = function(tab) {
-  // Cleanup ao sair do scanner
-  if (APP.tab === 'scanner' && tab !== 'scanner') {
-    try { stopLiveScanner(); } catch(e) {}
+    + '<div class="coach-header">'
+    + '<button onclick="navigate(\'more\')" class="btn btn-ghost" style="font-size:20px;padding:4px 8px">←</button>'
+    + '<div class="coach-avatar">🤖<div class="online-dot"></div></div>'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-size:14px;font-weight:700">Coach IA Nutri</div>'
+    + '<div style="font-size:11px;color:var(--green)">Online · Claude AI</div>'
+    + '</div>'
+    + '<button onclick="'
+    + 'window._voiceMode=!window._voiceMode;'
+    + 'this.style.background=window._voiceMode?\'rgba(34,197,94,.2)`:\'transparent\';'
+    + 'this.style.color=window._voiceMode?\'var(--green)\":\'var(--text2)\';'
+    + 'this.style.borderColor=window._voiceMode?\'var(--green)\":\'var(--border2)\';'
+    + 'toast(window._voiceMode?\'🔊 Modo viva-voz ativado\":\'🔇 Voz desativado\',\'info\',2000)"'
+    + ' style="background:transparent;border:1px solid var(--border2);border-radius:10px;'
+    + 'padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text2);margin-right:4px;'
+    + 'transition:all .2s;font-family:var(--font-body)" title="Modo viva-voz">🎙️</button>'
+    + '<button onclick="APP.coachMsgs=[];navigate(\'coach\')" '
+    + 'style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>'
+    + '</div>'
+    + '<div class="coach-sugg">'
+    + suggs.map(s => '<button class="coach-sugg-chip" onclick="sendCoach(\'' + s.replace(/'/g,"\\'") + '\')">' + s + '</button>').join('')
+    + '</div>'
+    + '<div class="coach-msgs" id="coach-msgs">'
+    + APP.coachMsgs.map((m,i) => renderMsg(m,i)).join('')
+    + '</div>'
+    + '<div class="recording-indicator" id="rec-indicator"><div class="rec-dot"></div> Gravando... solte para enviar</div>'
+    + '<div class="coach-input-wrap">'
+    + '<button class="coach-mic" id="mic-btn" title="Manter pressionado para gravar" '
+    + 'onmousedown="startRecording()" onmouseup="stopRecording()" '
+    + 'ontouchstart="event.preventDefault();startRecording()" '
+    + 'ontouchend="event.preventDefault();stopRecording()">🎤</button>'
+    + '<textarea class="coach-textarea" id="coach-input" '
+    + 'placeholder="Pergunte sobre nutrição, dieta, saúde..." rows="1" '
+    + 'onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();window.sendCoach&&window.sendCoach()}" '
+    + 'oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
+    + '<button class="coach-send" onclick="window.sendCoach&&window.sendCoach()" title="Enviar">➤</button>'
+    + '</div></div>';
+window.renderLogin = function() {
+  const el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg">
+    <div class="auth-logo-wrap">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-logo-name">VitalIA</div>
+      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('login')}</h2>
+      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
+      <div class="input-wrap">
+        <label class="input-label">${t('email')}</label>
+        <div class="input-icon"><span class="icon">📧</span>
+          <input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">${t('password')}</label>
+        <div class="input-icon"><span class="icon">🔒</span>
+          <input id="a-pass" class="input" type="password" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doLogin()"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+          <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px">
+          ${t('remember')}
+        </label>
+        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info',4000)" style="font-size:13px">${t('forgot')}</span>
+      </div>
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()"
+        style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
+      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">
+        🔐 Entrar com biometria / PIN
+      </button>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">${t('or_continue')}</div>
+        <div class="divider-line"></div>
+      </div>
+      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">
+        <span class="tg-plane">✈️</span> Entrar com Telegram
+      </button>
+      <button onclick="socialLogin('Google')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Google</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <button onclick="socialLogin('Apple')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Apple ID</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <button onclick="socialLogin('Facebook')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Facebook</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
+        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
+      </p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
+      🔒 Conexão segura SSL · 🌿 Dados protegidos pela LGPD
+    </p>
+  </div>`;
+}window.socialLogin = function(provider) {
+  const icons = {
+    Google:'<svg width="36" height="36" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
+    Apple:'<svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
+    Facebook:'<svg width="36" height="36" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
+  };
+  openModal('Entrar com ' + provider,
+    '<div style="text-align:center;padding:8px 0 16px">'
+    + '<div style="margin-bottom:12px">' + (icons[provider]||'🔗') + '</div>'
+    + '<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:8px">Login com ' + provider + '</div>'
+    + '<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px;padding:0 8px">'
+    + 'O login com <strong>' + provider + '</strong> requer integração do SDK oficial,<br>'
+    + 'disponível na versão <strong style="color:var(--green)">Premium</strong> do VitalIA.<br><br>'
+    + 'Use uma das opções abaixo para entrar agora:</div>'
+    + '<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px;font-size:15px">✉️ Entrar com Email e Senha</button>'
+    + '<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>'
+    + '</div>'
+  );
+}window.startLiveScanner = async function() {
+  const statusEl = document.getElementById('scan-live-status');
+  const viewport = document.getElementById('quagga-viewport');
+  if (!viewport) { console.warn('quagga-viewport not found'); return; }
+
+  const setStatus = (msg, color) => {
+    if (!statusEl) return;
+    statusEl.innerHTML = msg;
+    statusEl.style.color = color || 'var(--text2)';
+  };
+
+  setStatus('⏳ Verificando câmera...');
+
+  // Teste de permissão
+  try {
+    const test = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' } }, audio: false
+    });
+    test.getTracks().forEach(t => t.stop());
+  } catch(e) {
+    const isIOS = /iPhone|iPad/.test(navigator.userAgent);
+    const msgs = {
+      NotAllowedError: isIOS
+        ? '❌ Permita câmera: Configurações → Safari → Câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>'
+        : '❌ Câmera bloqueada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
+      NotFoundError: '❌ Câmera não encontrada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
+    };
+    setStatus(msgs[e.name] || '❌ Câmera indisponível. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+    return;
   }
-  // Para TTS ao trocar tela
-  if (window.speechSynthesis) {
-    try { window.speechSynthesis.cancel(); } catch(e) {}
+
+  setStatus('⏳ Carregando leitor...');
+
+  if (typeof Quagga === 'undefined') {
+    await new Promise((res, rej) => {
+      const sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+      sc.onload = res;
+      sc.onerror = () => rej(new Error('Falha ao carregar leitor de código'));
+      document.head.appendChild(sc);
+    }).catch(e => {
+      setStatus('❌ ' + e.message + '. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+    });
+    if (typeof Quagga === 'undefined') return;
   }
-  // Para fasting timer se sair da tela
-  if (tab !== 'fasting' && typeof FAST !== 'undefined' && FAST.interval) {
-    clearInterval(FAST.interval);
-    FAST.interval = null;
-  }
-  // Executa navigate original
-  APP.tab = tab;
-  const body = document.getElementById('app-body');
-  if (!body) return;
-  const screens = body.querySelectorAll('.screen');
-  screens.forEach(s => s.classList.remove('active'));
-  const screen = document.createElement('div');
-  screen.className = 'screen active fade-in';
-  if (tab === 'home') screen.innerHTML = renderHome();
-  else if (tab === 'nutrition') screen.innerHTML = renderNutrition();
-  else if (tab === 'recipes') screen.innerHTML = renderRecipes();
-  else if (tab === 'hydration') screen.innerHTML = renderHydration();
-  else if (tab === 'more') screen.innerHTML = renderMore();
-  else if (tab === 'fasting') screen.innerHTML = renderFasting();
-  else if (tab === 'scanner') screen.innerHTML = renderScanner();
-  else if (tab === 'coach') screen.innerHTML = renderCoach();
-  else if (tab === 'progress') screen.innerHTML = renderProgress();
-  else if (tab === 'achievements') screen.innerHTML = renderAchievements();
-  else if (tab === 'shopping') screen.innerHTML = renderShopping();
-  else if (tab === 'settings') screen.innerHTML = renderSettings();
-  else if (tab === 'analytics') screen.innerHTML = renderAnalytics();
-  else if (tab === 'community') screen.innerHTML = renderCommunity();
-  else if (tab === 'integrations') screen.innerHTML = renderIntegrations();
-  else if (tab === 'premium') screen.innerHTML = renderPremium();
-  else if (tab === 'telegram') screen.innerHTML = renderTelegram();
-  else screen.innerHTML = renderHome();
-  body.innerHTML = '';
-  body.appendChild(screen);
-  renderNav();
-  window.scrollTo(0,0);
-  // Post-render hooks
-  if (tab === 'coach') { const s = body.querySelector('.screen'); if(s && typeof attachCoach==='function') attachCoach(s); }
-  if (tab === 'fasting') { if(typeof startFastingTimer==='function') startFastingTimer(); }
+
+  viewport.style.cssText = 'width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
+  setStatus('📷 Iniciando câmera...');
+
+  Quagga.init({
+    inputStream: {
+      name: 'Live', type: 'LiveStream', target: viewport,
+      constraints: {
+        facingMode: { ideal: 'environment' },
+        width: { min: 640, ideal: 1280 },
+        height: { min: 480, ideal: 720 },
+      },
+    },
+    locator: { patchSize: 'medium', halfSample: true },
+    numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
+    frequency: 10,
+    decoder: { readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'] },
+    locate: true,
+  }, function(err) {
+    if (err) {
+      setStatus('❌ Falha ao iniciar câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+      return;
+    }
+    Quagga.start();
+    SCAN.quaggaRunning = true;
+    setTimeout(() => {
+      const v = viewport.querySelector('video');
+      if (v) {
+        v.style.cssText = 'width:100%!important;height:100%!important;object-fit:cover!important';
+        window._activeCamStream = v.srcObject;
+      }
+    }, 600);
+    setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
+  });
+
+  let lastCode = '', lastTime = 0;
+  Quagga.onDetected(function(result) {
+    const code = result && result.codeResult && result.codeResult.code;
+    if (!code || code.length < 4) return;
+    const now = Date.now();
+    if (code === lastCode && now - lastTime < 2500) return;
+    lastCode = code; lastTime = now;
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    stopLiveScanner();
+    doScan(code);
+  });
 }}
 </html>
