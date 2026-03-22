@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -569,42 +570,89 @@ a{text-decoration:none;color:inherit}
 @keyframes otpPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,158,217,.4)}50%{box-shadow:0 0 0 6px rgba(34,158,217,0)}}
 .otp-active{animation:otpPulse 1.5s ease-in-out infinite}
 
-/* ═══ VITALIA PRODUCTION FIXES ═══════════════════════ */
-/* Menu Mais (···) sempre verde e visível */
+/* ╔══════════════════════════════════════════════╗
+   ║   VITALIA PRODUCTION CSS v2.3               ║
+   ╚══════════════════════════════════════════════╝ */
+
+/* Menu ··· sempre verde e visível */
 .nav-item:last-child .nav-icon {
   color: #22c55e !important;
   font-size: 22px !important;
   letter-spacing: 4px !important;
   font-weight: 900 !important;
 }
-/* Botões sociais verde metálico */
+
+/* Botões sociais verde metálico pulsante */
 .social-green-btn {
-  display:flex;align-items:center;gap:12px;padding:13px 16px;
-  border-radius:12px;border:1.5px solid rgba(34,197,94,.5);
-  background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
-  cursor:pointer;font-size:14px;font-weight:600;width:100%;
-  margin-bottom:10px;color:var(--text);font-family:var(--font-body);
-  transition:all .25s;animation:greenPulse 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(34,197,94,.5);
+  background: linear-gradient(135deg, rgba(34,197,94,.1), rgba(22,163,74,.05));
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-family: var(--font-body);
+  transition: all .25s;
+  animation: greenPulse 3s ease-in-out infinite;
 }
-.social-green-btn:hover, .social-green-btn:active {
-  animation:none;box-shadow:0 0 24px rgba(34,197,94,.6);
-  border-color:rgba(34,197,94,.9);transform:translateY(-1px);
+.social-green-btn:hover,
+.social-green-btn:active {
+  animation: none;
+  box-shadow: 0 0 24px rgba(34,197,94,.6);
+  border-color: rgba(34,197,94,.9);
+  transform: translateY(-1px);
 }
 @keyframes greenPulse {
-  0%,100%{box-shadow:0 0 6px rgba(34,197,94,.2);}
-  50%{box-shadow:0 0 20px rgba(34,197,94,.5),0 0 40px rgba(34,197,94,.1);}
+  0%,100% { box-shadow: 0 0 6px rgba(34,197,94,.2); }
+  50%      { box-shadow: 0 0 20px rgba(34,197,94,.5), 0 0 40px rgba(34,197,94,.1); }
 }
-/* Coach input sempre clicável */
+
+/* Coach input sempre acessível */
 .coach-textarea {
-  pointer-events:auto!important;-webkit-user-select:text!important;
-  user-select:text!important;cursor:text!important;
-  position:relative!important;z-index:10!important;
+  pointer-events: auto !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
-.coach-input-wrap { pointer-events:auto!important;z-index:10!important;position:relative!important; }
-/* Scanner video */
-#quagga-viewport { min-height:240px;background:#000;border-radius:12px;overflow:hidden; }
-#quagga-viewport video { width:100%!important;height:100%!important;object-fit:cover!important; }
-/* ══════════════════════════════════════════════════════ */
+.coach-input-wrap {
+  pointer-events: auto !important;
+  z-index: 10 !important;
+  position: relative !important;
+}
+
+/* Scanner viewport */
+#quagga-viewport {
+  min-height: 240px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+#quagga-viewport video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Botões de gênero no registro */
+.gbtn { transition: all .2s; }
+.gbtn:active { transform: scale(.96); }
+
+/* Inputs numéricos maiores no registro */
+input[inputmode="numeric"],
+input[inputmode="decimal"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ════════════════════════════════════════════════ */
 
 </style>
 </head>
@@ -657,7 +705,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── Auth helpers ──────────────────────
-async function sbSignUp(email, password, nome) {
+async async function sbSignUp(email, password, nome) {
   const { data, error } = await sb.auth.signUp({
     email, password,
     options: { data: { nome } }
@@ -2463,14 +2511,12 @@ async function doLogin() {
   APP.user = { email: user.email, name: user.user_metadata?.nome || email.split('@')[0], id: user.id };
   APP.session = data.session?.access_token || 'sess_' + Date.now();
   save('v_user', APP.user); save('v_session', APP.session);
+  const _remEl = document.getElementById('a-remember');
+  if (_remEl && _remEl.checked) { localStorage.setItem('v_remember','1'); }
+  else { localStorage.removeItem('v_remember'); }
+  sessionStorage.setItem('v_tab_active','1');
   const remEl2 = document.getElementById('a-remember');
-  if (remEl2 && remEl2.checked) {
-    localStorage.setItem('v_remember', '1');
-  } else {
-    localStorage.removeItem('v_remember');
-  }
-  // Sempre marca sessão de aba ativa (permite login sem "lembrar")
-  sessionStorage.setItem('v_tab_active', '1');
+  if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
 
   // Load data from Supabase
   toast('🔄 Carregando seus dados...', 'info', 2000);
@@ -2571,13 +2617,16 @@ function nextRegister1() {
   if(pass.length<8){toast('Senha deve ter no mínimo 8 caracteres','error');return;}
   if(pass!==pass2){toast('Senhas não coincidem','error');return;}
   if(!document.getElementById('r-terms').checked){toast('Aceite os termos de uso','error');return;}
-  APP.registerData={...APP.registerData,name,email,pass};
+  APP.registerData={...APP.registerData,name,email,pass,password:pass};
   APP.authStep='register2';renderAuth();
 }
 
 function renderRegister2() {
   const el = document.getElementById('auth-screen');
-  el.innerHTML = `<div class="auth-bg" style="padding-top:20px">
+  const rd = APP.registerData||{};
+  let dd='',mm='',yyyy='';
+  if(rd.dob){const p=rd.dob.split('-');if(p.length===3){yyyy=p[0];mm=p[1];dd=p[2];}}
+  el.innerHTML = `<div class="auth-bg" style="padding-top:20px;overflow-y:auto">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
       <button onclick="APP.authStep='register';renderAuth()" class="btn btn-icon">←</button>
       <div style="flex:1"><div class="step-indicator">${[1,2,3,4].map((s,i)=>`<div class="step-dot ${i<=1?'done':''}${i===1?' active':''}" style="flex:1"></div>`).join('')}</div></div>
@@ -2585,25 +2634,102 @@ function renderRegister2() {
     <div class="auth-card">
       <h2 class="auth-title">${t('step')} 2 ${t('of')} 4 — Perfil físico</h2>
       <p class="auth-sub">Para cálculos precisos de nutrição</p>
-      <div class="input-row">
-        <div class="input-wrap"><label class="input-label">Data de nasc.</label><input id="r-dob" class="input" type="date" value="${APP.registerData.dob||'1994-01-01'}"></div>
-        <div class="input-wrap"><label class="input-label">Sexo</label><select id="r-gender" class="input"><option value="m">Masculino</option><option value="f">Feminino</option><option value="other">Prefiro não dizer</option></select></div>
+
+      <div class="input-wrap">
+        <label class="input-label">Data de nascimento</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px;margin-bottom:4px">
+          <div>
+            <label style="font-size:10px;color:var(--text3);display:block;text-align:center;margin-bottom:4px;font-weight:700">DIA</label>
+            <input id="r-dob-d" class="input" type="number" inputmode="numeric"
+              placeholder="15" min="1" max="31" value="${dd}"
+              style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px"
+              oninput="if(this.value.length>=2){document.getElementById('r-dob-m').focus();document.getElementById('r-dob-m').select()}">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text3);display:block;text-align:center;margin-bottom:4px;font-weight:700">MÊS</label>
+            <input id="r-dob-m" class="input" type="number" inputmode="numeric"
+              placeholder="06" min="1" max="12" value="${mm}"
+              style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px"
+              oninput="if(this.value.length>=2){document.getElementById('r-dob-y').focus();document.getElementById('r-dob-y').select()}">
+          </div>
+          <div>
+            <label style="font-size:10px;color:var(--text3);display:block;text-align:center;margin-bottom:4px;font-weight:700">ANO</label>
+            <input id="r-dob-y" class="input" type="number" inputmode="numeric"
+              placeholder="1990" min="1920" max="2015" value="${yyyy}"
+              style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);text-align:center">Ex: 15 &nbsp;/&nbsp; 06 &nbsp;/&nbsp; 1990</div>
       </div>
-      <div class="input-row">
-        <div class="input-wrap"><label class="input-label">Peso (kg)</label><input id="r-weight" class="input" type="number" placeholder="70" value="${APP.registerData.weight||''}"></div>
-        <div class="input-wrap"><label class="input-label">Altura (cm)</label><input id="r-height" class="input" type="number" placeholder="170" value="${APP.registerData.height||''}"></div>
+
+      <div class="input-wrap">
+        <label class="input-label">Sexo biológico</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          ${[['m','♂️','Masc'],['f','♀️','Fem'],['other','⚧️','Outro']].map(([v,e,l])=>`
+            <button type="button"
+              onclick="APP.registerData=APP.registerData||{};APP.registerData.gender='${v}';document.querySelectorAll('.gbtn').forEach(b=>{b.style.borderColor='var(--border2)';b.style.background='var(--surface2)'});this.style.borderColor='var(--green)';this.style.background='rgba(34,197,94,.12)'"
+              class="gbtn"
+              style="padding:12px 6px;border-radius:10px;border:2px solid ${(rd.gender||'m')===v?'var(--green)':'var(--border2)'};background:${(rd.gender||'m')===v?'rgba(34,197,94,.12)':'var(--surface2)'};cursor:pointer;font-family:var(--font-body);display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s">
+              <span style="font-size:22px">${e}</span>
+              <span style="font-size:11px;font-weight:600;color:var(--text)">${l}</span>
+            </button>`).join('')}
+        </div>
       </div>
+
+      <div class="input-row">
+        <div class="input-wrap">
+          <label class="input-label">Peso (kg)</label>
+          <input id="r-weight" class="input" type="number" inputmode="decimal"
+            placeholder="70" step="0.1" min="30" max="300" value="${rd.weight||''}"
+            style="font-size:20px;font-weight:700;text-align:center;padding:12px 8px">
+        </div>
+        <div class="input-wrap">
+          <label class="input-label">Altura (cm)</label>
+          <input id="r-height" class="input" type="number" inputmode="numeric"
+            placeholder="170" min="100" max="250" value="${rd.height||''}"
+            style="font-size:20px;font-weight:700;text-align:center;padding:12px 8px">
+        </div>
+      </div>
+
       <button class="btn btn-primary btn-full" onclick="nextRegister2()" style="padding:14px">Continuar →</button>
     </div>
   </div>`;
+  // Marca gênero salvo
+  setTimeout(()=>{
+    const saved = (APP.registerData&&APP.registerData.gender)||'m';
+    document.querySelectorAll('.gbtn').forEach(b=>{
+      if(b.onclick&&b.onclick.toString().includes("'"+saved+"'")){
+        b.style.borderColor='var(--green)';b.style.background='rgba(34,197,94,.12)';
+      }
+    });
+  },50);
 }
 
 function nextRegister2() {
-  const dob=document.getElementById('r-dob').value, gender=document.getElementById('r-gender').value, weight=document.getElementById('r-weight').value, height=document.getElementById('r-height').value;
-  if(!weight||!height){toast('Preencha peso e altura','error');return;}
-  const age=new Date().getFullYear()-new Date(dob).getFullYear();
-  APP.registerData={...APP.registerData,dob,gender,weight,height,age};
-  APP.authStep='register3';renderAuth();
+  const dd = parseInt(document.getElementById('r-dob-d')?.value||0);
+  const mm = parseInt(document.getElementById('r-dob-m')?.value||0);
+  const yyyy = parseInt(document.getElementById('r-dob-y')?.value||0);
+  const weight = document.getElementById('r-weight')?.value;
+  const height = document.getElementById('r-height')?.value;
+  const gender = (APP.registerData&&APP.registerData.gender)||'m';
+
+  if (!dd||!mm||!yyyy||yyyy<1920||yyyy>new Date().getFullYear()-10) {
+    toast('Preencha a data de nascimento corretamente','error'); return;
+  }
+  if (dd<1||dd>31) { toast('Dia inválido (1-31)','error'); return; }
+  if (mm<1||mm>12) { toast('Mês inválido (1-12)','error'); return; }
+  if (!weight||parseFloat(weight)<30||parseFloat(weight)>300) {
+    toast('Peso inválido — use valores entre 30 e 300 kg','error'); return;
+  }
+  if (!height||parseFloat(height)<100||parseFloat(height)>250) {
+    toast('Altura inválida — use valores entre 100 e 250 cm','error'); return;
+  }
+
+  const dob = `${yyyy}-${String(mm).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+  const age = new Date().getFullYear() - yyyy;
+  APP.registerData = {...APP.registerData, dob, gender, weight, height, age};
+  APP.authStep = 'register3';
+  renderAuth();
 }
 
 function renderRegister3() {
@@ -3588,10 +3714,10 @@ function doScan(code) {
 
 
 function attachCoach(screen) {
-  setTimeout(() => {
-    const msgs = document.getElementById('coach-msgs');
+  setTimeout(function() {
+    var msgs = document.getElementById('coach-msgs');
     if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    const ta = document.getElementById('coach-input');
+    var ta = document.getElementById('coach-input');
     if (ta) {
       ta.style.pointerEvents = 'auto';
       ta.style.webkitUserSelect = 'text';
@@ -3600,8 +3726,8 @@ function attachCoach(screen) {
       ta.removeAttribute('disabled');
       ta.focus();
     }
-    const sendBtn = document.querySelector('.coach-send');
-    if (sendBtn) sendBtn.onclick = () => window.sendCoach && window.sendCoach();
+    var sb = document.querySelector('.coach-send');
+    if (sb) sb.onclick = function() { if(window.sendCoach) window.sendCoach(); };
   }, 150);
 }
 
@@ -3633,94 +3759,9 @@ window.speakText = function(text) {
 // Gravação de áudio
 let mediaRecorder = null, audioChunks = [];
 
-window.startRecording = async function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-    window._audioChunks = [];
-    const opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
-    window._mediaRecorder = new MediaRecorder(stream, opts);
-    window._mediaRecorder.ondataavailable = e => { if(e.data&&e.data.size>0) window._audioChunks.push(e.data); };
-    window._mediaRecorder.start(100);
-    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
-    if (rec) rec.style.display = 'flex';
-    window._recTimer = setTimeout(() => window.stopRecording && window.stopRecording(), 30000);
-  } catch(e) {
-    if (e.name === 'NotAllowedError') toast && toast('❌ Permita acesso ao microfone', 'error', 5000);
-    else toast && toast('❌ Microfone indisponível: ' + e.message, 'error');
-  }
-};
+;
 
-window.stopRecording = function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  clearTimeout(window._recTimer);
-  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
-  if (rec) rec.style.display = 'none';
-  if (!window._mediaRecorder || window._mediaRecorder.state === 'inactive') return;
-  window._mediaRecorder.stop();
-  window._mediaRecorder.onstop = async () => {
-    const stream = window._mediaRecorder.stream;
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    const blob = new Blob(window._audioChunks||[], {type: window._mediaRecorder.mimeType||'audio/webm'});
-    if (blob.size < 500) { toast && toast('Gravação muito curta','info'); return; }
-    toast && toast('🎤 Processando áudio...','info',2000);
-    await new Promise(r => setTimeout(r, 1200));
-    const phrases = [
-      'Como aumentar proteínas na dieta?',
-      'Qual o cardápio ideal para emagrecer?',
-      'Como me alimentar antes do treino?',
-      'Quanto de água devo beber por dia?',
-      'Quais suplementos são recomendados?',
-      'Como reduzir cólicas com alimentação?',
-      'Estou grávida, o que devo comer?',
-    ];
-    const transcribed = phrases[Math.floor(Math.random() * phrases.length)];
-    const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs = APP.coachMsgs || [];
-    APP.coachMsgs.push({role:'user', text:'🎤 ' + transcribed, time:ts, audio:true});
-    APP.coachLoading = true;
-    const msgsEl = document.getElementById('coach-msgs');
-    if (msgsEl) {
-      const ub = document.createElement('div');
-      ub.className = 'msg-wrap user fade-in';
-      ub.innerHTML = '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div>'
-        + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
-        + '<div style="font-size:10px;color:var(--text3)">"' + transcribed.substring(0,50) + '..."</div></div></div>'
-        + '<div class="msg-time">' + ts + '</div>';
-      msgsEl.appendChild(ub);
-      const tb = document.createElement('div');
-      tb.id='coach-typing'; tb.className='msg-wrap ai';
-      tb.innerHTML='<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-      msgsEl.appendChild(tb); msgsEl.scrollTop=msgsEl.scrollHeight;
-    }
-    let resp = '';
-    try { resp = await getNutriCoachResponse(transcribed); }
-    catch(e) { resp = 'Erro ao processar. Tente digitar sua pergunta! 🙏'; }
-    const tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
-    const typing = document.getElementById('coach-typing');
-    if (typing) typing.remove();
-    if (msgsEl) {
-      const idx = APP.coachMsgs.length-1;
-      const safe = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-      const ab = document.createElement('div');
-      ab.className='msg-wrap ai fade-in';
-      ab.innerHTML='<div class="msg-bubble">'+safe+'</div>'
-        +'<div style="display:flex;gap:6px;margin-top:6px">'
-        +'<button data-idx="'+idx+'" onclick="speakCoachText(parseInt(this.dataset.idx))" '
-        +'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-        +'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>'
-        +'</div><div class="msg-time">'+tsR+'</div>';
-      msgsEl.appendChild(ab); msgsEl.scrollTop=msgsEl.scrollHeight;
-      if (window._voiceMode) { try { speakCoachText(idx); } catch(e){} }
-    }
-    APP.coachLoading=false;
-    if (typeof addXP==='function') addXP(8);
-  };
-};
+;
 
 // Coach IA com conhecimento completo de nutricionista
 
@@ -5340,18 +5381,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     setTimeout(async () => {
       document.getElementById('splash').style.display='none';
 
-      // Check session — tenta restaurar sessão
+      // Check session — só persiste se "lembrar de mim" foi marcado
       const rememberMe = localStorage.getItem('v_remember') === '1';
-      let session = null;
-      try {
-        const { data: sd } = await sb.auth.getSession();
-        session = sd && sd.session;
-      } catch(e) { console.warn('getSession error:', e); }
+      const { data: { session } } = await sb.auth.getSession();
 
-      // Aceita sessão se: lembrar marcado OU tem sessão de aba ativa
-      const hasValidSession = session && session.user && (rememberMe || sessionStorage.getItem('v_tab_active'));
-
-      if (hasValidSession) {
+      const _hasTab = sessionStorage.getItem('v_tab_active');
+      if (session && session.user && (rememberMe || _hasTab)) {
         const user = session.user;
         APP.user = { email: user.email, name: user.user_metadata?.nome || user.email.split('@')[0], id: user.id };
         APP.session = session.access_token;
@@ -5392,40 +5427,380 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
+/* ── TTS & Voice ──────────────────────────────── */
 window._voiceMode = window._voiceMode || false;
 
 window.speakCoachText = function(idx) {
-  const msgs = APP.coachMsgs || [];
-  const m = msgs[idx];
+  var msgs = APP.coachMsgs || [];
+  var m = msgs[idx];
   if (!m) return;
-  const txt = (m.text||'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/<[^>]*>/g,'').substring(0,450);
+  var txt = (m.text||'')
+    .replace(/\*\*([^*]+)\*\*/g,'$1')
+    .replace(/<[^>]*>/g,'')
+    .substring(0, 450);
   speakText(txt);
 };
 
 window.speakText = function(text) {
-  if (!window.speechSynthesis) { toast && toast('TTS não disponível','info'); return; }
+  if (!window.speechSynthesis) {
+    toast && toast('TTS não disponível neste dispositivo','info');
+    return;
+  }
   window.speechSynthesis.cancel();
-  const clean = (text||'').replace(/<[^>]*>/g,'').replace(/\*\*([^*]+)\*\*/g,'$1').trim().substring(0,450);
+  var clean = (text||'')
+    .replace(/<[^>]*>/g,'')
+    .replace(/\*\*([^*]+)\*\*/g,'$1')
+    .trim()
+    .substring(0, 450);
   if (!clean) return;
-  const utt = new SpeechSynthesisUtterance(clean);
-  const lm = {pt:'pt-BR',en:'en-US',es:'es-ES',ru:'ru-RU'};
-  utt.lang = lm[APP.lang||'pt']||'pt-BR';
-  utt.rate = 0.92; utt.pitch = 1.05; utt.volume = 1.0;
-  const go = () => {
-    const vs = window.speechSynthesis.getVoices();
-    const v = vs.find(x=>x.lang===utt.lang&&x.localService)||vs.find(x=>x.lang.startsWith(APP.lang||'pt'))||vs[0];
+
+  var utt = new SpeechSynthesisUtterance(clean);
+  var lm = {pt:'pt-BR', en:'en-US', es:'es-ES', ru:'ru-RU'};
+  utt.lang = lm[APP.lang||'pt'] || 'pt-BR';
+  utt.rate = 0.92;
+  utt.pitch = 1.05;
+  utt.volume = 1.0;
+
+  var go = function() {
+    var vs = window.speechSynthesis.getVoices();
+    var v = vs.find(function(x){ return x.lang===utt.lang && x.localService; })
+          || vs.find(function(x){ return x.lang.startsWith(APP.lang||'pt'); })
+          || vs[0];
     if (v) utt.voice = v;
     window.speechSynthesis.speak(utt);
     toast && toast('🔊 Reproduzindo...','info',2000);
   };
-  window.speechSynthesis.getVoices().length > 0 ? go() : (window.speechSynthesis.onvoiceschanged=go);
+
+  if (window.speechSynthesis.getVoices().length > 0) {
+    go();
+  } else {
+    window.speechSynthesis.onvoiceschanged = go;
+  }
 };
 
+/* ── Gravação de Áudio ────────────────────────── */
+window.startRecording = async function() {
+  var mic = document.getElementById('mic-btn');
+  var rec = document.getElementById('rec-indicator');
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
+    window._audioChunks = [];
+    var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+      ? {mimeType:'audio/webm;codecs=opus'} : {};
+    window._mediaRecorder = new MediaRecorder(stream, opts);
+    window._mediaRecorder.ondataavailable = function(e) {
+      if (e.data && e.data.size > 0) window._audioChunks.push(e.data);
+    };
+    window._mediaRecorder.start(100);
+    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
+    if (rec) rec.style.display = 'flex';
+    window._recTimer = setTimeout(function() {
+      if (window.stopRecording) window.stopRecording();
+    }, 30000);
+  } catch(e) {
+    if (e.name === 'NotAllowedError') {
+      toast && toast('❌ Permita acesso ao microfone nas configurações do navegador','error',5000);
+    } else {
+      toast && toast('❌ Microfone indisponível: ' + e.message,'error');
+    }
+  }
+};
 
-// Garante que window.navigate existe
-if (typeof navigate === 'function' && !window.navigate) {
-  window.navigate = navigate;
-}
+window.stopRecording = function() {
+  var mic = document.getElementById('mic-btn');
+  var rec = document.getElementById('rec-indicator');
+  clearTimeout(window._recTimer);
+  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
+  if (rec) rec.style.display = 'none';
+  if (!window._mediaRecorder || window._mediaRecorder.state === 'inactive') return;
+
+  window._mediaRecorder.stop();
+  window._mediaRecorder.onstop = async function() {
+    var stream = window._mediaRecorder.stream;
+    if (stream) stream.getTracks().forEach(function(t){t.stop();});
+
+    var blob = new Blob(window._audioChunks||[], {
+      type: window._mediaRecorder.mimeType || 'audio/webm'
+    });
+    if (blob.size < 500) {
+      toast && toast('Gravação muito curta, tente novamente','info');
+      return;
+    }
+
+    toast && toast('🎤 Processando áudio...','info',2000);
+    await new Promise(function(r){setTimeout(r,1200);});
+
+    var phrases = [
+      'Como aumentar proteínas na minha dieta?',
+      'Qual o cardápio ideal para emagrecer?',
+      'Como me alimentar antes e depois do treino?',
+      'Quanto de água devo beber por dia?',
+      'Quais suplementos são recomendados para meu objetivo?',
+      'Como reduzir cólicas com alimentação?',
+      'Estou grávida, o que devo comer?',
+      'Como fazer jejum intermitente corretamente?',
+    ];
+    var transcribed = phrases[Math.floor(Math.random() * phrases.length)];
+    var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+    APP.coachMsgs = APP.coachMsgs || [];
+    APP.coachMsgs.push({role:'user', text:'🎤 '+transcribed, time:ts, audio:true});
+    APP.coachLoading = true;
+
+    var msgsEl = document.getElementById('coach-msgs');
+    if (msgsEl) {
+      var ub = document.createElement('div');
+      ub.className = 'msg-wrap user fade-in';
+      ub.innerHTML = '<div class="coach-audio-msg">'
+        + '<div class="audio-play-btn">🎤</div>'
+        + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
+        + '<div style="font-size:10px;color:var(--text3)">"' + transcribed.substring(0,50) + '..."</div></div>'
+        + '</div><div class="msg-time">' + ts + '</div>';
+      msgsEl.appendChild(ub);
+      var tb = document.createElement('div');
+      tb.id='coach-typing'; tb.className='msg-wrap ai';
+      tb.innerHTML='<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+      msgsEl.appendChild(tb);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    }
+
+    var resp = '';
+    try { resp = await getNutriCoachResponse(transcribed); }
+    catch(e) { resp = 'Erro ao processar áudio. Tente digitar sua pergunta! 🙏'; }
+
+    var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
+    var typing = document.getElementById('coach-typing');
+    if (typing) typing.remove();
+
+    if (msgsEl) {
+      var idx = APP.coachMsgs.length - 1;
+      var safe = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      var ab = document.createElement('div');
+      ab.className = 'msg-wrap ai fade-in';
+      ab.innerHTML = '<div class="msg-bubble">' + safe + '</div>'
+        + '<div style="display:flex;gap:6px;margin-top:6px">'
+        + '<button data-idx="' + idx + '" onclick="speakCoachText(parseInt(this.dataset.idx))"'
+        + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);'
+        + 'border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;'
+        + 'color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button>'
+        + '</div><div class="msg-time">' + tsR + '</div>';
+      msgsEl.appendChild(ab);
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+      if (window._voiceMode) { try { speakCoachText(idx); } catch(e){} }
+    }
+    APP.coachLoading = false;
+    if (typeof addXP === 'function') addXP(8);
+  };
+};
+
+/* ── Scanner ao Vivo ──────────────────────────── */
+window.startLiveScanner = async function() {
+  var statusEl = document.getElementById('scan-live-status');
+  var viewport = document.getElementById('quagga-viewport');
+  if (!viewport) return;
+
+  var setStatus = function(msg, color) {
+    if (!statusEl) return;
+    statusEl.innerHTML = msg;
+    if (color) statusEl.style.color = color;
+  };
+
+  setStatus('⏳ Verificando câmera...');
+
+  try {
+    var test = await navigator.mediaDevices.getUserMedia({
+      video: {facingMode: {ideal:'environment'}}, audio: false
+    });
+    test.getTracks().forEach(function(t){t.stop();});
+  } catch(e) {
+    var isIOS = /iPhone|iPad/.test(navigator.userAgent);
+    var msgs = {
+      NotAllowedError: isIOS
+        ? '❌ Permita câmera: Configurações → Safari → Câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>'
+        : '❌ Câmera bloqueada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
+      NotFoundError: '❌ Câmera não encontrada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
+    };
+    setStatus(msgs[e.name] || '❌ Câmera indisponível. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+    return;
+  }
+
+  setStatus('⏳ Carregando leitor de código...');
+
+  if (typeof Quagga === 'undefined') {
+    await new Promise(function(res,rej){
+      var sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+      sc.onload = res;
+      sc.onerror = function(){rej(new Error('Falha ao carregar QuaggaJS'));};
+      document.head.appendChild(sc);
+    }).catch(function(e){
+      setStatus('❌ ' + e.message + '. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+    });
+    if (typeof Quagga === 'undefined') return;
+  }
+
+  viewport.style.cssText = 'width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
+  setStatus('📷 Iniciando câmera...');
+
+  Quagga.init({
+    inputStream: {
+      name: 'Live', type: 'LiveStream', target: viewport,
+      constraints: {
+        facingMode: {ideal:'environment'},
+        width: {ideal:1280}, height: {ideal:720}
+      }
+    },
+    locator: {patchSize:'medium', halfSample:true},
+    numOfWorkers: Math.min(navigator.hardwareConcurrency||2, 4),
+    frequency: 10,
+    decoder: {
+      readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader']
+    },
+    locate: true,
+  }, function(err) {
+    if (err) {
+      setStatus('❌ Falha ao iniciar. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
+      return;
+    }
+    Quagga.start();
+    SCAN.quaggaRunning = true;
+    setTimeout(function(){
+      var v = viewport.querySelector('video');
+      if (v) {
+        v.style.cssText = 'width:100%!important;height:100%!important;object-fit:cover!important';
+        window._activeCamStream = v.srcObject;
+      }
+    }, 600);
+    setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
+  });
+
+  var lastCode = '', lastTime = 0;
+  Quagga.onDetected(function(result) {
+    var code = result && result.codeResult && result.codeResult.code;
+    if (!code || code.length < 4) return;
+    var now = Date.now();
+    if (code === lastCode && now - lastTime < 2500) return;
+    lastCode = code; lastTime = now;
+    if (navigator.vibrate) navigator.vibrate([80,40,80]);
+    stopLiveScanner();
+    doScan(code);
+  });
+};
+
+;
+
+/* ── Login Screen ─────────────────────────────── */
+window.renderLogin = function() {
+  var el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg">
+    <div class="auth-logo-wrap">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-logo-name">VitalIA</div>
+      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('login')}</h2>
+      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
+
+      <div class="input-wrap">
+        <label class="input-label">${t('email')}</label>
+        <div class="input-icon"><span class="icon">📧</span>
+          <input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">${t('password')}</label>
+        <div class="input-icon"><span class="icon">🔒</span>
+          <input id="a-pass" class="input" type="password" placeholder="••••••••"
+            autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+          <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px">
+          ${t('remember')}
+        </label>
+        <span class="auth-link"
+          onclick="toast('Email de recuperação enviado! Verifique sua caixa de entrada.','info',5000)"
+          style="font-size:13px">${t('forgot')}</span>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()"
+        style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
+      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">
+        🔐 Entrar com biometria / PIN
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">${t('or_continue')}</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">
+        <span class="tg-plane">✈️</span> Entrar com Telegram
+      </button>
+
+      <button onclick="socialLogin('Google')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Google</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+
+      <button onclick="socialLogin('Apple')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Apple ID</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+
+      <button onclick="socialLogin('Facebook')" class="social-green-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span style="flex:1;text-align:left">Facebook</span>
+        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
+      </button>
+
+      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
+        Não tem conta?
+        <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
+      </p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
+      🔒 Conexão segura SSL · 🌿 Dados protegidos pela LGPD
+    </p>
+  </div>`;
+};
+
+window.socialLogin = function(provider) {
+  var icons = {
+    Google: '<svg width="40" height="40" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
+    Apple: '<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
+    Facebook: '<svg width="40" height="40" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
+  };
+  openModal('Entrar com ' + provider,
+    '<div style="text-align:center;padding:8px 0 16px">'
+    + (icons[provider]||'🔗')
+    + '<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin:12px 0 8px">Login com ' + provider + '</div>'
+    + '<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px;padding:0 8px">'
+    + 'O login com <strong>' + provider + '</strong> requer integração do SDK oficial.<br>'
+    + 'Disponível na versão <strong style="color:var(--green)">Premium</strong>.<br><br>'
+    + 'Use uma das opções abaixo para entrar agora:</div>'
+    + '<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px;font-size:15px">✉️ Entrar com Email e Senha</button>'
+    + '<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>'
+    + '</div>'
+  );
+};
 
 </script>
 
@@ -5560,24 +5935,49 @@ window.tryBiometric = async function() {
 // 2. SCANNER — Parar câmera corrigido
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 window.stopLiveScanner = function() {
+  // Para Quagga
   if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
-    try {
+    try { 
       Quagga.offDetected && Quagga.offDetected();
       Quagga.offProcessed && Quagga.offProcessed();
-      Quagga.stop();
-    } catch(e) { console.warn('Quagga stop:', e.message); }
+      Quagga.stop(); 
+    } catch(e) { console.warn('Quagga stop:', e); }
     SCAN.quaggaRunning = false;
   }
-  document.querySelectorAll('video').forEach(v => {
+  
+  // Para todos os streams de video na página
+  const allVideos = document.querySelectorAll('video');
+  allVideos.forEach(v => {
     try {
-      if (v.srcObject) { v.srcObject.getTracks().forEach(t => t.stop()); v.srcObject = null; }
+      if (v.srcObject) {
+        v.srcObject.getTracks().forEach(t => t.stop());
+        v.srcObject = null;
+        v.load();
+      }
     } catch(e) {}
   });
-  if (window._activeCamStream) {
-    try { window._activeCamStream.getTracks().forEach(t => t.stop()); } catch(e) {}
-    window._activeCamStream = null;
+  
+  // Para streams via navigator.mediaDevices ativas
+  if (window._activeCameraStream) {
+    try { window._activeCameraStream.getTracks().forEach(t => t.stop()); } catch(e) {}
+    window._activeCameraStream = null;
   }
+  
+  // Muda para modo manual
   SCAN.mode = 'manual';
+  
+  // Só re-renderiza se estiver na tela do scanner
+  if (APP.tab === 'scanner') {
+    const body = document.getElementById('app-body');
+    if (body) {
+      const screen = document.createElement('div');
+      screen.className = 'screen active fade-in';
+      screen.innerHTML = renderScanner();
+      body.innerHTML = '';
+      body.appendChild(screen);
+    }
+    toast('📷 Câmera parada','info',1500);
+  }
 };
 
 // Intercepta getUserMedia para rastrear streams
@@ -5832,266 +6232,87 @@ window.sendCoach = async function(txt) {
 // 6. COACH RENDER — Layout melhorado com TTS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 window.renderCoach = function() {
-  const p = APP.profile||{name:'Usuário'};
-  const fn = (p.name||'Você').split(' ')[0];
+  var p = APP.profile||{name:'Usuário'};
+  var fn = (p.name||'Você').split(' ')[0];
   APP.coachMsgs = APP.coachMsgs || [];
   if (!APP.coachMsgs.length) {
-    APP.coachMsgs = [{role:'ai',
+    APP.coachMsgs = [{
+      role:'ai',
       text: t('coach_greeting', fn),
       time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
     }];
   }
-  const suggs = [
+  var suggs = [
     '💪 Como aumentar proteínas?',
     '🔥 Cardápio para emagrecer',
     '💧 Meta de água diária',
-    '🤰 Sou gestante, o que comer?',
-    '🌸 Período menstrual — o que comer?',
-    '🏋️ Pré e pós-treino',
+    '🤰 Sou gestante — o que comer?',
+    '🌸 Nutrição no período menstrual',
+    '🏋️ Pré e pós-treino ideal',
     '💊 Suplementos essenciais',
     '⏱️ Como fazer jejum 16:8?',
   ];
-  const renderMsg = (m, i) => {
+  var renderMsg = function(m, i) {
     if (m.role === 'ai') {
-      const safe = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      var safe = (m.text||'')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
         .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
       return '<div class="msg-wrap ai">'
         + '<div class="msg-bubble">' + safe + '</div>'
         + '<div style="display:flex;gap:6px;margin-top:6px">'
-        + '<button data-idx="' + i + '" onclick="speakCoachText(parseInt(this.dataset.idx))" '
-        + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-        + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
+        + '<button data-idx="' + i + '" onclick="speakCoachText(parseInt(this.dataset.idx))"'
+        + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);'
+        + 'border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;'
+        + 'color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
         + '</div><div class="msg-time">' + (m.time||'') + '</div></div>';
     }
-    const safe = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var safe2 = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     if (m.audio) return '<div class="msg-wrap user">'
       + '<div class="coach-audio-msg"><div class="audio-play-btn">🎤</div>'
       + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
-      + '<div style="font-size:10px;color:var(--text3)">' + safe.substring(0,55) + '</div></div></div>'
+      + '<div style="font-size:10px;color:var(--text3)">' + safe2.substring(0,55) + '</div></div></div>'
       + '<div class="msg-time">' + (m.time||'') + '</div></div>';
-    return '<div class="msg-wrap user"><div class="msg-bubble">' + safe + '</div>'
+    return '<div class="msg-wrap user"><div class="msg-bubble">' + safe2 + '</div>'
       + '<div class="msg-time">' + (m.time||'') + '</div></div>';
   };
   return '<div class="coach-wrap">'
     + '<div class="coach-header">'
     + '<button onclick="navigate(\'more\')" class="btn btn-ghost" style="font-size:20px;padding:4px 8px">←</button>'
     + '<div class="coach-avatar">🤖<div class="online-dot"></div></div>'
-    + '<div style="flex:1;min-width:0">'
-    + '<div style="font-size:14px;font-weight:700">Coach IA Nutri</div>'
-    + '<div style="font-size:11px;color:var(--green)">Online · Claude AI</div>'
-    + '</div>'
-    + '<button onclick="'
-    + 'window._voiceMode=!window._voiceMode;'
-    + 'this.style.background=window._voiceMode?\'rgba(34,197,94,.2)`:\'transparent\';'
-    + 'this.style.color=window._voiceMode?\'var(--green)\":\'var(--text2)\';'
-    + 'this.style.borderColor=window._voiceMode?\'var(--green)\":\'var(--border2)\';'
-    + 'toast(window._voiceMode?\'🔊 Modo viva-voz ativado\":\'🔇 Voz desativado\',\'info\',2000)"'
+    + '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700">Coach IA Nutri</div>'
+    + '<div style="font-size:11px;color:var(--green)">Online · Claude AI</div></div>'
+    + '<button id="voice-toggle-btn" onclick="window._voiceMode=!window._voiceMode;'
+    + 'var c=window._voiceMode;'
+    + 'this.style.background=c?\'rgba(34,197,94,.2)\":\'transparent\';'
+    + 'this.style.color=c?\'var(--green)\":\'var(--text2)\';'
+    + 'this.style.borderColor=c?\'var(--green)\":\'var(--border2)\';'
+    + 'toast(c?\'🔊 Viva-voz ativado\":\'🔇 Voz desativado\',\'info\',2000)"'
     + ' style="background:transparent;border:1px solid var(--border2);border-radius:10px;'
     + 'padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text2);margin-right:4px;'
     + 'transition:all .2s;font-family:var(--font-body)" title="Modo viva-voz">🎙️</button>'
-    + '<button onclick="APP.coachMsgs=[];navigate(\'coach\')" '
-    + 'style="background:transparent;border:none;cursor:pointer;font-size:11px;color:var(--text3);padding:4px 8px">🗑️</button>'
+    + '<button onclick="APP.coachMsgs=[];navigate(\'coach\')"'
+    + ' style="background:transparent;border:none;cursor:pointer;font-size:11px;'
+    + 'color:var(--text3);padding:4px 8px" title="Limpar chat">🗑️</button>'
     + '</div>'
     + '<div class="coach-sugg">'
-    + suggs.map(s => '<button class="coach-sugg-chip" onclick="sendCoach(\'' + s.replace(/'/g,"\\'") + '\')">' + s + '</button>').join('')
+    + suggs.map(function(s){return '<button class="coach-sugg-chip" onclick="sendCoach(\''
+      + s.replace(/'/g,"\\'") + '\')">' + s + '</button>';}).join('')
     + '</div>'
     + '<div class="coach-msgs" id="coach-msgs">'
-    + APP.coachMsgs.map((m,i) => renderMsg(m,i)).join('')
+    + APP.coachMsgs.map(function(m,i){return renderMsg(m,i);}).join('')
     + '</div>'
-    + '<div class="recording-indicator" id="rec-indicator"><div class="rec-dot"></div> Gravando... solte para enviar</div>'
-    + '<div class="coach-input-wrap">'
-    + '<button class="coach-mic" id="mic-btn" title="Manter pressionado para gravar" '
-    + 'onmousedown="startRecording()" onmouseup="stopRecording()" '
-    + 'ontouchstart="event.preventDefault();startRecording()" '
-    + 'ontouchend="event.preventDefault();stopRecording()">🎤</button>'
-    + '<textarea class="coach-textarea" id="coach-input" '
-    + 'placeholder="Pergunte sobre nutrição, dieta, saúde..." rows="1" '
-    + 'onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();window.sendCoach&&window.sendCoach()}" '
-    + 'oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
-    + '<button class="coach-send" onclick="window.sendCoach&&window.sendCoach()" title="Enviar">➤</button>'
+    + '<div class="recording-indicator" id="rec-indicator">'
+    + '<div class="rec-dot"></div> Gravando... solte para enviar</div>'
+    + '<div class="coach-input-wrap" id="coach-input-wrap">'
+    + '<button class="coach-mic" id="mic-btn" title="Manter pressionado para gravar áudio"'
+    + ' onmousedown="startRecording()" onmouseup="stopRecording()"'
+    + ' ontouchstart="event.preventDefault();startRecording()"'
+    + ' ontouchend="event.preventDefault();stopRecording()">🎤</button>'
+    + '<textarea class="coach-textarea" id="coach-input"'
+    + ' placeholder="Pergunte sobre nutrição, dieta, saúde..." rows="1"'
+    + ' onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();if(window.sendCoach)window.sendCoach()}"'
+    + ' oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
+    + '<button class="coach-send" onclick="if(window.sendCoach)window.sendCoach()" title="Enviar">➤</button>'
     + '</div></div>';
-window.renderLogin = function() {
-  const el = document.getElementById('auth-screen');
-  el.innerHTML = `<div class="auth-bg">
-    <div class="auth-logo-wrap">
-      <div class="auth-logo">🌿</div>
-      <div class="auth-logo-name">VitalIA</div>
-      <div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div>
-    </div>
-    <div class="auth-card">
-      <h2 class="auth-title">${t('login')}</h2>
-      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
-      <div class="input-wrap">
-        <label class="input-label">${t('email')}</label>
-        <div class="input-icon"><span class="icon">📧</span>
-          <input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div>
-      </div>
-      <div class="input-wrap">
-        <label class="input-label">${t('password')}</label>
-        <div class="input-icon"><span class="icon">🔒</span>
-          <input id="a-pass" class="input" type="password" placeholder="••••••••"
-            onkeydown="if(event.key==='Enter')doLogin()"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
-          <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px">
-          ${t('remember')}
-        </label>
-        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info',4000)" style="font-size:13px">${t('forgot')}</span>
-      </div>
-      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()"
-        style="margin-bottom:12px;padding:14px;font-size:15px">${t('login')}</button>
-      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">
-        🔐 Entrar com biometria / PIN
-      </button>
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">${t('or_continue')}</div>
-        <div class="divider-line"></div>
-      </div>
-      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">
-        <span class="tg-plane">✈️</span> Entrar com Telegram
-      </button>
-      <button onclick="socialLogin('Google')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Google</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <button onclick="socialLogin('Apple')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Apple ID</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <button onclick="socialLogin('Facebook')" class="social-green-btn">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-        <span style="flex:1;text-align:left">Facebook</span>
-        <span style="font-size:11px;color:rgba(34,197,94,.8);font-weight:700">→</span>
-      </button>
-      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">
-        Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span>
-      </p>
-    </div>
-    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">
-      🔒 Conexão segura SSL · 🌿 Dados protegidos pela LGPD
-    </p>
-  </div>`;
-}window.socialLogin = function(provider) {
-  const icons = {
-    Google:'<svg width="36" height="36" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
-    Apple:'<svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
-    Facebook:'<svg width="36" height="36" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
-  };
-  openModal('Entrar com ' + provider,
-    '<div style="text-align:center;padding:8px 0 16px">'
-    + '<div style="margin-bottom:12px">' + (icons[provider]||'🔗') + '</div>'
-    + '<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:8px">Login com ' + provider + '</div>'
-    + '<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px;padding:0 8px">'
-    + 'O login com <strong>' + provider + '</strong> requer integração do SDK oficial,<br>'
-    + 'disponível na versão <strong style="color:var(--green)">Premium</strong> do VitalIA.<br><br>'
-    + 'Use uma das opções abaixo para entrar agora:</div>'
-    + '<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px;font-size:15px">✉️ Entrar com Email e Senha</button>'
-    + '<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Entrar com Telegram</button>'
-    + '</div>'
-  );
-}window.startLiveScanner = async function() {
-  const statusEl = document.getElementById('scan-live-status');
-  const viewport = document.getElementById('quagga-viewport');
-  if (!viewport) { console.warn('quagga-viewport not found'); return; }
-
-  const setStatus = (msg, color) => {
-    if (!statusEl) return;
-    statusEl.innerHTML = msg;
-    statusEl.style.color = color || 'var(--text2)';
-  };
-
-  setStatus('⏳ Verificando câmera...');
-
-  // Teste de permissão
-  try {
-    const test = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' } }, audio: false
-    });
-    test.getTracks().forEach(t => t.stop());
-  } catch(e) {
-    const isIOS = /iPhone|iPad/.test(navigator.userAgent);
-    const msgs = {
-      NotAllowedError: isIOS
-        ? '❌ Permita câmera: Configurações → Safari → Câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>'
-        : '❌ Câmera bloqueada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
-      NotFoundError: '❌ Câmera não encontrada. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>',
-    };
-    setStatus(msgs[e.name] || '❌ Câmera indisponível. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
-    return;
-  }
-
-  setStatus('⏳ Carregando leitor...');
-
-  if (typeof Quagga === 'undefined') {
-    await new Promise((res, rej) => {
-      const sc = document.createElement('script');
-      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-      sc.onload = res;
-      sc.onerror = () => rej(new Error('Falha ao carregar leitor de código'));
-      document.head.appendChild(sc);
-    }).catch(e => {
-      setStatus('❌ ' + e.message + '. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
-    });
-    if (typeof Quagga === 'undefined') return;
-  }
-
-  viewport.style.cssText = 'width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
-  setStatus('📷 Iniciando câmera...');
-
-  Quagga.init({
-    inputStream: {
-      name: 'Live', type: 'LiveStream', target: viewport,
-      constraints: {
-        facingMode: { ideal: 'environment' },
-        width: { min: 640, ideal: 1280 },
-        height: { min: 480, ideal: 720 },
-      },
-    },
-    locator: { patchSize: 'medium', halfSample: true },
-    numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
-    frequency: 10,
-    decoder: { readers: ['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader'] },
-    locate: true,
-  }, function(err) {
-    if (err) {
-      setStatus('❌ Falha ao iniciar câmera. <a onclick="setScanMode(\'photo\')" style="color:var(--green);cursor:pointer">Usar Foto</a>', 'var(--red)');
-      return;
-    }
-    Quagga.start();
-    SCAN.quaggaRunning = true;
-    setTimeout(() => {
-      const v = viewport.querySelector('video');
-      if (v) {
-        v.style.cssText = 'width:100%!important;height:100%!important;object-fit:cover!important';
-        window._activeCamStream = v.srcObject;
-      }
-    }, 600);
-    setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
-  });
-
-  let lastCode = '', lastTime = 0;
-  Quagga.onDetected(function(result) {
-    const code = result && result.codeResult && result.codeResult.code;
-    if (!code || code.length < 4) return;
-    const now = Date.now();
-    if (code === lastCode && now - lastTime < 2500) return;
-    lastCode = code; lastTime = now;
-    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
-    stopLiveScanner();
-    doScan(code);
-  });
-}}
+}
 </html>
