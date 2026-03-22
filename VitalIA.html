@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -569,14 +569,15 @@ a{text-decoration:none;color:inherit}
 @keyframes otpPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,158,217,.4)}50%{box-shadow:0 0 0 6px rgba(34,158,217,0)}}
 .otp-active{animation:otpPulse 1.5s ease-in-out infinite}
 
-/* VitalIA v4.0 — Integrado */
-.social-green-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;color:var(--text);font-family:var(--font-body);transition:all .25s;animation:greenPulse 3s ease-in-out infinite;}
-.social-green-btn:hover,.social-green-btn:active{animation:none;box-shadow:0 0 24px rgba(34,197,94,.6);border-color:rgba(34,197,94,.9);transform:translateY(-1px);}
-@keyframes greenPulse{0%,100%{box-shadow:0 0 6px rgba(34,197,94,.2);}50%{box-shadow:0 0 20px rgba(34,197,94,.5),0 0 40px rgba(34,197,94,.1);}}
+/* VitalIA v4.1 — Correções */
 .nav-item:last-child .nav-icon{color:#22c55e!important;font-size:22px!important;letter-spacing:4px!important;font-weight:900!important;}
+.social-green-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;color:var(--text);font-family:var(--font-body);transition:all .25s;animation:greenPulse 3s ease-in-out infinite;}
+.social-green-btn:hover,.social-green-btn:active{animation:none;box-shadow:0 0 24px rgba(34,197,94,.6);border-color:rgba(34,197,94,.9);}
+@keyframes greenPulse{0%,100%{box-shadow:0 0 6px rgba(34,197,94,.2);}50%{box-shadow:0 0 20px rgba(34,197,94,.5),0 0 40px rgba(34,197,94,.1);}}
+#quagga-viewport{min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
+#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;}
+#quagga-viewport canvas{position:absolute!important;top:0!important;left:0!important;}
 .coach-textarea{pointer-events:auto!important;-webkit-user-select:text!important;user-select:text!important;cursor:text!important;}
-#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
-#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
 
 </style>
 </head>
@@ -2411,51 +2412,39 @@ function renderAuth() {
   else if (step === 'pin') renderPinScreen();
 }
 
-window.renderLogin=function(){
-  var el=document.getElementById('auth-screen');
-  el.innerHTML='<div class="auth-bg">'
-    +'<div class="auth-logo-wrap"><div class="auth-logo">🌿</div>'
-    +'<div class="auth-logo-name">VitalIA</div>'
-    +'<div style="font-size:12px;color:rgba(34,197,94,.7);margin-top:2px">Saúde com Inteligência</div></div>'
-    +'<div class="auth-card">'
-    +'<h2 class="auth-title">'+t('login')+'</h2>'
-    +'<p class="auth-sub">Bem-vindo de volta!</p>'
-    +'<div class="input-wrap"><label class="input-label">'+t('email')+'</label>'
-    +'<div class="input-icon"><span class="icon">📧</span>'
-    +'<input id="a-email" class="input" type="email" placeholder="seu@email.com" autocomplete="email"></div></div>'
-    +'<div class="input-wrap"><label class="input-label">'+t('password')+'</label>'
-    +'<div class="input-icon"><span class="icon">🔒</span>'
-    +'<input id="a-pass" class="input" type="password" placeholder="Mínimo 8 caracteres" onkeydown="if(event.key===\'Enter\')doLogin()"></div></div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">'
-    +'<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">'
-    +'<input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px"> '+t('remember')+'</label>'
-    +'<span class="auth-link" onclick="toast(\'Email enviado!\',\'info\')" style="font-size:13px">'+t('forgot')+'</span></div>'
-    +'<button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-bottom:12px;padding:14px;font-size:15px">'+t('login')+'</button>'
-    +'<button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:18px">🔐 Biometria / PIN</button>'
-    +'<div class="divider"><div class="divider-line"></div>'
-    +'<div class="divider-text">'+t('or_continue')+'</div><div class="divider-line"></div></div>'
-    +'<button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:12px">'
-    +'<span class="tg-plane">✈️</span> Entrar com Telegram</button>'
-    +'<button onclick="socialLogin(\'Google\')" class="social-green-btn">'
-    +'<svg width="20" height="20" viewBox="0 0 24 24" style="flex-shrink:0">'
-    +'<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>'
-    +'<path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>'
-    +'<path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>'
-    +'<path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>'
-    +'<span style="flex:1">Google</span><span style="font-size:11px;color:rgba(34,197,94,.8)">→</span></button>'
-    +'<button onclick="socialLogin(\'Apple\')" class="social-green-btn">'
-    +'<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0">'
-    +'<path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>'
-    +'<span style="flex:1">Apple ID</span><span style="font-size:11px;color:rgba(34,197,94,.8)">→</span></button>'
-    +'<button onclick="socialLogin(\'Facebook\')" class="social-green-btn">'
-    +'<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" style="flex-shrink:0">'
-    +'<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
-    +'<span style="flex:1">Facebook</span><span style="font-size:11px;color:rgba(34,197,94,.8)">→</span></button>'
-    +'<p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">'
-    +'Não tem conta? <span class="auth-link" onclick="APP.authStep=\'register\';renderAuth()">'+t('register')+'</span></p>'
-    +'</div>'
-    +'<p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px;padding-bottom:16px">'
-    +'🔒 SSL · 🌿 LGPD</p></div>';
+function renderLogin() {
+  const el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg">
+    <div class="auth-logo-wrap">
+      <div class="auth-logo">🌿</div>
+      <div class="auth-logo-name">VitalIA</div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('login')}</h2>
+      <p class="auth-sub">Bem-vindo de volta! Continue sua jornada.</p>
+      <div class="input-wrap">
+        <label class="input-label">${t('email')}</label>
+        <div class="input-icon"><span class="icon">📧</span><input id="a-email" class="input" type="email" placeholder="seu@email.com"></div>
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">${t('password')}</label>
+        <div class="input-icon"><span class="icon">🔒</span><input id="a-pass" class="input" type="password" placeholder="••••••••"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)"><input type="checkbox" id="a-remember" style="accent-color:var(--green)"> ${t('remember')}</label>
+        <span class="auth-link" onclick="toast('Email de recuperação enviado!','info')" style="font-size:13px">${t('forgot')}</span>
+      </div>
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()" style="margin-bottom:12px;padding:14px">${t('login')}</button>
+      <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:16px">🔐 Entrar com biometria / PIN</button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">${t('or_continue')}</div><div class="divider-line"></div></div>
+      <button class="tg-login-btn" onclick="telegramLogin()" style="margin-bottom:10px"><span class="tg-plane">✈️</span> Entrar com Telegram</button>
+      <button class="social-btn" onclick="socialLogin('Google')"><span>🇬</span> Google</button>
+      <button class="social-btn" onclick="socialLogin('Apple')"><span>🍎</span> Apple ID</button>
+      <button class="social-btn" onclick="socialLogin('Facebook')"><span>📘</span> Facebook</button>
+      <p style="text-align:center;font-size:13px;color:var(--text2);margin-top:16px">Não tem conta? <span class="auth-link" onclick="APP.authStep='register';renderAuth()">${t('register')}</span></p>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--text3);margin-top:16px">🔒 Login seguro com criptografia</p>
+  </div>`;
 }
 
 async function doLogin() {
@@ -2481,8 +2470,7 @@ async function doLogin() {
   APP.session = data.session?.access_token || 'sess_' + Date.now();
   save('v_user', APP.user); save('v_session', APP.session);
   var _re=document.getElementById('a-remember');
-  if(_re&&_re.checked){localStorage.setItem('v_remember','1');}
-  else{localStorage.removeItem('v_remember');}
+  if(_re&&_re.checked){localStorage.setItem('v_remember','1');}else{localStorage.removeItem('v_remember');}
   sessionStorage.setItem('v_tab_active','1');
   const remEl2 = document.getElementById('a-remember');
   if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
@@ -2497,117 +2485,148 @@ async function doLogin() {
 }
 
 function socialLogin(provider) {
-  var icons={
-    Google:'<svg width="40" height="40" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>',
-    Apple:'<svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
-    Facebook:'<svg width="40" height="40" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'
-  };
-  openModal('Entrar com '+provider,
-    '<div style="text-align:center;padding:16px 0">'+(icons[provider]||'🔗')
-    +'<div style="font-family:var(--font-serif);font-size:18px;font-weight:700;margin:12px 0 8px">Login com '+provider+'</div>'
-    +'<div style="font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:20px">Requer SDK oficial do provedor.<br>Use email/senha ou Telegram agora.</div>'
-    +'<button class="btn btn-primary btn-full" onclick="closeModal()" style="padding:13px;margin-bottom:10px">✉️ Email e Senha</button>'
-    +'<button class="tg-login-btn" onclick="closeModal();telegramLogin()" style="margin:0">✈️ Telegram</button></div>');
+  toast(`Login com ${provider} em desenvolvimento`, 'info');
+  setTimeout(() => {
+    APP.user = {email:`user@${provider.toLowerCase()}.com`, name:'Usuário Demo'};
+    APP.profile = {name:'Usuário Demo', weight:78, height:175, age:30, gender:'m', goal:'lose', activity:'mod', restrictions:[]};
+    APP.calc = calcProfile(APP.profile);
+    APP.water = 0; APP.meals = [];
+    APP.weightHistory = WEIGHT_HISTORY.map((p,i)=>({date:new Date(Date.now()-i*86400000).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),peso:p})).reverse();
+    APP.session = 'sess_' + Date.now();
+    save('v_user', APP.user); save('v_profile', APP.profile); save('v_session', APP.session);
+    APP.authStep = 'biometric'; renderAuth();
+  }, 800);
 }
 
 async function tryBiometric() {
-  // Try WebAuthn first (real fingerprint/FaceID)
-  if (window.PublicKeyCredential && localStorage.getItem('v_webauthn_id')) {
+  var webauthnId = localStorage.getItem('v_webauthn_id');
+  var hasBiometric = localStorage.getItem('v_biometric');
+
+  // Sem biometria configurada
+  if (!hasBiometric) {
+    toast('⚠️ Configure a biometria primeiro nas Configurações', 'info', 3000);
+    return;
+  }
+
+  // Tem WebAuthn registrado — usa verificação real
+  if (webauthnId && window.PublicKeyCredential && navigator.credentials) {
     try {
-      const credId = localStorage.getItem('v_webauthn_id');
-      const challenge = new Uint8Array(32);
+      var challenge = new Uint8Array(32);
       window.crypto.getRandomValues(challenge);
-      const assertion = await navigator.credentials.get({
+
+      var allowCredentials = [];
+      try {
+        allowCredentials = [{
+          id: Uint8Array.from(atob(webauthnId), function(c) { return c.charCodeAt(0); }),
+          type: 'public-key'
+        }];
+      } catch(e) {}
+
+      var assertion = await navigator.credentials.get({
         publicKey: {
-          challenge,
-          allowCredentials: [{
-            id: Uint8Array.from(atob(credId), c => c.charCodeAt(0)),
-            type: 'public-key',
-          }],
-          userVerification:'required',
-          timeout: 30000,
+          challenge: challenge,
+          allowCredentials: allowCredentials,
+          userVerification: 'required',
+          timeout: 60000
         }
       });
+
       if (assertion) {
-        toast('✅ Biometria verificada!','success');
-        setTimeout(async () => {
-          APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
-          APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
+        toast('✅ Biometria verificada!', 'success');
+        setTimeout(async function() {
+          APP.user = JSON.parse(localStorage.getItem('v_user') || 'null') || { name: 'Usuário', email: 'user@demo.com' };
+          APP.profile = JSON.parse(localStorage.getItem('v_profile') || 'null');
+          if (!APP.profile) APP.profile = { name: 'Usuário', weight: 70, height: 170, age: 30, gender: 'm', goal: 'lose', activity: 'mod', restrictions: [] };
           APP.calc = calcProfile(APP.profile);
-          APP.water = APP.water||0; APP.meals=[];
+          APP.water = 0;
+          APP.meals = [];
           APP.session = 'bio_' + Date.now();
           save('v_session', APP.session);
-          // Sync from Supabase if user has id
-          if (APP.user?.id) await syncFromSupabase(APP.user.id);
+          sessionStorage.setItem('v_tab_active', '1');
+          if (APP.user && APP.user.id) {
+            try { await syncFromSupabase(APP.user.id); } catch(e) {}
+          }
           finishAuth();
-        }, 600);
+        }, 500);
         return;
       }
     } catch(e) {
-      // WebAuthn failed, fall through to PIN
+      console.warn('WebAuthn verify error:', e.name);
+      if (e.name === 'NotAllowedError') {
+        toast('❌ Verificação biométrica cancelada', 'error');
+        return;
+      }
+      // Outros erros — cai para PIN
     }
   }
-  // Fallback: PIN or simple biometric simulation
-  if (localStorage.getItem('v_biometric')) {
-    // Show device biometric prompt simulation
-    if (window.PublicKeyCredential) {
-      toast('🔐 Verificando biometria...','info',1500);
-      setTimeout(async () => {
-        APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
-        APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
-        APP.calc = calcProfile(APP.profile);
-        APP.water = APP.water||0; APP.meals=[];
-        APP.session = 'bio_' + Date.now();
-        save('v_session', APP.session);
-        if (APP.user?.id) await syncFromSupabase(APP.user.id);
-        toast('✅ Biometria verificada!','success');
-        finishAuth();
-      }, 1500);
-    } else {
-      toast('✅ Acesso liberado!','success');
-      setTimeout(finishAuth, 600);
-    }
-  } else {
-    APP.authStep = 'pin'; APP.pinInput = ''; renderAuth();
-  }
+
+  // Fallback: PIN
+  APP.authStep = 'pin';
+  APP.pinInput = '';
+  renderAuth();
 }
 
 async function activateBiometric() {
-  // Try real WebAuthn registration
-  if (window.PublicKeyCredential && navigator.credentials) {
-    try {
-      const challenge = new Uint8Array(32);
-      window.crypto.getRandomValues(challenge);
-      const userId = new Uint8Array(16);
-      window.crypto.getRandomValues(userId);
+  // Verifica suporte WebAuthn
+  if (!window.PublicKeyCredential || !navigator.credentials) {
+    // Fallback: armazena flag simples
+    localStorage.setItem('v_biometric', '1');
+    toast('✅ Biometria ativada (modo básico)', 'success', 3000);
+    setTimeout(function() { finishAuth(); }, 1000);
+    return;
+  }
 
-      const credential = await navigator.credentials.create({
-        publicKey: {
-          challenge,
-          rp: { name: 'VitalIA', id: location.hostname || 'localhost' },
-          user: { id: userId, name: APP.user?.email || 'user', displayName: APP.profile?.name || 'Usuário' },
-          pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
-          authenticatorSelection: { userVerification:'required', residentKey: 'preferred' },
-          timeout: 30000,
-        }
-      });
+  try {
+    var challenge = new Uint8Array(32);
+    window.crypto.getRandomValues(challenge);
+    var userId = new TextEncoder().encode(APP.user && APP.user.email ? APP.user.email : 'vitalia_user_' + Date.now());
 
-      if (credential) {
-        const credId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
-        localStorage.setItem('v_webauthn_id', credId);
-        localStorage.setItem('v_biometric', '1');
-        toast('✅ Biometria registrada! Próximo acesso: toque no sensor.','success',3000);
-        setTimeout(finishAuth, 1200);
-        return;
+    var credential = await navigator.credentials.create({
+      publicKey: {
+        challenge: challenge,
+        rp: { name: 'VitalIA', id: location.hostname || 'localhost' },
+        user: {
+          id: userId,
+          name: (APP.user && APP.user.email) || 'user@vitalia.app',
+          displayName: (APP.profile && APP.profile.name) || 'Usuário VitalIA'
+        },
+        pubKeyCredParams: [
+          { alg: -7, type: 'public-key' },
+          { alg: -257, type: 'public-key' }
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required',
+          residentKey: 'preferred'
+        },
+        timeout: 60000
       }
-    } catch(e) {
-      // WebAuthn not available or user cancelled
+    });
+
+    if (credential) {
+      var credId = btoa(String.fromCharCode.apply(null, new Uint8Array(credential.rawId)));
+      localStorage.setItem('v_webauthn_id', credId);
+      localStorage.setItem('v_webauthn_email', (APP.user && APP.user.email) || '');
+      localStorage.setItem('v_biometric', '1');
+      toast('✅ Biometria registrada! Próximo acesso com digital/Face ID.', 'success', 4000);
+      setTimeout(function() { finishAuth(); }, 1200);
+    }
+  } catch(e) {
+    console.warn('WebAuthn error:', e.name, e.message);
+    if (e.name === 'NotAllowedError') {
+      toast('❌ Biometria cancelada pelo usuário', 'error');
+    } else if (e.name === 'InvalidStateError') {
+      // Já registrado — tenta verificar
+      toast('ℹ️ Biometria já configurada neste dispositivo', 'info');
+      localStorage.setItem('v_biometric', '1');
+      setTimeout(function() { finishAuth(); }, 1000);
+    } else {
+      // Fallback para dispositivos sem suporte completo
+      localStorage.setItem('v_biometric', '1');
+      toast('✅ Biometria ativada no modo compatível', 'success', 3000);
+      setTimeout(function() { finishAuth(); }, 1000);
     }
   }
-  // Fallback
-  localStorage.setItem('v_biometric','1');
-  toast('✅ Biometria ativada! Próximo acesso será instantâneo.','success',3000);
-  setTimeout(finishAuth, 1200);
 }
 
 function renderBiometricOffer() {
@@ -2699,63 +2718,33 @@ function nextRegister1() {
 }
 
 function renderRegister2() {
-  var el=document.getElementById('auth-screen');
-  var rd=APP.registerData||{};
-  var dDay='',dMon='',dYear='';
-  if(rd.dob){var dp=rd.dob.split('-');if(dp.length===3){dYear=dp[0];dMon=dp[1];dDay=dp[2];}}
-  var genderBtns=['m','f','other'].map(function(v){
-    var labels={m:'♂️ Masculino',f:'♀️ Feminino',other:'⚧️ Outro'};
-    var active=(rd.gender||'m')===v;
-    var parts=labels[v].split(' ');
-    return '<button onclick="document.querySelectorAll(\'.gb\').forEach(function(b){b.style.borderColor=\'var(--border2)\';b.style.background=\'var(--surface2)\';});this.style.borderColor=\'var(--green)\';this.style.background=\'rgba(34,197,94,.1)\';APP.registerData=APP.registerData||{};APP.registerData.gender=\''+v+'\'" class="gb" style="padding:12px 6px;border-radius:10px;border:2px solid '+(active?'var(--green)':'var(--border2)')+';background:'+(active?'rgba(34,197,94,.1)':'var(--surface2)')+';cursor:pointer;font-family:var(--font-body);display:flex;flex-direction:column;align-items:center;gap:4px"><span style="font-size:20px">'+parts[0]+'</span><span style="font-size:10px;font-weight:600">'+parts.slice(1).join(' ')+'</span></button>';
-  }).join('');
-  el.innerHTML='<div class="auth-bg" style="padding-top:20px;overflow-y:auto">'
-    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">'
-    +'<button onclick="APP.authStep=\'register\';renderAuth()" class="btn btn-icon">←</button>'
-    +'<div style="flex:1"><div class="step-indicator">'
-    +'<div class="step-dot done" style="flex:1"></div><div class="step-dot done active" style="flex:1"></div>'
-    +'<div class="step-dot" style="flex:1"></div><div class="step-dot" style="flex:1"></div>'
-    +'</div></div></div>'
-    +'<div class="auth-card">'
-    +'<h2 class="auth-title">Passo 2 de 4 — Perfil físico</h2>'
-    +'<p class="auth-sub">Para cálculos precisos de nutrição</p>'
-    +'<div class="input-wrap"><label class="input-label">Data de nascimento</label>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px;margin-bottom:4px">'
-    +'<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;text-align:center">DIA</label>'
-    +'<input id="r-dob-d" class="input" type="number" inputmode="numeric" placeholder="DD" min="1" max="31" value="'+dDay+'" style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px" oninput="if(this.value.length>=2)document.getElementById(\'r-dob-m\').focus()"></div>'
-    +'<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;text-align:center">MÊS</label>'
-    +'<input id="r-dob-m" class="input" type="number" inputmode="numeric" placeholder="MM" min="1" max="12" value="'+dMon+'" style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px" oninput="if(this.value.length>=2)document.getElementById(\'r-dob-y\').focus()"></div>'
-    +'<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px;text-align:center">ANO</label>'
-    +'<input id="r-dob-y" class="input" type="number" inputmode="numeric" placeholder="AAAA" min="1920" max="2014" value="'+dYear+'" style="text-align:center;font-size:20px;font-weight:700;padding:12px 6px"></div>'
-    +'</div><div style="font-size:11px;color:var(--text3);text-align:center">Ex: 15 · 06 · 1981</div></div>'
-    +'<div class="input-wrap"><label class="input-label">Sexo biológico</label>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'+genderBtns+'</div></div>'
-    +'<div class="input-row">'
-    +'<div class="input-wrap"><label class="input-label">Peso (kg)</label>'
-    +'<input id="r-weight" class="input" type="number" inputmode="decimal" placeholder="70" step="0.1" min="30" max="300" value="'+(rd.weight||'')+'" style="font-size:18px;font-weight:700;text-align:center"></div>'
-    +'<div class="input-wrap"><label class="input-label">Altura (cm)</label>'
-    +'<input id="r-height" class="input" type="number" inputmode="numeric" placeholder="170" min="100" max="250" value="'+(rd.height||'')+'" style="font-size:18px;font-weight:700;text-align:center"></div>'
-    +'</div>'
-    +'<button class="btn btn-primary btn-full" onclick="nextRegister2()" style="padding:14px">Continuar →</button>'
-    +'</div></div>';
+  const el = document.getElementById('auth-screen');
+  el.innerHTML = `<div class="auth-bg" style="padding-top:20px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <button onclick="APP.authStep='register';renderAuth()" class="btn btn-icon">←</button>
+      <div style="flex:1"><div class="step-indicator">${[1,2,3,4].map((s,i)=>`<div class="step-dot ${i<=1?'done':''}${i===1?' active':''}" style="flex:1"></div>`).join('')}</div></div>
+    </div>
+    <div class="auth-card">
+      <h2 class="auth-title">${t('step')} 2 ${t('of')} 4 — Perfil físico</h2>
+      <p class="auth-sub">Para cálculos precisos de nutrição</p>
+      <div class="input-row">
+        <div class="input-wrap"><label class="input-label">Data de nasc.</label><input id="r-dob" class="input" type="date" value="${APP.registerData.dob||'1994-01-01'}"></div>
+        <div class="input-wrap"><label class="input-label">Sexo</label><select id="r-gender" class="input"><option value="m">Masculino</option><option value="f">Feminino</option><option value="other">Prefiro não dizer</option></select></div>
+      </div>
+      <div class="input-row">
+        <div class="input-wrap"><label class="input-label">Peso (kg)</label><input id="r-weight" class="input" type="number" placeholder="70" value="${APP.registerData.weight||''}"></div>
+        <div class="input-wrap"><label class="input-label">Altura (cm)</label><input id="r-height" class="input" type="number" placeholder="170" value="${APP.registerData.height||''}"></div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="nextRegister2()" style="padding:14px">Continuar →</button>
+    </div>
+  </div>`;
 }
 
 function nextRegister2() {
-  var dD=(document.getElementById('r-dob-d')?document.getElementById('r-dob-d').value:'').trim();
-  var dM=(document.getElementById('r-dob-m')?document.getElementById('r-dob-m').value:'').trim();
-  var dY=(document.getElementById('r-dob-y')?document.getElementById('r-dob-y').value:'').trim();
-  var wt=document.getElementById('r-weight')?document.getElementById('r-weight').value:'';
-  var ht=document.getElementById('r-height')?document.getElementById('r-height').value:'';
-  var gn=(APP.registerData&&APP.registerData.gender)||'m';
-  if(!dD||!dM||!dY||dY.length<4){toast('Preencha DIA, MÊS e ANO de nascimento','error');return;}
-  var d=parseInt(dD),mo=parseInt(dM),y=parseInt(dY);
-  if(d<1||d>31){toast('Dia inválido (1-31)','error');return;}
-  if(mo<1||mo>12){toast('Mês inválido (1-12)','error');return;}
-  if(y<1920||y>new Date().getFullYear()-10){toast('Ano inválido','error');return;}
-  if(!wt||!ht){toast('Preencha peso e altura','error');return;}
-  if(parseFloat(wt)<30||parseFloat(wt)>300){toast('Peso inválido (30-300kg)','error');return;}
-  var dob=y+'-'+String(mo).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-  APP.registerData=Object.assign({},APP.registerData,{dob:dob,gender:gn,weight:wt,height:ht,age:new Date().getFullYear()-y});
+  const dob=document.getElementById('r-dob').value, gender=document.getElementById('r-gender').value, weight=document.getElementById('r-weight').value, height=document.getElementById('r-height').value;
+  if(!weight||!height){toast('Preencha peso e altura','error');return;}
+  const age=new Date().getFullYear()-new Date(dob).getFullYear();
+  APP.registerData={...APP.registerData,dob,gender,weight,height,age};
   APP.authStep='register3';renderAuth();
 }
 
@@ -3621,88 +3610,189 @@ window.setScanMode = function(mode) {
 };
 
 // ── MODO 1: Câmera ao vivo com QuaggaJS ──
-window.startLiveScanner=async function(){
-  var statusEl=document.getElementById('scan-live-status');
-  var viewport=document.getElementById('quagga-viewport');
-  if(!viewport)return;
-  var setS=function(msg,color){if(statusEl){statusEl.innerHTML=msg;if(color)statusEl.style.color=color;}};
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    setS('❌ Câmera não suportada. <a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Usar Foto</a>','var(--red)');return;
+window.startLiveScanner = async function() {
+  var statusEl = document.getElementById('scan-live-status');
+  var viewport = document.getElementById('quagga-viewport');
+  if (!viewport) { console.warn('quagga-viewport não encontrado'); return; }
+
+  var setStatus = function(msg, color) {
+    if (statusEl) { statusEl.innerHTML = msg; if(color) statusEl.style.color = color; }
+  };
+
+  // Verifica suporte
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus('❌ Câmera não suportada neste navegador.<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Usar modo Foto</a>', 'var(--red)');
+    return;
   }
-  setS('⏳ Solicitando permissão da câmera...');
-  try{
-    var testStream=null;
-    try{testStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:'environment'}},audio:false});}
-    catch(e1){testStream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});}
-    testStream.getTracks().forEach(function(t){t.stop();});
-  }catch(permErr){
-    var isIOS=/iPhone|iPad/i.test(navigator.userAgent);
-    var isAndroid=/Android/i.test(navigator.userAgent);
-    var instrucao='';
-    if(permErr.name==='NotAllowedError'||permErr.name==='PermissionDeniedError'){
-      if(isIOS)instrucao='📱 Vá em <strong>Ajustes → Safari → Câmera → Permitir</strong> e recarregue.';
-      else if(isAndroid)instrucao='📱 Toque no ícone 🔒 na barra de endereço → Câmera → Permitir.';
-      else instrucao='🖥️ Clique no ícone de câmera/cadeado na barra de endereço e permita o acesso.';
-      instrucao+='<br><br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">👆 Ou use o modo Foto</a>';
-    }else if(permErr.name==='NotFoundError'){
-      instrucao='❌ Nenhuma câmera encontrada. <a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>';
-    }else{
-      instrucao='❌ Erro: '+permErr.message+'. <a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>';
+
+  setStatus('⏳ Solicitando acesso à câmera...');
+
+  // Pede permissão
+  try {
+    var testStream;
+    try {
+      testStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: 'environment' } }, audio: false });
+    } catch(e) {
+      testStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
     }
-    setS(instrucao,'var(--orange)');return;
+    testStream.getTracks().forEach(function(t) { t.stop(); });
+  } catch(permErr) {
+    var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    var msg = '';
+    if (permErr.name === 'NotAllowedError' || permErr.name === 'PermissionDeniedError') {
+      if (isIOS) {
+        msg = '📱 <strong>iPhone/iPad:</strong> Vá em Ajustes → Safari → Câmera → Permitir.<br>Depois recarregue a página.';
+      } else if (isAndroid) {
+        msg = '📱 <strong>Android:</strong> Toque no ícone 🔒 ou 📷 na barra de endereço → Câmera → Permitir.';
+      } else {
+        msg = '🖥️ Clique no ícone de cadeado na barra de endereço → Câmera → Permitir.';
+      }
+      msg += '<br><br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">👆 Ou use o modo Foto</a>';
+    } else if (permErr.name === 'NotFoundError') {
+      msg = '❌ Nenhuma câmera encontrada.<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>';
+    } else {
+      msg = '❌ Erro: ' + permErr.message + '<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>';
+    }
+    setStatus(msg, 'var(--orange)');
+    return;
   }
-  setS('⏳ Carregando leitor de código de barras...');
-  if(typeof Quagga==='undefined'){
-    try{
-      await new Promise(function(res,rej){
-        var sc=document.createElement('script');
-        sc.src='https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
-        sc.onload=res;sc.onerror=rej;document.head.appendChild(sc);
+
+  setStatus('⏳ Carregando leitor de código de barras...');
+
+  // Carrega Quagga
+  if (typeof Quagga === 'undefined') {
+    try {
+      await new Promise(function(res, rej) {
+        var sc = document.createElement('script');
+        sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
+        sc.onload = res;
+        sc.onerror = function() { rej(new Error('Falha ao carregar QuaggaJS')); };
+        document.head.appendChild(sc);
       });
-    }catch(e){
-      setS('❌ Falha ao carregar leitor. <a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>','var(--red)');return;
+    } catch(loadErr) {
+      setStatus('❌ Falha ao carregar leitor.<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>', 'var(--red)');
+      return;
     }
   }
-  viewport.style.cssText='width:100%;min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative';
-  setS('📷 Iniciando câmera...');
-  Quagga.init({
-    inputStream:{name:'Live',type:'LiveStream',target:viewport,
-      constraints:{facingMode:{ideal:'environment'},width:{min:640,ideal:1280},height:{min:480,ideal:720}}},
-    locator:{patchSize:'medium',halfSample:true},
-    numOfWorkers:Math.min(navigator.hardwareConcurrency||2,4),
-    frequency:10,
-    decoder:{readers:['ean_reader','ean_8_reader','code_128_reader','upc_reader','upc_e_reader']},
-    locate:true
-  },function(err){
-    if(err){setS('❌ Falha ao iniciar câmera. <a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>','var(--red)');return;}
-    Quagga.start();SCAN.quaggaRunning=true;
-    setTimeout(function(){
-      var v=viewport.querySelector('video');
-      if(v){v.style.cssText='width:100%!important;height:100%!important;object-fit:cover!important;display:block!important';window._activeCamStream=v.srcObject;}
-    },600);
-    setS('🟢 Câmera ativa — aponte para o código de barras','var(--green)');
-  });
-  var lc='',lt=0;
-  Quagga.onDetected(function(r){
-    var code=r&&r.codeResult&&r.codeResult.code;
-    if(!code||code.length<4)return;
-    var now=Date.now();if(code===lc&&now-lt<2500)return;
-    lc=code;lt=now;
-    if(navigator.vibrate)navigator.vibrate([80,40,80]);
-    stopLiveScanner();doScan(code);
-  });
+
+  // Prepara viewport
+  viewport.style.width = '100%';
+  viewport.style.minHeight = '260px';
+  viewport.style.background = '#000';
+  viewport.style.borderRadius = '12px';
+  viewport.style.overflow = 'hidden';
+  viewport.style.position = 'relative';
+  viewport.innerHTML = '';
+
+  setStatus('📷 Iniciando câmera...');
+
+  try {
+    Quagga.init({
+      inputStream: {
+        name: 'Live',
+        type: 'LiveStream',
+        target: viewport,
+        constraints: {
+          facingMode: { ideal: 'environment' },
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720 }
+        }
+      },
+      locator: { patchSize: 'medium', halfSample: true },
+      numOfWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
+      frequency: 10,
+      decoder: {
+        readers: ['ean_reader', 'ean_8_reader', 'code_128_reader', 'upc_reader', 'upc_e_reader', 'code_39_reader']
+      },
+      locate: true
+    }, function(err) {
+      if (err) {
+        console.error('Quagga init error:', err);
+        setStatus('❌ Falha ao iniciar câmera.<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>', 'var(--red)');
+        return;
+      }
+
+      Quagga.start();
+      SCAN.quaggaRunning = true;
+
+      // Estiliza o video após iniciar
+      setTimeout(function() {
+        var video = viewport.querySelector('video');
+        if (video) {
+          video.style.width = '100%';
+          video.style.height = '100%';
+          video.style.objectFit = 'cover';
+          video.style.display = 'block';
+          video.setAttribute('playsinline', '');
+          window._activeCamStream = video.srcObject;
+        }
+        var canvas = viewport.querySelector('canvas');
+        if (canvas) { canvas.style.position = 'absolute'; canvas.style.top = '0'; canvas.style.left = '0'; }
+      }, 800);
+
+      setStatus('🟢 Câmera ativa — aponte para o código de barras', 'var(--green)');
+    });
+
+    // Detecta código de barras
+    var lastCode = '', lastTime = 0;
+    Quagga.onDetected(function(result) {
+      var code = result && result.codeResult && result.codeResult.code;
+      if (!code || code.length < 4) return;
+      var now = Date.now();
+      if (code === lastCode && now - lastTime < 2500) return;
+      lastCode = code; lastTime = now;
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      window.stopLiveScanner();
+      if (typeof doScan === 'function') doScan(code);
+    });
+
+  } catch(e) {
+    setStatus('❌ Erro: ' + e.message + '<br><a href="#" onclick="setScanMode(\'photo\');return false" style="color:var(--green)">Use o modo Foto</a>', 'var(--red)');
+  }
 };
 
-window.stopLiveScanner=function(){
-  if(SCAN.quaggaRunning&&typeof Quagga!=='undefined'){
-    try{Quagga.offDetected&&Quagga.offDetected();Quagga.offProcessed&&Quagga.offProcessed();Quagga.stop();}catch(e){}
-    SCAN.quaggaRunning=false;
+window.stopLiveScanner = function() {
+  // Para Quagga
+  if (typeof SCAN !== 'undefined' && SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
+    try {
+      Quagga.offDetected && Quagga.offDetected();
+      Quagga.offProcessed && Quagga.offProcessed();
+      Quagga.stop();
+    } catch(e) { console.warn('Quagga stop error:', e.message); }
+    SCAN.quaggaRunning = false;
   }
-  document.querySelectorAll('video').forEach(function(v){
-    try{if(v.srcObject){v.srcObject.getTracks().forEach(function(t){t.stop();});v.srcObject=null;}}catch(e){}
+
+  // Para stream rastreado
+  if (window._activeCamStream) {
+    try {
+      window._activeCamStream.getTracks().forEach(function(t) {
+        try { t.stop(); } catch(e) {}
+      });
+    } catch(e) {}
+    window._activeCamStream = null;
+  }
+
+  // Para TODOS os videos na página
+  document.querySelectorAll('video').forEach(function(v) {
+    try {
+      if (v.srcObject) {
+        v.srcObject.getTracks().forEach(function(t) { try { t.stop(); } catch(e) {} });
+        v.srcObject = null;
+      }
+      v.pause();
+      v.load();
+    } catch(e) {}
   });
-  if(window._activeCamStream){try{window._activeCamStream.getTracks().forEach(function(t){t.stop();});}catch(e){}window._activeCamStream=null;}
-  SCAN.mode='manual';
+
+  if (typeof SCAN !== 'undefined') SCAN.mode = 'manual';
+
+  // Volta para tela do scanner no modo manual
+  if (typeof navigate === 'function' && APP.tab === 'scanner') {
+    setTimeout(function() { navigate('scanner'); }, 100);
+  }
+
+  toast && toast('📷 Câmera parada', 'info', 1500);
 };
 
 // ── MODO 2: Leitura de foto com ZXing ─────
@@ -3893,56 +3983,22 @@ function renderCoach() {
   </div>`;
 }
 
-function attachCoach(screen){
-  setTimeout(function(){
-    var msgs=document.getElementById('coach-msgs');
-    if(msgs)msgs.scrollTop=msgs.scrollHeight;
-    var ta=document.getElementById('coach-input');
-    if(ta){ta.style.pointerEvents='auto';ta.style.webkitUserSelect='text';ta.style.userSelect='text';ta.removeAttribute('readonly');ta.removeAttribute('disabled');ta.focus();}
-    var sb=document.querySelector('.coach-send');
-    if(sb)sb.onclick=function(){window.sendCoach&&window.sendCoach();};
-  },150);
+function attachCoach(screen) {
+  const msgs = screen.querySelector('#coach-msgs');
+  if(msgs) setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,100);
 }
 
-window.sendCoach=async function(txt){
-  var inp=document.getElementById('coach-input');
-  var msg=(txt||(inp&&inp.value)||'').trim();
-  if(!msg||APP.coachLoading)return;
-  if(inp){inp.value='';inp.style.height='44px';setTimeout(function(){inp.focus();},50);}
-  var ts=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs=APP.coachMsgs||[];
-  APP.coachMsgs.push({role:'user',text:msg,time:ts});
-  APP.coachLoading=true;
-  var msgsEl=document.getElementById('coach-msgs');
-  if(msgsEl){
-    var safe=msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var ub=document.createElement('div');ub.className='msg-wrap user fade-in';
-    ub.innerHTML='<div class="msg-bubble">'+safe+'</div><div class="msg-time">'+ts+'</div>';
-    msgsEl.appendChild(ub);
-    var tb=document.createElement('div');tb.id='coach-typing';tb.className='msg-wrap ai';
-    tb.innerHTML='<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-    msgsEl.appendChild(tb);msgsEl.scrollTop=msgsEl.scrollHeight;
-  }
-  var resp='';
-  try{resp=await getNutriCoachResponse(msg);}catch(e){resp='Desculpe, tente novamente! 🙏';}
-  var tsR=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'ai',text:resp,time:tsR});
-  var typing=document.getElementById('coach-typing');if(typing)typing.remove();
-  if(msgsEl){
-    var idx=APP.coachMsgs.length-1;
-    var safeR=resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-    var ab=document.createElement('div');ab.className='msg-wrap ai fade-in';
-    ab.innerHTML='<div class="msg-bubble">'+safeR+'</div>'
-      +'<div style="display:flex;gap:6px;margin-top:6px">'
-      +'<button data-idx="'+idx+'" onclick="speakText(this.dataset.idx)" '
-      +'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-      +'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
-      +'</div><div class="msg-time">'+tsR+'</div>';
-    msgsEl.appendChild(ab);msgsEl.scrollTop=msgsEl.scrollHeight;
-    if(window._voiceMode){try{speakText(idx);}catch(e){}}
-  }
-  APP.coachLoading=false;
-  if(typeof addXP==='function')addXP(5);
+window.sendCoach = async function(txt) {
+  const inp = document.getElementById('coach-input');
+  const msg = txt || inp?.value?.trim();
+  if(!msg||APP.coachLoading) return;
+  if(inp) inp.value='';
+  const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  APP.coachMsgs.push({role:'user',text:msg,time});
+  APP.coachLoading=true; navigate('coach');
+  const resp = await getNutriCoachResponse(msg);
+  APP.coachMsgs.push({role:'ai',text:resp,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),tts:true});
+  APP.coachLoading=false; addXP(5); navigate('coach');
 };
 
 window.playAudioMsg = function(audioSrc) {
@@ -3955,120 +4011,520 @@ window.clearCoachHistory = function() {
 };
 
 // Text-to-Speech usando Web Speech API
-function speakText(idxOrText){
-  if(!window.speechSynthesis){toast&&toast('TTS não disponível','info');return;}
+window.speakText = function(text) {
+  if(!window.speechSynthesis) { toast('TTS não suportado neste dispositivo','info'); return; }
   window.speechSynthesis.cancel();
-  var text='';
-  if(typeof idxOrText==='number'||!isNaN(parseInt(idxOrText))){
-    var m=(APP.coachMsgs||[])[parseInt(idxOrText)];
-    text=m?m.text||'':'';
-  }else{text=idxOrText||'';}
-  var clean=text.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/<[^>]*>/g,'').trim().substring(0,500);
-  if(!clean)return;
-  var utt=new SpeechSynthesisUtterance(clean);
-  var lm={pt:'pt-BR',en:'en-US',es:'es-ES',ru:'ru-RU'};
-  utt.lang=lm[APP.lang||'pt']||'pt-BR';utt.rate=0.9;utt.pitch=1.0;utt.volume=1.0;
-  var go=function(){
-    var vs=window.speechSynthesis.getVoices();
-    var v=vs.find(function(x){return x.lang===utt.lang&&x.localService;})
-      ||vs.find(function(x){return x.lang.startsWith(APP.lang||'pt');})
-      ||vs[0];
-    if(v)utt.voice=v;
-    window.speechSynthesis.speak(utt);
-    toast&&toast('🔊 Reproduzindo...','info',2000);
-  };
-  window.speechSynthesis.getVoices().length>0?go():(window.speechSynthesis.onvoiceschanged=go);
+  const utt = new SpeechSynthesisUtterance(text.substring(0,300));
+  utt.lang = 'pt-BR'; utt.rate = 0.95; utt.pitch = 1.0;
+  // Tenta voz em português
+  const voices = window.speechSynthesis.getVoices();
+  const ptVoice = voices.find(v => v.lang.startsWith('pt'));
+  if(ptVoice) utt.voice = ptVoice;
+  window.speechSynthesis.speak(utt);
+  toast('🔊 Reproduzindo resposta...','info',2000);
 };
 
 // Gravação de áudio
 let mediaRecorder = null, audioChunks = [];
 
-window.startRecording=async function(){
-  var mic=document.getElementById('mic-btn'),rec=document.getElementById('rec-indicator');
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    toast&&toast('Microfone não suportado','error');return;
-  }
-  try{
-    var stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-    window._audioChunks=[];
-    var opts=MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?{mimeType:'audio/webm;codecs=opus'}:{};
-    window._mediaRecorder=new MediaRecorder(stream,opts);
-    window._mediaRecorder.ondataavailable=function(e){if(e.data&&e.data.size>0)window._audioChunks.push(e.data);};
-    window._mediaRecorder.start(100);
-    if(mic){mic.classList.add('recording');mic.textContent='⏹';}
-    if(rec)rec.style.display='flex';
-    window._recTimer=setTimeout(function(){window.stopRecording&&window.stopRecording();},45000);
-  }catch(e){
-    if(e.name==='NotAllowedError')toast&&toast('❌ Permita acesso ao microfone','error',5000);
-    else toast&&toast('❌ Microfone indisponível: '+e.message,'error');
+window.startRecording = async function() {
+  const mic = document.getElementById('mic-btn');
+  const rec = document.getElementById('rec-indicator');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.start();
+    if(mic) mic.classList.add('recording');
+    if(rec) rec.style.display = 'flex';
+  } catch(e) {
+    toast('❌ Permita acesso ao microfone nas configurações','error', 4000);
   }
 };
 
-window.stopRecording=function(){
-  var mic=document.getElementById('mic-btn'),rec=document.getElementById('rec-indicator');
-  clearTimeout(window._recTimer);
-  if(mic){mic.classList.remove('recording');mic.textContent='🎤';}
-  if(rec)rec.style.display='none';
-  if(!window._mediaRecorder||window._mediaRecorder.state==='inactive')return;
-  window._mediaRecorder.stop();
-  window._mediaRecorder.onstop=async function(){
-    var stream=window._mediaRecorder.stream;if(stream)stream.getTracks().forEach(function(t){t.stop();});
-    var blob=new Blob(window._audioChunks||[],{type:window._mediaRecorder.mimeType||'audio/webm'});
-    if(blob.size<800){toast&&toast('Gravação muito curta','info');return;}
-    toast&&toast('🎤 Processando...','info',2000);
-    await new Promise(function(r){setTimeout(r,1000);});
-    var phs=['Como aumentar proteínas?','Cardápio para emagrecer?','Alimentação pré-treino?','Meta de água?','Suplementos recomendados?','Nutrição na gestação?'];
-    var txt=phs[Math.floor(Math.random()*phs.length)];
-    if(window.sendCoach)window.sendCoach('🎤 '+txt);
+window.stopRecording = function() {
+  const mic = document.getElementById('mic-btn');
+  const rec = document.getElementById('rec-indicator');
+  if(!mediaRecorder || mediaRecorder.state==='inactive') return;
+  mediaRecorder.stop();
+  if(mic) mic.classList.remove('recording');
+  if(rec) rec.style.display = 'none';
+  mediaRecorder.onstop = async () => {
+    const blob = new Blob(audioChunks, {type:'audio/webm'});
+    if(blob.size < 1000) { toast('Gravação muito curta','info'); return; }
+    // Simulate transcription (in production use Whisper API)
+    const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const transcriptions = [
+      'Quais alimentos são ricos em proteína?',
+      'Como devo me alimentar antes do treino?',
+      'Tenho diabetes, o que posso comer?',
+      'Qual a diferença entre whey e caseína?',
+      'Como perder barriga rápido com alimentação?',
+    ];
+    const transcribed = transcriptions[Math.floor(Math.random()*transcriptions.length)];
+    toast('🎤 Áudio transcrito!','success', 2000);
+    APP.coachMsgs.push({role:'user', text:`🎤 ${transcribed}`, time, audio: true});
+    APP.coachLoading = true; navigate('coach');
+    const resp = await getNutriCoachResponse(transcribed);
+    APP.coachMsgs.push({role:'ai', text:resp, time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), tts:true});
+    APP.coachLoading = false; addXP(5); navigate('coach');
   };
 };
 
 // Coach IA com conhecimento completo de nutricionista
-async function getNutriCoachResponse(msg){
-  // Tenta API Anthropic
-  try{
-    var p=APP.profile||{},c=APP.calc||{};
-    var lm={pt:'português do Brasil',en:'English',es:'español',ru:'русский'};
-    var sys='Você é o Coach IA de Nutrição do VitalIA. Seja empático, motivador e prático.\n\n'
-      +'PERFIL:\n- Nome: '+(p.name||'Usuário')+'\n- Peso: '+(p.weight||70)+'kg | Altura: '+(p.height||170)+'cm\n'
-      +'- Objetivo: '+(p.goal==='lose'?'Emagrecer':p.goal==='gain'?'Ganhar massa':'Manutenção')+'\n'
-      +'- Meta: '+(c.meta||1800)+'kcal/dia | Proteína: '+(c.prot||140)+'g/dia\n\n'
-      +'REGRAS:\n- Responda em '+(lm[APP.lang||'pt']||'português')+'\n'
-      +'- Máximo 280 palavras\n- Use 2-4 emojis\n- Para temas médicos graves, indique profissional\n'
-      +'- Suplementos: recomendações gerais, não substituem prescrição';
-    var hist=(APP.coachMsgs||[]).slice(-6).map(function(m){
-      return{role:m.role==='user'?'user':'assistant',content:(m.text||'').substring(0,400)};
-    }).filter(function(m){return m.content.length>0;});
-    var res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sys,
-        messages:hist.concat([{role:'user',content:msg}])})
-    });
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    var data=await res.json();
-    var tb=data.content&&data.content.find(function(b){return b.type==='text';});
-    if(tb&&tb.text&&tb.text.length>5)return tb.text;
-    throw new Error('empty');
-  }catch(e){
-    // Fallback local
-    var m=msg.toLowerCase(),p=APP.profile||{},c=APP.calc||{};
-    var nome=(p.name||'Você').split(' ')[0],peso=p.weight||70;
-    if(m.includes('gestant')||m.includes('grávid'))
-      return '🤰 **Nutrição na Gestação**\n\n- **Ácido fólico**: 600mcg/dia\n- **Ferro**: 27mg/dia + vitamina C\n- **Cálcio**: 1000mg/dia\n- **DHA**: 200mg/dia\n\n❌ Evite: álcool, peixes crus, queijos não pasteurizados.\n⚠️ Acompanhe com obstetra!';
-    if(m.includes('menstrual')||m.includes('tpm')||m.includes('cólica'))
-      return '🌸 **Ciclo Menstrual**\n\n- **Magnésio**: cólicas (amêndoas, cacau)\n- **Ferro**: repõe perdas\n- **Ômega-3**: anti-inflamatório\n- **B6**: alivia TPM (banana)';
-    if(m.includes('proteína')||m.includes('musculo')||m.includes('massa'))
-      return '💪 **Proteínas para '+nome+'**\n\nMeta: **'+Math.round(peso*2)+'g/dia**\n\n- Frango: 31g/100g\n- Ovos: 13g/2un\n- Atum: 29g/lata\n- Iogurte grego: 17g/170g';
-    if(m.includes('emagrecer')||m.includes('perder peso'))
-      return '🔥 **Emagrecimento**\n\nMeta: '+(c.meta||1800)+'kcal/dia\n\n1. Proteína alta ('+Math.round(peso*2)+'g/dia)\n2. Fibras 25-35g/dia\n3. Água antes das refeições\n4. Sono 7-8h/noite';
-    if(m.includes('água')||m.includes('hidrat'))
-      return '💧 **Hidratação**\n\nMeta: '+(c.agua||Math.round(peso*35))+'ml/dia\n\nHoje: '+(APP.water||0)+' copos\n\n- 500ml ao acordar\n- 1 copo antes de cada refeição';
-    if(m.includes('suplemento')||m.includes('creatina'))
-      return '💊 **Suplementos**\n\n- **Creatina**: 3-5g/dia\n- **Vitamina D**: 2000-4000UI/dia\n- **Ômega-3**: 2g EPA+DHA/dia\n- **Whey**: 25-40g pós-treino';
-    if(m.includes('jejum')||m.includes('16:8'))
-      return '⏱️ **Jejum Intermitente**\n\n**16:8**: come 12h-20h, jejua 20h-12h\n\n✅ Permitido: água, café preto, chá\n⚠️ Não indicado para gestantes';
-    return 'Olá '+nome+'! 🌿 Posso ajudar com:\n\n💪 Proteínas e massa\n🔥 Emagrecimento\n💧 Hidratação\n💊 Suplementação\n⏱️ Jejum\n🤰 Gestação\n🌸 Ciclo menstrual\n🏋️ Nutrição esportiva\n\nO que você precisa?';
-  }
+async function getNutriCoachResponse(msg) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const m = msg.toLowerCase();
+      const p = APP.profile || {};
+      const lang = APP.lang || 'pt';
+      const nome = p.name?.split(' ')[0] || {'pt':'você','en':'you','es':'tú','ru':'вы'}[lang]||'você';
+      const peso = p.weight || 70;
+      const meta = p.goal || 'lose';
+      const calc = APP.calc || {};
+
+      // ── Language-aware keywords ────────────────
+      const keywords = {
+        gestante: {
+          pt: ['gestant','grávid','gravidez'],
+          en: ['pregnant','pregnancy','gestational','prenatal'],
+          es: ['gestante','embaraz','prenat'],
+          ru: ['беремен','гестац','дородов']
+        },
+        menstrual: {
+          pt: ['menstrual','cólica','tpm','período','menstruaç'],
+          en: ['menstrual','period','cramp','pms','cycle'],
+          es: ['menstrual','cólico','menstruac','período'],
+          ru: ['менструац','спазм','предменстр','цикл']
+        },
+        proteina: {
+          pt: ['proteína','músculo','massa','whey'],
+          en: ['protein','muscle','mass','whey'],
+          es: ['proteína','músculo','masa','whey'],
+          ru: ['белок','протеин','мышц','масс']
+        },
+        emagrecer: {
+          pt: ['emagrecer','perder peso','déficit','gordura','queimar'],
+          en: ['lose weight','diet','deficit','fat','slim'],
+          es: ['adelgazar','perder peso','déficit','grasa'],
+          ru: ['похудет','снизить вес','дефицит','жир']
+        },
+        agua: {
+          pt: ['água','hidrat'],
+          en: ['water','hydrat'],
+          es: ['agua','hidrat'],
+          ru: ['вода','гидрат']
+        },
+        suplemento: {
+          pt: ['suplemento','creatina','bcaa','vitamina','ômega'],
+          en: ['supplement','creatine','bcaa','vitamin','omega'],
+          es: ['suplemento','creatina','bcaa','vitamina','omega'],
+          ru: ['добавк','креатин','витамин','омега']
+        },
+        jejum: {
+          pt: ['jejum','16:8','intermitente'],
+          en: ['fasting','intermittent','16:8'],
+          es: ['ayuno','intermitente','16:8'],
+          ru: ['голодан','интервал','16:8']
+        },
+        treino: {
+          pt: ['treino','academia','musculaç','exercício'],
+          en: ['workout','gym','training','exercise'],
+          es: ['entrenamiento','gimnasio','ejercicio'],
+          ru: ['тренировк','спортзал','упражнен']
+        },
+        menstrual_es: {
+          pt: [],
+          en: [],
+          es: ['menstrual','regla','menstruación'],
+          ru: []
+        }
+      };
+
+      // Helper: check if message matches keywords for given topic
+      function matches(topic) {
+        const kws = keywords[topic]?.[lang] || keywords[topic]?.['pt'] || [];
+        return kws.some(k => m.includes(k));
+      }
+
+      // Responses by language
+      const responses = {
+        gestante: {
+          pt: `🤰 *Nutrição para Gestantes*\n\nOlá, ${nome}! A alimentação na gravidez é fundamental.\n\n**Nutrientes essenciais:**\n• **Ácido fólico** — 400-800mcg/dia (folhas verdes, feijão)\n• **Ferro** — 27mg/dia (carne vermelha + vitamina C)\n• **Cálcio** — 1000mg/dia (leite, iogurte, brócolis)\n• **Ômega-3 / DHA** — 200mg/dia (salmão, sardinha, chia)\n• **Colina** — 450mg/dia (3 ovos/dia)\n\n**Evitar na gestação:**\n🚫 Álcool — zero tolerância\n🚫 Peixes grandes crus (atum, cação)\n🚫 Queijos moles não pasteurizados\n🚫 Cafeína acima de 200mg/dia\n\n⚠️ Sempre consulte seu obstetra e nutricionista!`,
+          en: `🤰 *Nutrition for Pregnant Women*\n\nHello, ${nome}! Nutrition during pregnancy is essential.\n\n**Key nutrients:**\n• **Folic acid** — 400-800mcg/day (leafy greens, beans)\n• **Iron** — 27mg/day (red meat + vitamin C)\n• **Calcium** — 1000mg/day (dairy, broccoli)\n• **Omega-3 / DHA** — 200mg/day (salmon, sardine, chia)\n• **Choline** — 450mg/day (3 eggs/day)\n\n**Avoid during pregnancy:**\n🚫 Alcohol — zero tolerance\n🚫 Raw large fish (tuna, shark)\n🚫 Unpasteurized soft cheeses\n🚫 More than 200mg caffeine/day\n\n⚠️ Always consult your OB and nutritionist!`,
+          es: `🤰 *Nutrición para Gestantes*\n\n¡Hola, ${nome}! La alimentación en el embarazo es fundamental.\n\n**Nutrientes esenciales:**\n• **Ácido fólico** — 400-800mcg/día (verduras, frijoles)\n• **Hierro** — 27mg/día (carne roja + vitamina C)\n• **Calcio** — 1000mg/día (lácteos, brócoli)\n• **Omega-3 / DHA** — 200mg/día (salmón, sardina, chía)\n• **Colina** — 450mg/día (3 huevos/día)\n\n**Evitar en el embarazo:**\n🚫 Alcohol — tolerancia cero\n🚫 Pescados grandes crudos (atún, tiburón)\n🚫 Quesos blandos no pasteurizados\n🚫 Más de 200mg de cafeína/día\n\n⚠️ ¡Siempre consulta a tu obstetra y nutricionista!`,
+          ru: `🤰 *Питание при беременности*\n\nЗдравствуйте, ${nome}! Питание во время беременности крайне важно.\n\n**Ключевые нутриенты:**\n• **Фолиевая кислота** — 400-800мкг/день (зелень, бобы)\n• **Железо** — 27мг/день (красное мясо + витамин С)\n• **Кальций** — 1000мг/день (молочные, брокколи)\n• **Омега-3 / DHA** — 200мг/день (лосось, сардина, чиа)\n• **Холин** — 450мг/день (3 яйца/день)\n\n**Избегать при беременности:**\n🚫 Алкоголь — полный запрет\n🚫 Сырая крупная рыба (тунец, акула)\n🚫 Мягкие непастеризованные сыры\n🚫 Более 200мг кофеина/день\n\n⚠️ Всегда консультируйтесь с врачом и нутрициологом!`
+        },
+        menstrual: {
+          pt: `🌸 *Nutrição no Período Menstrual*\n\n**Nutrientes prioritários:**\n• **Magnésio** — reduz cólicas (amêndoas, cacau, sementes)\n• **Ferro** — repõe perdas do fluxo (carnes + vitamina C)\n• **Ômega-3** — anti-inflamatório (sardinha, chia, linhaça)\n• **Vitamina B6** — alivia TPM (banana, batata-doce)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacau (magnésio + serotonina)\n✅ Espinafre + limão (ferro + absorção)\n✅ Gengibre e cúrcuma (anti-inflamatórios)\n✅ Abacate (gorduras boas + B6)\n\n**Evitar:**\n🚫 Cafeína excessiva (piora cólicas)\n🚫 Sal excessivo (aumenta inchaço)\n🚫 Açúcar refinado (piora humor)`,
+          en: `🌸 *Nutrition During Your Period*\n\n**Priority nutrients:**\n• **Magnesium** — reduces cramps (almonds, cocoa, seeds)\n• **Iron** — replenishes losses (meat + vitamin C)\n• **Omega-3** — anti-inflammatory (sardine, chia, flaxseed)\n• **Vitamin B6** — eases PMS (banana, sweet potato)\n\n**Recommended foods:**\n✅ 70%+ dark chocolate (magnesium + serotonin)\n✅ Spinach + lemon (iron + absorption)\n✅ Ginger and turmeric (anti-inflammatories)\n✅ Avocado (healthy fats + B6)\n\n**Avoid:**\n🚫 Excess caffeine (worsens cramps)\n🚫 Excess salt (increases bloating)\n🚫 Refined sugar (worsens mood)`,
+          es: `🌸 *Nutrición durante la Menstruación*\n\n**Nutrientes prioritarios:**\n• **Magnesio** — reduce cólicos (almendras, cacao, semillas)\n• **Hierro** — repone pérdidas (carnes + vitamina C)\n• **Omega-3** — antiinflamatorio (sardina, chía, lino)\n• **Vitamina B6** — alivia el SPM (banana, batata)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacao (magnesio + serotonina)\n✅ Espinacas + limón (hierro + absorción)\n✅ Jengibre y cúrcuma (antiinflamatorios)\n✅ Aguacate (grasas buenas + B6)\n\n**Evitar:**\n🚫 Exceso de cafeína (empeora cólicos)\n🚫 Exceso de sal (aumenta hinchazón)\n🚫 Azúcar refinada (empeora el humor)`,
+          ru: `🌸 *Питание во время менструации*\n\n**Приоритетные нутриенты:**\n• **Магний** — снижает спазмы (миндаль, какао, семена)\n• **Железо** — восполняет потери (мясо + витамин С)\n• **Омега-3** — противовоспалительное (сардина, чиа)\n• **Витамин B6** — облегчает ПМС (банан, батат)\n\n**Рекомендуемые продукты:**\n✅ Тёмный шоколад 70%+ (магний + серотонин)\n✅ Шпинат + лимон (железо + усвоение)\n✅ Имбирь и куркума (противовоспалительные)\n✅ Авокадо (полезные жиры + B6)\n\n**Избегать:**\n🚫 Избыток кофеина (усиливает спазмы)\n🚫 Избыток соли (увеличивает отёки)\n🚫 Рафинированный сахар (ухудшает настроение)`
+        },
+        proteina: {
+          pt: `💪 *Proteínas — Guia Completo*\n\nSua meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/dia**\n\n**Melhores fontes:**\n🥚 Ovos — 13g/2 unidades\n🍗 Frango — 31g/100g\n🐟 Atum — 29g/lata\n🥛 Iogurte grego — 17g/170g\n🫘 Feijão — 9g/100g\n\n**Dicas de distribuição:**\n• 4-5 refeições com 25-40g proteína cada\n• Pós-treino: 30-40g em até 45 min\n• Antes de dormir: caseína (cottage, iogurte)\n\n💊 Whey: ótimo complemento se não atingir a meta pela alimentação.`,
+          en: `💪 *Protein — Complete Guide*\n\nYour goal: **${calc.prot||Math.round((p.weight||70)*1.8)}g/day**\n\n**Best sources:**\n🥚 Eggs — 13g/2 units\n🍗 Chicken breast — 31g/100g\n🐟 Canned tuna — 29g/can\n🥛 Greek yogurt — 17g/170g\n🫘 Beans — 9g/100g\n\n**Distribution tips:**\n• 4-5 meals with 25-40g protein each\n• Post-workout: 30-40g within 45 min\n• Before bed: casein (cottage, yogurt)\n\n💊 Whey: great supplement if you can't hit your target through food alone.`,
+          es: `💪 *Proteínas — Guía Completa*\n\nTu meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/día**\n\n**Mejores fuentes:**\n🥚 Huevos — 13g/2 unidades\n🍗 Pechuga de pollo — 31g/100g\n🐟 Atún en lata — 29g/lata\n🥛 Yogur griego — 17g/170g\n🫘 Frijoles — 9g/100g\n\n**Consejos de distribución:**\n• 4-5 comidas con 25-40g proteína cada una\n• Post-entreno: 30-40g en 45 minutos\n• Antes de dormir: caseína (requesón, yogur)\n\n💊 Whey: excelente suplemento si no alcanzas tu meta con la alimentación.`,
+          ru: `💪 *Белок — Полное руководство*\n\nВаша цель: **${calc.prot||Math.round((p.weight||70)*1.8)}г/день**\n\n**Лучшие источники:**\n🥚 Яйца — 13г/2 штуки\n🍗 Куриная грудка — 31г/100г\n🐟 Консервированный тунец — 29г/банка\n🥛 Греческий йогурт — 17г/170г\n🫘 Бобовые — 9г/100г\n\n**Советы по распределению:**\n• 4-5 приёмов по 25-40г белка\n• После тренировки: 30-40г в течение 45 мин\n• Перед сном: казеин (творог, йогурт)\n\n💊 Сывороточный протеин: отлично подходит, если не достигаете нормы из пищи.`
+        },
+        emagrecer: {
+          pt: `🔥 *Estratégia de Emagrecimento*\n\nSeu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/dia\n\n**Estratégias comprovadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/dia) — preserva músculo\n2️⃣ Fibras (25-35g/dia) — saciedade prolongada\n3️⃣ Água: ${calc.agua||2100}ml/dia antes das refeições\n4️⃣ Carboidratos complexos (aveia, arroz integral, batata-doce)\n5️⃣ Sono de qualidade (cortisol alto = mais fome)\n\n**Evitar:**\n🚫 Déficit acima de 500kcal (perde músculo)\n🚫 Ultraprocessados\n🚫 Pular refeições`,
+          en: `🔥 *Weight Loss Strategy*\n\nYour TDEE: ~${calc.tdee||2200}kcal | Goal: ${calc.meta||1800}kcal\nDeficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/day\n\n**Proven strategies:**\n1️⃣ High protein (${calc.prot||Math.round((p.weight||70)*1.8)}g/day) — preserve muscle\n2️⃣ Fiber (25-35g/day) — extended satiety\n3️⃣ Water: ${calc.agua||2100}ml/day before meals\n4️⃣ Complex carbs (oats, brown rice, sweet potato)\n5️⃣ Quality sleep (high cortisol = more hunger)\n\n**Avoid:**\n🚫 Deficit over 500kcal (muscle loss)\n🚫 Ultra-processed foods\n🚫 Skipping meals`,
+          es: `🔥 *Estrategia para Adelgazar*\n\nTu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/día\n\n**Estrategias probadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/día) — preserva músculo\n2️⃣ Fibra (25-35g/día) — saciedad prolongada\n3️⃣ Agua: ${calc.agua||2100}ml/día antes de las comidas\n4️⃣ Carbohidratos complejos (avena, arroz integral)\n5️⃣ Sueño de calidad (cortisol alto = más hambre)\n\n**Evitar:**\n🚫 Déficit superior a 500kcal (pierde músculo)\n🚫 Alimentos ultraprocesados\n🚫 Saltarse comidas`,
+          ru: `🔥 *Стратегия похудения*\n\nВаш TDEE: ~${calc.tdee||2200}ккал | Цель: ${calc.meta||1800}ккал\nДефицит: ${(calc.tdee||2200)-(calc.meta||1800)}ккал/день\n\n**Проверенные стратегии:**\n1️⃣ Высокий белок (${calc.prot||Math.round((p.weight||70)*1.8)}г/день) — сохраняет мышцы\n2️⃣ Клетчатка (25-35г/день) — длительное насыщение\n3️⃣ Вода: ${calc.agua||2100}мл/день перед едой\n4️⃣ Сложные углеводы (овсянка, бурый рис)\n5️⃣ Качественный сон (высокий кортизол = больше голода)\n\n**Избегать:**\n🚫 Дефицит более 500ккал (потеря мышц)\n🚫 Ультра-обработанные продукты\n🚫 Пропуск приёмов пищи`
+        },
+        default: {
+          pt: `Olá, ${nome}! 🌿 Sou seu coach de nutrição e esportes. Posso te ajudar com:\n\n• 💪 Proteínas e ganho de massa\n• 🔥 Emagrecimento e déficit calórico\n• 💧 Hidratação ideal\n• 💊 Suplementação (whey, creatina, BCAA)\n• ⏱️ Jejum intermitente\n• 🏋️ Nutrição pré e pós-treino\n• 🤰 Alimentação na gestação\n• 🌸 Nutrição no período menstrual\n\nO que você gostaria de saber?`,
+          en: `Hello, ${nome}! 🌿 I'm your nutrition and sports coach. I can help you with:\n\n• 💪 Protein and muscle gain\n• 🔥 Weight loss and caloric deficit\n• 💧 Optimal hydration\n• 💊 Supplementation (whey, creatine, BCAA)\n• ⏱️ Intermittent fasting\n• 🏋️ Pre and post-workout nutrition\n• 🤰 Pregnancy nutrition\n• 🌸 Nutrition during your period\n\nWhat would you like to know?`,
+          es: `¡Hola, ${nome}! 🌿 Soy tu coach de nutrición y deportes. Puedo ayudarte con:\n\n• 💪 Proteínas y ganancia muscular\n• 🔥 Adelgazamiento y déficit calórico\n• 💧 Hidratación óptima\n• 💊 Suplementación (whey, creatina, BCAA)\n• ⏱️ Ayuno intermitente\n• 🏋️ Nutrición pre y post-entreno\n• 🤰 Alimentación en el embarazo\n• 🌸 Nutrición durante la menstruación\n\n¿Qué te gustaría saber?`,
+          ru: `Привет, ${nome}! 🌿 Я ваш коуч по питанию и спорту. Я помогу вам с:\n\n• 💪 Белком и набором мышечной массы\n• 🔥 Похудением и калорийным дефицитом\n• 💧 Оптимальной гидратацией\n• 💊 Добавками (протеин, креатин, BCAA)\n• ⏱️ Интервальным голоданием\n• 🏋️ Питанием до и после тренировки\n• 🤰 Питанием при беременности\n• 🌸 Питанием во время менструации\n\nЧто бы вы хотели узнать?`
+        }
+      };
+
+      // Match topic and return language-aware response
+      const getLangResp = (topic) => (responses[topic]?.[lang] || responses[topic]?.['pt'] || '');
+
+      // ── Gestante ─────────────────────────────
+      if(matches('gestante') || m.includes('gestant') || m.includes('grávid') || m.includes('gravidez') || m.includes('pregnant') || m.includes('embaraz') || m.includes('беремен')) {
+        resolve(getLangResp('gestante') || responses.gestante.pt);
+        return;
+      }
+
+      // ── Menstruação / Período ─────────────────
+      if(matches('menstrual') || m.includes('menstrual') || m.includes('período') || m.includes('cólica') || m.includes('colica') || m.includes('tpm') || m.includes('cramp') || m.includes('period') || m.includes('ayuno') || m.includes('менструац')) {
+        resolve(getLangResp('menstrual'));
+        return;
+      }
+
+      // ── Suplementos ───────────────────────────
+      if(m.includes('suplemento') || m.includes('whey') || m.includes('creatina') || m.includes('bcaa') || m.includes('proteína em pó') || m.includes('termogênico') || m.includes('pre-workout') || m.includes('pré-treino')) {
+        resolve(`💊 *Guia Completo de Suplementos*
+
+**WHEY PROTEIN**
+• Melhor horário: até 30 min após treino
+• Dose: 25-40g por dose
+• Tipos: Concentrado (+ econômico), Isolado (+ puro), Hidrolisado (+ absorção rápida)
+• Para quem: qualquer pessoa com dificuldade de atingir cota proteica
+
+**CREATINA MONOHIDRATADA**
+• Melhor custo-benefício: 3-5g/dia sempre (sem ciclar)
+• Não precisa fase de carga
+• Para quem: treinos de força, HIIT, explosão muscular
+• Resultados visíveis: 4-8 semanas
+
+**BCAA**
+• Dose: 5-10g antes ou durante treino
+• Honestidade: se você já consome whey suficiente, é pouco necessário
+• Mais útil em treinos em jejum
+
+**VITAMINA D + K2**
+• A maioria dos brasileiros tem deficiência
+• Dose: 2000-4000 UI/dia (conforme exame)
+• Fundamental para imunidade, ossos e hormônios
+
+**ÔMEGA-3**
+• 2g EPA+DHA/dia
+• Anti-inflamatório, saúde cardiovascular e cerebral
+• Tomar com refeição gordurosa para melhor absorção
+
+⚠️ Suplementos são complementos, não substituem alimentação equilibrada. Consulte um nutricionista para personalizar!`);
+        return;
+      }
+
+      // ── Pré e pós treino ─────────────────────
+      if(m.includes('treino') || m.includes('pré-treino') || m.includes('pre treino') || m.includes('pós-treino') || m.includes('musculação') || m.includes('academia')) {
+        resolve(`🏋️ *Nutrição para Treino*
+
+**PRÉ-TREINO (1-2h antes)**
+🍌 Carboidrato + proteína moderada
+• Frango + batata-doce
+• Ovo mexido + tapioca
+• Banana + pasta de amendoim
+• Arroz + feijão (treinos mais longos)
+⚡ Cafeína 200-400mg = ótimo pré-natural (café, chá verde)
+
+**DURANTE O TREINO**
+💧 Água: 500-700ml/hora de treino
+🍌 Acima de 90 min: banana ou maltodextrina
+
+**PÓS-TREINO (até 2h depois)**
+💪 PROTEÍNA + carbo rápido
+• Whey + banana
+• Frango + arroz branco
+• Ovo + pão integral
+• Iogurte grego + granola
+📊 Meta: 0.3-0.4g proteína/kg de peso logo após
+
+**Para ${nome} (${peso}kg):**
+Proteína pós-treino ideal: ~${Math.round(peso*0.35)}g
+Ex: ${Math.round(peso*0.35/25)} doses de whey ou ${Math.round(peso*0.35/31*100)}g de peito de frango`);
+        return;
+      }
+
+      // ── Emagrecimento ─────────────────────────
+      if(m.includes('emagrecer') || m.includes('perder peso') || m.includes('barriga') || m.includes('gordura') || m.includes('dieta') || m.includes('deficit') || (meta==='lose' && m.includes('como'))) {
+        const metaCal = calc.meta || 1600;
+        resolve(`🔥 *Estratégia de Emagrecimento para ${nome}*
+
+**Sua meta calórica:** ~${metaCal} kcal/dia
+(Déficit de ~400 kcal = ~1,5kg/mês de gordura)
+
+**As 5 regras de ouro:**
+1️⃣ Priorize proteína (2g/kg) — preserva músculo e sacia mais
+2️⃣ Reduza ultraprocessados, não os carboidratos integrais
+3️⃣ Coma de 3 em 3 horas — evita picos de fome
+4️⃣ Durma 7-8h — sono ruim aumenta grelina (hormônio da fome)
+5️⃣ Musculação > só cardio para emagrecer com saúde
+
+**Alimentos termogênicos naturais:**
+🌶️ Pimenta caiena, ☕ Café, 🫚 Azeite, 🫚 TCM
+🍵 Chá verde, 🫚 Gengibre, 🥥 Coco
+
+**Alimentos ELIMINAR:**
+❌ Refrigerantes e sucos industriais
+❌ Farinha branca e açúcar refinado
+❌ Frituras e fast food
+❌ Álcool (7 kcal/g, sem valor nutricional)
+
+**Cardápio exemplo ${metaCal} kcal:**
+☀️ Café: omelete (2 ovos) + café preto
+🌤️ Lanche: maçã + castanhas (30g)
+☀️ Almoço: frango (150g) + salada grande + 3 col arroz integral
+🌙 Jantar: peixe (150g) + legumes assados`);
+        return;
+      }
+
+      // ── Ganho de massa ────────────────────────
+      if(m.includes('massa') || m.includes('ganhar peso') || m.includes('ganho') || m.includes('bulking') || m.includes('hipertrofia') || (meta==='gain')) {
+        const metaCal = calc.meta || 2400;
+        resolve(`💪 *Estratégia de Ganho de Massa para ${nome}*
+
+**Sua meta calórica:** ~${metaCal} kcal/dia
+(Superávit de ~300 kcal = ganho limpo de músculo)
+
+**Distribuição de macros:**
+🥩 Proteína: ${Math.round(peso*2)}g/dia (${Math.round(peso*2*4)} kcal)
+🍚 Carboidratos: ${Math.round((metaCal - peso*2*4 - 70*9)/4)}g/dia
+🥑 Gorduras: ~70g/dia (${70*9} kcal)
+
+**Top alimentos para ganho limpo:**
+• 🥚 Ovos inteiros — proteína completa + colesterol bom
+• 🐔 Frango/Peru — proteína magra, versátil
+• 🐄 Carne vermelha magra — creatina natural + ferro
+• 🌾 Aveia — carbo de baixo índice glicêmico
+• 🍚 Arroz branco pós-treino — carbo de absorção rápida
+• 🥑 Abacate — gordura boa + calorias densas
+• 🥜 Pasta de amendoim — proteína + gordura boa
+• 🍠 Batata-doce — vitaminas + carbo para treino
+
+**Frequência alimentar:** 5-6 refeições por dia
+**Hidratação:** Mínimo ${Math.round(peso*35)}ml/dia`);
+        return;
+      }
+
+      // ── Jejum intermitente ────────────────────
+      if(m.includes('jejum') || m.includes('16:8') || m.includes('18:6') || m.includes('omad') || m.includes('janela')) {
+        resolve(`⏱️ *Jejum Intermitente — Guia Completo*
+
+**Protocolos mais usados:**
+
+🔹 **16:8** (mais popular)
+• Jejua 16h, come em janela de 8h
+• Ex: come 12h-20h, jejua 20h-12h
+• Ideal para iniciantes e lifestyle sustentável
+
+🔹 **18:6** (avançado)
+• Jejua 18h, come em janela de 6h
+• Ex: come 13h-19h
+• Resultados mais rápidos
+
+🔹 **OMAD** (extremo)
+• Uma refeição por dia
+• Apenas para experientes e com supervisão
+
+🔹 **5:2**
+• 5 dias normal, 2 dias com 500-600 kcal
+• Bom para quem tem dificuldade de restringir diário
+
+**O que pode durante o jejum:**
+✅ Água (deve beber bastante)
+✅ Café preto sem açúcar
+✅ Chá sem açúcar
+✅ Sal (ajuda na retenção de eletrólitos)
+
+**Dicas para o primeiro jejum:**
+1. Comece pelo 12:12 por 1 semana
+2. Progrida para 14:10 na semana 2
+3. Chegue ao 16:8 na semana 3
+4. O café da manhã pode ser apenas café preto
+
+⚠️ Gestantes, diabéticos e pessoas com histórico de distúrbios alimentares devem consultar médico antes!`);
+        return;
+      }
+
+      // ── Proteínas e macros ────────────────────
+      if(m.includes('proteína') || m.includes('proteina') || m.includes('macro') || m.includes('carboidrato') || m.includes('gordura boa')) {
+        resolve(`📊 *Macronutrientes — Guia Completo*
+
+**PROTEÍNAS** (4 kcal/g)
+• Função: construção muscular, saciedade, imunidade
+• Meta geral: 1,6-2,2g/kg/dia
+• Para ${nome} (${peso}kg): ${Math.round(peso*2)}-${Math.round(peso*2.2)}g/dia
+• Fontes: frango, ovos, peixe, carne magra, whey, iogurte grego, leguminosas
+
+**CARBOIDRATOS** (4 kcal/g)
+• Função: energia principal, especialmente para o cérebro
+• Prefira de baixo IG: aveia, arroz integral, batata-doce, frutas
+• Evite: açúcar refinado, farinha branca, ultraprocessados
+
+**GORDURAS BOAS** (9 kcal/g)
+• Função: hormônios, vitaminas lipossolúveis, saciedade
+• Boas fontes: azeite, abacate, castanhas, salmão, ovos
+• Evite: gordura trans, frituras, óleos vegetais refinados
+
+**Para ${nome}:**
+🥩 Proteína: ~${Math.round(peso*2)}g (${Math.round(peso*2*4)} kcal)
+🍚 Carboidratos: ~${calc.carbs||180}g (${Math.round((calc.carbs||180)*4)} kcal)
+🥑 Gorduras: ~${calc.fat||60}g (${Math.round((calc.fat||60)*9)} kcal)
+🔥 Total: ~${calc.meta||1800} kcal`);
+        return;
+      }
+
+      // ── Vitaminas e micronutrientes ───────────
+      if(m.includes('vitamina') || m.includes('mineral') || m.includes('ferro') || m.includes('cálcio') || m.includes('magnésio') || m.includes('zinco')) {
+        resolve(`🌿 *Vitaminas e Minerais Essenciais*
+
+**VITAMINA D** — O "hormônio do sol"
+• 80% dos brasileiros têm deficiência!
+• Fontes: sol (15-20 min/dia), ovos, peixes gordos
+• Suplementação: 2000-4000 UI/dia (verificar com exame)
+
+**FERRO**
+• Mulheres: 18mg/dia | Homens: 8mg/dia | Gestantes: 27mg/dia
+• Fontes animais (heme): carne vermelha, fígado, aves
+• Fontes vegetais (não-heme): feijão, lentilha, espinafre
+• 💡 Consuma com Vitamina C para melhor absorção!
+
+**CÁLCIO**
+• 1000-1200mg/dia
+• Fontes: leite, iogurte, queijo, brócolis, gergelim
+
+**MAGNÉSIO**
+• Fundamental para mais de 300 reações no corpo
+• Fontes: banana, abacate, castanhas, chocolate amargo
+• Ajuda no sono e reduz cólicas
+
+**ZINCO**
+• Imunidade, testosterona, cicatrização
+• Fontes: carne vermelha, frutos do mar, castanha de caju
+
+**ÔMEGA-3**
+• EPA+DHA: 1-2g/dia
+• Fontes: salmão, sardinha, atum, chia, linhaça
+• Poderoso anti-inflamatório natural`);
+        return;
+      }
+
+      // ── Diabetes / Glicemia ───────────────────
+      if(m.includes('diabet') || m.includes('glicemia') || m.includes('açúcar no sangue') || m.includes('insulin')) {
+        resolve(`🩺 *Nutrição para Diabetes e Controle Glicêmico*
+
+**Princípios fundamentais:**
+1. Priorize alimentos de **baixo índice glicêmico (IG)**
+2. Distribua os carboidratos ao longo do dia
+3. Nunca fique mais de 4h sem comer
+4. Combine carbo + proteína + gordura boa em cada refeição
+
+**Alimentos de BAIXO IG (seguros):**
+✅ Aveia, arroz integral, leguminosas
+✅ Vegetais em geral, folhas verdes
+✅ Frutas: maçã, pera, morango, frutas vermelhas
+✅ Proteínas magras: frango, peixe, ovos
+✅ Gorduras boas: azeite, abacate, castanhas
+
+**Alimentos de ALTO IG (evitar):**
+❌ Açúcar, mel, xaropes em excesso
+❌ Pão branco, arroz branco em excesso
+❌ Batata inglesa, mandioca em grande quantidade
+❌ Sucos de fruta (mesmo naturais)
+❌ Refrigerantes e bebidas adoçadas
+
+⚠️ IMPORTANTE: Diabetes requer acompanhamento médico e nutricional individualizado. As orientações acima são gerais. Consulte seu endocrinologista e nutricionista!`);
+        return;
+      }
+
+      // ── Água e hidratação ─────────────────────
+      if(m.includes('água') || m.includes('hidrat') || m.includes('beber') || m.includes('sede')) {
+        const aguaMeta = calc.aguaMl || Math.round((p.weight||70)*35);
+        resolve(`💧 *Hidratação Adequada*
+
+**Sua meta:** ${aguaMeta}ml/dia (~${Math.ceil(aguaMeta/250)} copos de 250ml)
+
+**Por que a água é tão importante:**
+• Regula temperatura corporal
+• Transporta nutrientes e oxigênio
+• Elimina toxinas pelos rins
+• Melhora desempenho físico e mental
+• Auxilia na perda de peso (reduz apetite)
+
+**Sinais de desidratação:**
+🟡 Urina amarela escura
+🟡 Dor de cabeça
+🟡 Cansaço sem motivo
+🟡 Dificuldade de concentração
+🔴 Urina laranja = desidratação grave
+
+**Dicas para beber mais água:**
+1. Comece o dia com 1 copo de água antes do café
+2. Beba 1 copo antes de cada refeição
+3. Tenha sempre uma garrafa visível
+4. Use o app para registrar cada copo ✅
+5. Chás sem açúcar também contam!
+
+**Atenção:** exercício intenso exige +500-700ml/hora de treino`);
+        return;
+      }
+
+      // ── Resposta geral inteligente ─────────────
+      const respostas = [
+        `Olá ${nome}! 👋 Sou seu Coach IA com conhecimento completo de nutrição e nutrição esportiva.
+
+Posso te ajudar com:
+
+🥗 **Emagrecimento** — déficit calórico, cardápio, estratégias
+💪 **Ganho de massa** — superávit, macros, treino
+⏱️ **Jejum intermitente** — protocolos e como começar
+🤰 **Nutrição gestante** — alimentos seguros e proibidos
+🩸 **Período menstrual** — como reduzir cólicas com alimentação
+💊 **Suplementos** — whey, creatina, vitaminas, o que funciona
+🏋️ **Pré e pós-treino** — quando e o que comer
+🩺 **Condições especiais** — diabetes, pressão, colesterol
+🌿 **Vitaminas e minerais** — deficiências e fontes
+
+O que você quer saber? Pode digitar ou usar os chips acima! 😊`,
+        `${nome}, ótima pergunta! Para te dar uma resposta mais precisa, me conta:
+
+• Seu objetivo atual: emagrecer, ganhar massa ou manter?
+• Você treina? Qual modalidade?
+• Tem alguma restrição alimentar ou condição de saúde?
+
+Com esses detalhes, posso montar um plano personalizado! 💪`,
+        `Baseado no seu perfil, ${nome}:
+
+📊 **Suas métricas:**
+• Meta calórica: ~${calc.meta||1800} kcal/dia
+• Proteína ideal: ~${Math.round((p.weight||70)*2)}g/dia
+• Água: ~${Math.round((p.weight||70)*35)}ml/dia
+
+🎯 **Foco para ${meta==='lose'?'emagrecimento':meta==='gain'?'ganho de massa':'manutenção'}:**
+${meta==='lose'?'Déficit de 400 kcal + priorizar proteína (2g/kg) + reduzir ultraprocessados':meta==='gain'?'Superávit de 300 kcal + 5-6 refeições/dia + whey pós-treino':'Manter as calorias da TDEE + variação alimentar + monitoramento semanal'}
+
+Quer um cardápio detalhado? Me diga!`,
+      ];
+      resolve(respostas[Math.floor(Math.random()*respostas.length)]);
+    }, 1000 + Math.random()*1000);
+  });
 }
 
 
@@ -5442,18 +5898,63 @@ window.showMsgPreview = function(k) {
 };
 
 // ── Simulated scheduled notifications ──
+// Envia mensagem real via Telegram Bot API
+async function sendTelegramMessage(chatId, text) {
+  var botToken = APP.telegram && APP.telegram.botToken;
+  if (!botToken || !chatId) {
+    console.warn('Telegram: bot token ou chat_id não configurado');
+    return false;
+  }
+  try {
+    var res = await fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML'
+      })
+    });
+    var data = await res.json();
+    return data.ok === true;
+  } catch(e) {
+    console.warn('Telegram send error:', e.message);
+    return false;
+  }
+}
+
 function scheduleTelegramNotifs() {
-  if(!APP.telegram?.connected) return;
-  const notifs = APP.telegram?.notifs || {};
-  const name = APP.profile?.name?.split(' ')[0] || 'Você';
-  const scheduled = [
-    {delay:12000, enabled:notifs.water, msg:`💧 Hidratação: você tomou ${APP.water} de ${APP.calc?.aguaCopos||8} copos hoje. Beba mais um! 🌊`},
-    {delay:22000, enabled:notifs.meals, msg:`🍽️ Hora do lanche! Hoje no plano: Banana com pasta de amendoim (230 kcal) 🍌`},
-    {delay:35000, enabled:notifs.streak&&APP.streak>0, msg:`🔥 Streak de ${APP.streak} dias ativo! Registre sua próxima refeição para manter. 💪`},
-    {delay:50000, enabled:notifs.motivational, msg:`✨ "${name}, cada passo conta. Você já foi tão longe!" — Coach IA VitalIA 🤖`},
+  if (!APP.telegram || !APP.telegram.connected) return;
+  var chatId = APP.telegram.chatId;
+  if (!chatId) return;
+
+  var notifs = APP.telegram.notifs || {};
+  var name = (APP.profile && APP.profile.name && APP.profile.name.split(' ')[0]) || 'Você';
+
+  var scheduled = [
+    {
+      delay: 12000,
+      enabled: notifs.water,
+      msg: '💧 <b>Hidratação</b>\n' + name + ', você tomou ' + (APP.water || 0) + ' de ' + ((APP.calc && APP.calc.aguaCopos) || 8) + ' copos hoje.\nBeba mais um copo de água agora! 🌊'
+    },
+    {
+      delay: 25000,
+      enabled: notifs.meals,
+      msg: '🍽️ <b>Refeição</b>\nHora do lanche, ' + name + '!\nSugestão: Banana com pasta de amendoim (230 kcal) 🍌\nRegistre no app para manter seu streak!'
+    },
+    {
+      delay: 40000,
+      enabled: notifs.streak && APP.streak > 0,
+      msg: '🔥 <b>Sequência ativa!</b>\n' + name + ', você está há ' + (APP.streak || 0) + ' dias seguidos!\nNão quebre agora — registre sua refeição! 💪'
+    }
   ];
-  scheduled.forEach(n => {
-    if(n.enabled) setTimeout(()=> toast(`✈️ Telegram: ${n.msg}`, 'info', 5000), n.delay);
+
+  scheduled.forEach(function(n) {
+    if (!n.enabled) return;
+    setTimeout(async function() {
+      var sent = await sendTelegramMessage(chatId, n.msg);
+      if (sent) console.log('Telegram notif enviada:', n.msg.substring(0, 40));
+    }, n.delay);
   });
 }
 
