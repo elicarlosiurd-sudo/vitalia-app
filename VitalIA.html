@@ -1,5 +1,4 @@
-
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -44,34 +43,22 @@ input,select,textarea{font-family:var(--font-body);outline:none}
 a{text-decoration:none;color:inherit}
 
 /* ═══════════════════════════════════════
-   LAYOUT
+   LAYOUT E ANIMAÇÕES
 ═══════════════════════════════════════ */
 #root{height:100dvh;display:flex;flex-direction:column;overflow:hidden;position:relative;max-width:430px;margin:0 auto;background:var(--bg)}
 #app-body{flex:1;overflow:hidden;position:relative}
 .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + 12px)}
 .screen.no-nav{padding-bottom:0}
 .screen.active{z-index:10}
-
-/* ═══════════════════════════════════════
-   ANIMATIONS
-═══════════════════════════════════════ */
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeInFast{from{opacity:0}to{opacity:1}}
 @keyframes slideUp{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-@keyframes ringFill{from{stroke-dashoffset:var(--ring-full)}to{stroke-dashoffset:var(--ring-offset)}}
-@keyframes pop{0%{transform:scale(0.8);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-@keyframes confettiDrop{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .fade-in{animation:fadeIn .35s ease forwards}
-.fade-in-fast{animation:fadeInFast .2s ease forwards}
-.pop-in{animation:pop .3s ease forwards}
 
 /* ═══════════════════════════════════════
-   BOTTOM NAV
+   BOTTOM NAV & HEADER
 ═══════════════════════════════════════ */
 #bottom-nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
@@ -90,107 +77,35 @@ a{text-decoration:none;color:inherit}
 .nav-item::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--green);border-radius:0 0 4px 4px;transition:width .25s}
 .nav-item.active::before{width:32px}
 
-/* ═══════════════════════════════════════
-   HEADER
-═══════════════════════════════════════ */
 .screen-header{position:sticky;top:0;z-index:50;background:rgba(13,17,23,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
 .screen-title{font-family:var(--font-serif);font-size:20px;font-weight:700}
 .light-mode .screen-header{background:rgba(248,250,252,.92)}
 
 /* ═══════════════════════════════════════
-   CARDS & SURFACES
+   COMPONENTES (Cards, Buttons, Inputs)
 ═══════════════════════════════════════ */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-.card-glow{background:linear-gradient(135deg,rgba(34,197,94,.08),var(--surface));border-color:rgba(34,197,94,.2)}
-.card-blue{background:linear-gradient(135deg,rgba(56,189,248,.08),var(--surface));border-color:rgba(56,189,248,.2)}
-.card-purple{background:linear-gradient(135deg,rgba(167,139,250,.08),var(--surface));border-color:rgba(167,139,250,.2)}
-.card-orange{background:linear-gradient(135deg,rgba(249,115,22,.08),var(--surface));border-color:rgba(249,115,22,.2)}
-.card.clickable{cursor:pointer;transition:all var(--transition)}
-.card.clickable:active{transform:scale(.98);border-color:var(--green)}
 .section-title{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;padding:0 16px;margin:20px 0 10px}
-
-/* ═══════════════════════════════════════
-   BUTTONS
-═══════════════════════════════════════ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;transition:all var(--transition);cursor:pointer;border:none;white-space:nowrap}
 .btn-primary{background:var(--gradient);color:#000;font-weight:700;box-shadow:0 4px 20px rgba(34,197,94,.3)}
-.btn-primary:active{transform:scale(.97);box-shadow:0 2px 10px rgba(34,197,94,.2)}
 .btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text)}
-.btn-outline:active{border-color:var(--green);color:var(--green)}
-.btn-ghost{background:transparent;color:var(--text2)}
-.btn-danger{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
 .btn-full{width:100%;border-radius:var(--radius)}
-.btn-sm{padding:8px 14px;font-size:12px;border-radius:8px}
-.btn-icon{width:40px;height:40px;border-radius:12px;padding:0;background:var(--surface2);border:1px solid var(--border)}
-.btn-loading{position:relative;color:transparent!important}
-.btn-loading::after{content:'';position:absolute;width:18px;height:18px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;color:#000}
-
-/* ═══════════════════════════════════════
-   INPUTS
-═══════════════════════════════════════ */
 .input-wrap{margin-bottom:14px}
 .input-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block}
 .input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;font-size:14px;color:var(--text);transition:border-color var(--transition)}
 .input:focus{border-color:var(--green);background:var(--surface)}
-.input::placeholder{color:var(--text3)}
-.input.error{border-color:var(--red)}
-.input-error{font-size:11px;color:var(--red);margin-top:4px}
 .input-icon{position:relative}
 .input-icon .input{padding-left:42px}
 .input-icon .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px}
-.input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-/* ═══════════════════════════════════════
-   PILLS & BADGES
-═══════════════════════════════════════ */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700}
-.pill-green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2)}
-.pill-orange{background:rgba(249,115,22,.12);color:var(--orange);border:1px solid rgba(249,115,22,.2)}
-.pill-blue{background:rgba(56,189,248,.12);color:var(--blue);border:1px solid rgba(56,189,248,.2)}
-.pill-purple{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
-.pill-red{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2)}
-.pill-yellow{background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.2)}
-.badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:99px;font-size:10px;font-weight:800;background:var(--red);color:#fff;position:absolute;top:-4px;right:-4px}
-
-/* ═══════════════════════════════════════
-   PROGRESS RINGS
-═══════════════════════════════════════ */
-.ring-container{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.ring-text{position:absolute;text-align:center}
-
-/* ═══════════════════════════════════════
-   TABS
-═══════════════════════════════════════ */
-.tab-row{display:flex;gap:6px;padding:0 16px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none}
-.tab-row::-webkit-scrollbar{display:none}
-.tab-btn{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;border:1.5px solid var(--border2);background:transparent;color:var(--text2);white-space:nowrap;transition:all var(--transition);cursor:pointer;flex-shrink:0}
-.tab-btn.active{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
-
-/* ═══════════════════════════════════════
-   TOGGLE SWITCH
-═══════════════════════════════════════ */
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0;position:absolute}
-.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:99px;cursor:pointer;transition:.3s}
-.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
-.toggle input:checked+.toggle-slider{background:var(--green)}
-.toggle input:checked+.toggle-slider::before{transform:translateX(20px)}
-
-/* ═══════════════════════════════════════
-   BOTTOM SHEET MODAL
-═══════════════════════════════════════ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex;animation:fadeInFast .2s}
 .bottom-sheet{width:100%;max-width:430px;margin:0 auto;background:var(--surface);border-radius:24px 24px 0 0;padding:0 0 env(safe-area-inset-bottom,16px);max-height:92vh;overflow-y:auto;animation:slideUp .3s ease}
-.sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto 0}
 .sheet-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .sheet-title{font-family:var(--font-serif);font-size:17px;font-weight:700}
 .sheet-body{padding:16px 20px}
 .sheet-close{width:32px;height:32px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:16px;color:var(--text2)}
 
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
 #toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;width:90%;max-width:360px;pointer-events:none}
 .toast{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;font-size:13px;font-weight:500;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;animation:slideDown .3s ease;pointer-events:all}
 .toast-success{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08)}
@@ -198,15 +113,7 @@ a{text-decoration:none;color:inherit}
 .toast-info{border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.08)}
 
 /* ═══════════════════════════════════════
-   SPLASH SCREEN
-═══════════════════════════════════════ */
-#splash{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;animation:fadeInFast .3s}
-.splash-logo{font-size:64px;animation:pulse 1.5s ease-in-out infinite}
-.splash-name{font-family:var(--font-serif);font-size:36px;font-weight:700;color:var(--green);font-style:italic}
-.splash-tag{font-size:13px;color:var(--text3)}
-
-/* ═══════════════════════════════════════
-   AUTH SCREENS & OTHERS
+   TELAS DE AUTENTICAÇÃO
 ═══════════════════════════════════════ */
 #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:none;flex-direction:column;overflow-y:auto}
 #auth-screen.active{display:flex}
@@ -215,79 +122,29 @@ a{text-decoration:none;color:inherit}
 .auth-logo{font-size:48px;margin-bottom:8px}
 .auth-card{background:rgba(22,27,34,.9);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;backdrop-filter:blur(20px)}
 .auth-title{font-family:var(--font-serif);font-size:22px;font-weight:700;margin-bottom:4px}
-.auth-sub{font-size:13px;color:var(--text2);margin-bottom:24px}
-.divider{display:flex;align-items:center;gap:12px;margin:16px 0}
-.divider-line{flex:1;height:1px;background:var(--border)}
-.divider-text{font-size:12px;color:var(--text3)}
 .auth-link{color:var(--green);font-weight:600;cursor:pointer}
+.social-green-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;color:var(--text);font-family:var(--font-body);transition:all .25s;}
 
 /* ═══════════════════════════════════════
-   HOME SCREEN
-═══════════════════════════════════════ */
-.home-hero{padding:20px 16px;background:radial-gradient(ellipse at top right,rgba(34,197,94,.12),transparent 60%)}
-.greeting-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.greeting-name{font-family:var(--font-serif);font-size:22px;font-weight:700;font-style:italic}
-.avatar{width:42px;height:42px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid rgba(34,197,94,.3);flex-shrink:0}
-.score-info{flex:1}
-.score-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
-.macro-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.macro-card{background:var(--surface2);border-radius:var(--radius-sm);padding:10px;text-align:center;border:1px solid var(--border)}
-.calory-ring-wrap{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:12px}
-.streak-card{background:linear-gradient(135deg,rgba(249,115,22,.2),rgba(251,191,36,.1));border:1px solid rgba(249,115,22,.3);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;margin:0 16px 12px}
-
-/* ═══════════════════════════════════════
-   NUTRITION & RECIPES
-═══════════════════════════════════════ */
-.camera-area{background:var(--surface2);border:2px dashed var(--border2);border-radius:var(--radius-lg);margin:0 16px;padding:40px 20px;text-align:center;cursor:pointer;position:relative;overflow:hidden}
-.recipe-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer;}
-.recipe-hero{height:120px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:64px;position:relative}
-
-/* ═══════════════════════════════════════
-   COACH SCREEN
+   COACH IA E SCANNER
 ═══════════════════════════════════════ */
 .coach-wrap{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)}
 .msg-wrap{display:flex;flex-direction:column;gap:4px;max-width:85%}
 .msg-wrap.user{align-self:flex-end;align-items:flex-end}
 .msg-wrap.ai{align-self:flex-start}
-.msg-bubble{padding:11px 14px;border-radius:16px;font-size:13px;line-height:1.6;word-break:break-word}
+.msg-bubble{padding:11px 14px;border-radius:16px;font-size:14px;line-height:1.6;word-break:break-word}
 .msg-wrap.user .msg-bubble{background:var(--green);color:#000;border-bottom-right-radius:4px;font-weight:500}
 .msg-wrap.ai .msg-bubble{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:4px}
-.msg-time{font-size:10px;color:var(--text3);padding:0 4px}
-
-/* ════════════════════════════════════════════
-   VitalIA v4.2 — CSS PRODUÇÃO
-════════════════════════════════════════════ */
-.social-green-btn{
-  display:flex;align-items:center;gap:12px;padding:13px 16px;
-  border-radius:12px;border:1.5px solid rgba(34,197,94,.5);
-  background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.06));
-  cursor:pointer;font-size:14px;font-weight:600;width:100%;margin-bottom:10px;
-  color:var(--text);font-family:var(--font-body);
-}
-.tg-login-btn{
-  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
-  padding:13px 16px;border-radius:var(--radius-sm);
-  border:1.5px solid rgba(34,197,94,.5);
-  background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.06));
-  cursor:pointer;font-size:14px;font-weight:600;color:var(--text);
-  font-family:var(--font-body);margin-bottom:10px;
-}
-#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
-#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
+#quagga-viewport{min-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
+#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;}
 
 </style>
 </head>
 <body>
 <div id="root">
-  <div id="splash">
-    <div class="splash-logo">🌿</div>
-    <div class="splash-name">VitalIA</div>
-    <div class="splash-tag">Saúde com Inteligência</div>
-  </div>
-
   <div id="auth-screen"></div>
 
-  <div id="app" style="display:none;height:100%;display:flex;flex-direction:column">
+  <div id="app" style="display:none;height:100%;flex-direction:column">
     <div id="app-body"></div>
     <nav id="bottom-nav"></nav>
   </div>
@@ -308,77 +165,86 @@ a{text-decoration:none;color:inherit}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// Mock Supabase SDK Initialization to prevent errors if not connected
+// Mock Supabase (Apenas para não travar a UI)
 const sb = { auth: { getSession: async () => ({data:{session:null}}), onAuthStateChange: () => {}, getUser: async () => ({data:{user:null}}) } };
 
-const LANG = {
-  pt: {
-    nav:['Início','Nutrição','Receitas','Hidratação','Mais'],
-    greeting_m:'Bom dia', greeting_a:'Boa tarde', greeting_e:'Boa noite',
-    score_label:'Score de Saúde', score_great:'Excelente! Continue assim 🔥', score_ok:'Bom! Pode melhorar 💪', score_low:'Vamos melhorar juntos 🌱',
-    streak:'dias de sequência', next_action:'Próxima ação', macros:'Macros do Dia', calories:'Calorias', water:'Hidratação',
-    mood_title:'Como você está hoje?', mood_saved:'Humor registrado!',
-    take_photo:'Fotografar Refeição', take_photo_sub:'Toque para abrir câmera ou galeria', gallery:'Galeria', camera:'Câmera', analyzing:'Analisando com IA...',
-    meal_diary:'Diário Alimentar', recipes:'Receitas', recipe_detail:'Ingredientes', steps:'Modo de preparo',
-    hydration:'Hidratação', water_goal:'Meta de água', fasting:'Jejum Intermitente', scanner:'Scanner', scan_sub:'Aponte para o código de barras',
-    coach:'Coach IA', coach_online:'Online agora', coach_greeting:(n)=>`Olá, ${n}! 👋 Sou seu coach de nutrição com IA. Como posso te ajudar hoje?`,
-    progress:'Progresso', achievements:'Conquistas', shopping:'Compras', settings:'Configurações',
-    save:'Salvar', cancel:'Cancelar', back:'← Voltar', login:'Entrar', register:'Criar conta', email:'Email', password:'Senha',
-    name:'Nome completo', remember:'Lembrar de mim', forgot:'Esqueci minha senha', or_continue:'ou continue com', step:'Passo', of:'de',
-    languages:[{code:'pt',name:'Português',flag:'🇧🇷'},{code:'en',name:'English',flag:'🇺🇸'},{code:'es',name:'Español',flag:'🇪🇸'},{code:'ru',name:'Русский',flag:'🇷🇺'}],
-    dark_mode:'Modo escuro', logout:'Sair'
-  }
-};
-
 const APP = {
-  lang: localStorage.getItem('v_lang') || 'pt', darkMode: localStorage.getItem('v_dark') !== 'false', tab: 'home',
-  user: JSON.parse(localStorage.getItem('v_user') || 'null'), profile: JSON.parse(localStorage.getItem('v_profile') || 'null'),
-  calc: null, session: localStorage.getItem('v_session'), telegram: JSON.parse(localStorage.getItem('v_telegram') || 'null'),
-  mood: null, water: 0, calories: 0, meals: [], fastingActive: false, fastStart: null, fastProtocol: '16:8',
-  coachMsgs: [], coachLoading: false, weightHistory: JSON.parse(localStorage.getItem('v_weights') || '[]'),
-  xp: parseInt(localStorage.getItem('v_xp') || '0'), streak: parseInt(localStorage.getItem('v_streak') || '7'), shopItems: null,
-  authStep: 'login', registerData: {}, pinInput: '', pinAttempts: 0, loginLoading: false,
+  lang: 'pt', darkMode: true, tab: 'home',
+  user: JSON.parse(localStorage.getItem('v_user') || 'null'),
+  profile: JSON.parse(localStorage.getItem('v_profile') || 'null'),
+  calc: null, water: 0, meals: [], coachMsgs: [], coachLoading: false,
+  xp: 0, streak: 7, authStep: 'login'
 };
 
-function t(key, ...args) { const v = LANG[APP.lang]?.[key] ?? LANG.pt?.[key] ?? key; return typeof v === 'function' ? v(...args) : v; }
-function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
-function addXP(n) { APP.xp += n; save('v_xp', APP.xp); }
-function calcDailyScore() { return 85; } // Mocked score
 function toast(msg, type='info', duration=3000) {
   const el = document.createElement('div'); el.className = `toast toast-${type}`;
   el.innerHTML = `<span>${{success:'✅',error:'❌',info:'💬'}[type]||'💬'}</span><span>${msg}</span>`;
   document.getElementById('toast-container').appendChild(el); setTimeout(() => el.remove(), duration);
 }
+
 function openModal(title, bodyHTML) { document.getElementById('modal-title').textContent = title; document.getElementById('modal-body').innerHTML = bodyHTML; document.getElementById('modal-overlay').classList.add('open'); }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
-function svgRing(size, stroke, pct, color, bg='#21262d') { const r = (size-stroke)/2, circ = 2*Math.PI*r, offset = circ*(1-pct/100); return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${bg}" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" style="transition:stroke-dashoffset .8s ease"/></svg>`; }
 
-window.RECIPES = [
-  {id:204,emoji:'🫐',name:'Smoothie Energizante Menstrual',cat:'menstrual',time:'5min',diff:'facil',cal:260,prot:10,carb:42,fat:7,fiber:6,gi:38,score:9,tags:['Menstrual','Energia','Ferro'],ingredients:['1 xic. espinafre','1/2 xic. mirtilo','1 banana congelada','1 col. semente de girassol','200ml leite de aveia'],steps:['Coloque todos no liquidificador.','Bata por 1 minuto.','Sirva imediatamente.'],nutrition:{calories:260,protein:'10g',carbs:'42g',fat:'7g',fiber:'6g'},rating:4.6,reviews:167,goal:'maintain',special:'menstrual',specialNote:'Menstrual: Ferro do espinafre + vitamina C do mirtilo = absorcao maximizada. Combate fadiga.'},
-  {id:205,emoji:'🌰',name:'Mix Anti-Colica com Magnesio',cat:'menstrual',time:'2min',diff:'facil',cal:195,prot:6,carb:18,fat:13,fiber:4,gi:25,score:9,tags:['Menstrual','Lanche','Magnesio'],ingredients:['Amendoas (20g)','Nozes (15g)','Chocolate 70% cacau (15g)','Sementes abobora (10g)','Cranberry seco (15g)'],steps:['Misture tudo em pote.','Consuma como lanche.'],nutrition:{calories:195,protein:'6g',carbs:'18g',fat:'13g',fiber:'4g'},rating:4.8,reviews:220,goal:'maintain',special:'menstrual',specialNote:'Menstrual: 300mg magnesio/dia reduz colicas em ate 50%. Use na semana antes e durante o periodo.'},
-  {id:206,emoji:'🥗',name:'Salada Fitness',cat:'salad',time:'5min',diff:'facil',cal:150,prot:5,carb:15,fat:4,fiber:2,gi:28,score:6,tags:['Vegano','Sem gluten'],ingredients:['Ingredientes frescos e naturais'],steps:['Prepare os ingredientes.','Cozinhe conforme indicado.','Sirva imediatamente.'],nutrition:{calories:150,protein:'5g',carbs:'15g',fat:'4g',fiber:'2g'},rating:3.9,reviews:20,goal:'lose'}
-].filter(r => r !== undefined && r !== null);
+// ═══════════════════════════════════════════════════
+// TELA DE LOGIN 
+// ═══════════════════════════════════════════════════
+function renderAuth() {
+  const auth = document.getElementById('auth-screen');
+  auth.innerHTML = `
+  <div class="auth-bg">
+    <div class="auth-logo-wrap"><div class="auth-logo">🌿</div><div class="auth-logo-name">VitalIA</div></div>
+    <div class="auth-card">
+      <h2 class="auth-title" style="text-align:center">Acessar conta</h2>
+      <div class="input-wrap">
+        <label class="input-label">E-mail</label>
+        <input id="a-email" class="input" type="email" placeholder="seu@email.com">
+      </div>
+      <div class="input-wrap">
+        <label class="input-label">Senha</label>
+        <input id="a-pass" class="input" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:15px;margin-bottom:10px;font-size:16px">Entrar</button>
+      <button class="social-green-btn" onclick="doLogin()" style="justify-content:center">Acessar como Visitante (Teste)</button>
+    </div>
+  </div>`;
+}
 
-const TABS = [{id:'home',icon:'🏠',navIdx:0}, {id:'recipes',icon:'🍴',navIdx:2}, {id:'scanner',icon:'🔍',navIdx:1}, {id:'coach',icon:'🤖',navIdx:3}, {id:'more',icon:'···',navIdx:4}];
+function doLogin() {
+  APP.user = { email: 'demo@vitalia.app', name: 'Usuário' };
+  APP.profile = { name: 'Usuário', weight: 70, height: 175, goal: 'lose' };
+  document.getElementById('auth-screen').classList.remove('active');
+  startApp();
+}
+
+// ═══════════════════════════════════════════════════
+// NAVEGAÇÃO E TELAS PRINCIPAIS
+// ═══════════════════════════════════════════════════
+const TABS = [
+  {id:'home', icon:'🏠', label:'Início'},
+  {id:'scanner', icon:'🔍', label:'Scanner'},
+  {id:'recipes', icon:'🍴', label:'Receitas'},
+  {id:'coach', icon:'🤖', label:'Coach IA'},
+  {id:'settings', icon:'⚙️', label:'Perfil'}
+];
 
 function startApp() {
-  document.getElementById('auth-screen').classList.remove('active');
   document.getElementById('app').style.display = 'flex';
-  renderNav(); navigate('home');
+  renderNav();
+  navigate('home');
 }
 
 function renderNav() {
   document.getElementById('bottom-nav').innerHTML = TABS.map(tab =>
     `<button class="nav-item${APP.tab===tab.id?' active':''}" onclick="navigate('${tab.id}')">
       <span class="nav-icon">${tab.icon}</span>
-      <span class="nav-label">${t('nav')[tab.navIdx] || tab.id}</span>
+      <span class="nav-label">${tab.label}</span>
     </button>`
   ).join('');
 }
 
 function navigate(tab) {
   APP.tab = tab;
-  if(tab !== 'scanner' && typeof stopLiveScanner === 'function') stopLiveScanner();
+  if(typeof stopLiveScanner === 'function') stopLiveScanner();
   renderNav();
   const body = document.getElementById('app-body');
   body.innerHTML = '';
@@ -389,206 +255,28 @@ function navigate(tab) {
   else if (tab === 'recipes') screen.innerHTML = renderRecipes();
   else if (tab === 'scanner') { screen.innerHTML = renderScanner(); setTimeout(startLiveScanner, 300); }
   else if (tab === 'coach') { screen.innerHTML = renderCoach(); attachCoach(screen); }
-  else screen.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text3)">Tela em desenvolvimento</div>`;
+  else if (tab === 'settings') screen.innerHTML = renderSettings();
   
   body.appendChild(screen);
 }
 
 function renderHome() {
-  return `<div class="home-hero">
-    <div class="greeting-name">Olá, Usuário! 👋</div>
-    <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <button class="btn btn-primary" onclick="navigate('coach')" style="padding:20px;font-size:18px">🤖 Coach IA</button>
-      <button class="btn btn-outline" onclick="navigate('scanner')" style="padding:20px;font-size:18px">🔍 Scanner</button>
+  return `<div style="padding:20px 16px">
+    <h2 style="font-family:var(--font-serif);font-size:24px;margin-bottom:20px">Olá, ${APP.profile?.name}! 👋</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="card" style="text-align:center" onclick="navigate('scanner')">
+        <div style="font-size:32px;margin-bottom:8px">🔍</div>
+        <div style="font-weight:700">Scanner</div>
+      </div>
+      <div class="card" style="text-align:center" onclick="navigate('coach')">
+        <div style="font-size:32px;margin-bottom:8px">🤖</div>
+        <div style="font-weight:700">Coach IA</div>
+      </div>
     </div>
   </div>`;
 }
 
-function renderRecipes() {
-  return `<div class="screen-header"><div class="screen-title">🍴 Receitas</div></div>
-  <div style="padding:16px">
-    ${window.RECIPES.map(r=>`<div class="card">${r.emoji} <strong>${r.name}</strong><br><span style="font-size:11px;color:var(--text3)">${r.cal} kcal</span></div>`).join('')}
-  </div>`;
-}
-
-const SCAN = { mode:'live' };
-function renderScanner() {
-  return `<div class="screen-header"><div class="screen-title">🔍 Scanner</div></div>
-  <div style="padding:16px;text-align:center">
-    <div id="quagga-viewport" style="width:100%;height:260px;background:#000;border-radius:12px;margin-bottom:12px;overflow:hidden"></div>
-    <div id="scan-live-status" style="font-size:12px;color:var(--text2);margin-bottom:12px">⏳ Iniciando câmera...</div>
-    <button class="btn btn-danger btn-full" onclick="stopLiveScanner()">⏹ Parar Câmera</button>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════
-// COACH IA - CÓDIGO 100% CORRIGIDO E OTIMIZADO PARA ANDROID
-// ═══════════════════════════════════════════════════
-function renderCoach() {
-  const msgsHtml = APP.coachMsgs.length === 0 ? 
-    `<div class="msg-wrap ai"><div class="msg-bubble">Olá! 🌿 Sou seu Coach IA. Como posso te ajudar hoje?</div></div>` : 
-    APP.coachMsgs.map(m => `<div class="msg-wrap ${m.role}"><div class="msg-bubble">${m.text}</div></div>`).join('');
-
-  return `
-  <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg)">
-    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--surface)">
-      <div style="font-size:24px">🤖</div>
-      <div><div style="font-weight:700">Coach IA Nutri</div><div style="font-size:11px;color:var(--green)">Online agora</div></div>
-    </div>
-    
-    <div id="coach-msgs" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch">
-      ${msgsHtml}
-      ${APP.coachLoading ? `<div class="msg-wrap ai"><div class="msg-bubble">Digitando...</div></div>` : ''}
-    </div>
-
-    <div style="background:var(--surface);border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:8px;align-items:center">
-      
-      <button id="mic-btn" 
-        onmousedown="startRecording()" onmouseup="stopRecording()"
-        ontouchstart="startRecording()" ontouchend="stopRecording()"
-        style="width:44px;height:44px;border-radius:12px;background:var(--surface2);border:2px solid var(--border2);font-size:20px;color:var(--text);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent">
-        🎤
-      </button>
-
-      <input type="text" id="coach-input" placeholder="Pergunte sobre sua dieta..." 
-        style="flex:1;height:44px;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;color:var(--text);font-family:var(--font-body);outline:none;box-sizing:border-box"
-        onkeydown="if(event.key==='Enter'){sendCoach();}">
-      
-      <button onclick="sendCoach()" style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;font-size:20px;color:#000;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent">
-        ➤
-      </button>
-    </div>
-  </div>`;
-}
-
-window.attachCoach = function(screen) {
-  setTimeout(function() {
-    var msgs = document.getElementById('coach-msgs');
-    if (msgs) msgs.scrollTop = msgs.scrollHeight;
-  }, 100);
-};
-
-window.sendCoach = function(txt) {
-  var inp = document.getElementById('coach-input');
-  var msg = (txt || (inp && inp.value) || '').trim();
-  if (!msg || APP.coachLoading) return;
-  if (inp) inp.value = '';
-  
-  APP.coachMsgs.push({role:'user', text:msg});
-  APP.coachLoading = true;
-  navigate('coach');
-  
-  setTimeout(function() {
-    APP.coachMsgs.push({role:'ai', text:'Essa é uma resposta simulada do Coach IA! Você perguntou: "' + msg + '". Como não há chave de API ativa, respondo localmente. 🥗'});
-    APP.coachLoading = false;
-    navigate('coach');
-  }, 1000);
-};
-
-let _audioChunks = [];
-let _mediaRecorder = null;
-let _recTimer = null;
-
-window.startRecording = async function() {
-  if(location.protocol !== 'https:' && location.hostname !== 'localhost'){
-    toast('❌ O microfone requer uma conexão HTTPS (GitHub Pages).', 'error');
-    return;
-  }
-  
-  var mic = document.getElementById('mic-btn');
-  try {
-    var stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    _audioChunks = [];
-    _mediaRecorder = new MediaRecorder(stream);
-    _mediaRecorder.ondataavailable = function(e){ if(e.data.size > 0) _audioChunks.push(e.data); };
-    _mediaRecorder.start();
-    if(mic) { mic.style.background = 'rgba(248,113,113,.15)'; mic.style.borderColor = 'var(--red)'; }
-    toast('🎤 Gravando áudio...', 'info', 2000);
-    _recTimer = setTimeout(stopRecording, 15000);
-  } catch(e) {
-    toast('❌ Permita o acesso ao microfone no navegador.', 'error');
-  }
-};
-
-window.stopRecording = function() {
-  clearTimeout(_recTimer);
-  var mic = document.getElementById('mic-btn');
-  if(mic) { mic.style.background = 'var(--surface2)'; mic.style.borderColor = 'var(--border2)'; }
-  if(!_mediaRecorder || _mediaRecorder.state === 'inactive') return;
-  
-  _mediaRecorder.stop();
-  _mediaRecorder.onstop = function() {
-    _mediaRecorder.stream.getTracks().forEach(t => t.stop());
-    var blob = new Blob(_audioChunks, {type: 'audio/webm'});
-    if(blob.size < 500) { toast('Gravação muito curta.', 'info'); return; }
-    
-    toast('🎤 Processando áudio...', 'success', 2000);
-    setTimeout(function() {
-      sendCoach('Como posso melhorar minha alimentação hoje? (Transcrito do áudio 🎤)');
-    }, 1000);
-  };
-};
-
-// ═══════════════════════════════════════════════════
-// SCANNER CÂMERA - FORÇANDO REPRODUÇÃO NO ANDROID
-// ═══════════════════════════════════════════════════
-window.startLiveScanner = async function() {
-  var statusEl = document.getElementById('scan-live-status');
-  var viewport = document.getElementById('quagga-viewport');
-  if (!viewport) return;
-  viewport.innerHTML = ''; 
-
-  if(location.protocol !== 'https:' && location.hostname !== 'localhost'){
-    if (statusEl) statusEl.innerHTML = '❌ O Android bloqueia a câmera em sites sem HTTPS.<br>Acesse através do link oficial do GitHub Pages.';
-    return;
-  }
-
-  if (statusEl) statusEl.innerHTML = '⏳ Solicitando câmera ao Android...';
-
-  try {
-    var stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    var video = document.createElement('video');
-    video.srcObject = stream;
-    
-    // Regras essenciais para Android não bloquear o vídeo
-    video.setAttribute('playsinline', 'true');
-    video.setAttribute('autoplay', 'true');
-    video.setAttribute('muted', 'true');
-    video.muted = true;
-    
-    video.style.width = '100%';
-    video.style.height = '100%';
-    video.style.objectFit = 'cover';
-    
-    viewport.appendChild(video);
-    video.play().catch(e => console.warn('Autoplay bloqueado pelo Android:', e));
-    window._activeCamStream = stream;
-    
-    if (statusEl) statusEl.innerHTML = '🟢 Câmera ligada! Aponte para um produto.';
-  } catch(e) {
-    if (statusEl) statusEl.innerHTML = '❌ Permissão de câmera negada pelo navegador.';
-  }
-};
-
-window.stopLiveScanner = function() {
-  var viewport = document.getElementById('quagga-viewport');
-  if (viewport) {
-    var videos = viewport.querySelectorAll('video');
-    videos.forEach(v => {
-      if (v.srcObject) v.srcObject.getTracks().forEach(t => t.stop());
-    });
-  }
-  if (window._activeCamStream) {
-    window._activeCamStream.getTracks().forEach(t => t.stop());
-    window._activeCamStream = null;
-  }
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-  applyTheme();
-  document.getElementById('auth-screen').classList.add('active');
-  renderLogin();
-});
-</script>
-</body>
-</html>
+function renderSettings() {
+  return `<div class="screen-header"><div class="screen-title">⚙️ Perfil</div></div>
+  <div style="padding:20px;text-align:center">
+    <div style="width:80px;height:80px;background:var(--green);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#000">U</div>
