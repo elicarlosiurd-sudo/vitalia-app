@@ -401,7 +401,7 @@ a{text-decoration:none;color:inherit}
 .coach-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:12px;background:var(--surface)}
 .coach-avatar{width:40px;height:40px;border-radius:50%;background:var(--gradient2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative}
 .online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--surface)}
-.coach-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10pxmin-height:0;}
+.coach-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;min-height:0;}
 .msg-wrap{display:flex;flex-direction:column;gap:4px;max-width:85%}
 .msg-wrap.user{align-self:flex-end;align-items:flex-end}
 .msg-wrap.ai{align-self:flex-start}
@@ -413,7 +413,7 @@ a{text-decoration:none;color:inherit}
 .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce .9s infinite}
 .typing-dot:nth-child(2){animation-delay:.15s}
 .typing-dot:nth-child(3){animation-delay:.3s}
-.coach-input-wrap{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:flex-end;background:var(--surface)
+.coach-input-wrap{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:flex-end;background:var(--surface);
   position: sticky;
   bottom: 0;
   z-index: 10;
@@ -584,6 +584,47 @@ a{text-decoration:none;color:inherit}
 #quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
 #quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
 
+
+/* Coach IA — elemento real #coach-input */
+#coach-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  padding: 12px 16px;
+  font-size: 16px !important;
+  color: var(--text);
+  font-family: var(--font-body);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  height: 44px;
+  touch-action: manipulation;
+}
+#coach-input:focus {
+  border-color: var(--green);
+}
+#mic-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: all .2s;
+}
+#mic-btn.recording {
+  background: rgba(239,68,68,.15);
+  border-color: #ef4444;
+}
 </style>
 </head>
 <body>
@@ -6319,399 +6360,195 @@ window.addEventListener('DOMContentLoaded', async () => {
 </style>
 <script>
 
-// ═══════════════════════════════════════════════════════
-//  COACH IA v7.1 — funções completas
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  COACH IA — versão única limpa
+//  DOM real: #coach-input #mic-btn #coach-msgs #rec-indicator
+// ═══════════════════════════════════════════════
 
-// ── Aliases para compatibilidade ────────────────────────
-window.sendCoach = function(txt) { if(window.vCoachSend) vCoachSend(txt); };
-window.startRecording = function() { if(window.vCoachStartRec) vCoachStartRec(); };
-window.stopRecording  = function() { if(window.vCoachStopRec)  vCoachStopRec();  };
-window.speakText      = function(x) { if(window.vCoachSpeak)   vCoachSpeak(x);   };
-window.getNutriCoachResponse = function(m,h) { return window.vGetResp ? vGetResp(m,h) : Promise.resolve(''); };
-
-// ── vCoachSend ───────────────────────────────────────────
-window.vCoachSend = async function(txt) {
+// sendCoach — chamado pelo input e pelos chips
+window.sendCoach = async function(txt) {
   var inp = document.getElementById('coach-input');
-  var msg = (txt || (inp && inp.value) || '').trim();
+  var msg = (txt || (inp ? inp.value : '')).trim();
   if (!msg) return;
-  if (inp) { inp.value = ''; inp.style.height = 'auto'; }
+  if (inp) inp.value = '';
   var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   APP.coachMsgs = APP.coachMsgs || [];
-  APP.coachMsgs.push({role:'user', text: msg, time: ts});
+  APP.coachMsgs.push({role:'user', text:msg, time:ts});
   var el = document.getElementById('coach-msgs');
   if (el) {
+    var safe = msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     var ub = document.createElement('div');
     ub.className = 'msg-wrap user';
-    var safe = msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    ub.innerHTML = '<div class="msg-bubble">' + safe + '</div><div class="msg-time">' + ts + '</div>';
+    ub.innerHTML = '<div class="msg-bubble">'+safe+'</div><div class="msg-time">'+ts+'</div>';
     el.appendChild(ub);
-    var tb = document.createElement('div'); tb.id = 'v-typing'; tb.className = 'msg-wrap ai';
+    var tb = document.createElement('div'); tb.id='_typing'; tb.className='msg-wrap ai';
     tb.innerHTML = '<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
     el.appendChild(tb);
     el.scrollTop = el.scrollHeight;
   }
   var resp = '';
-  try { resp = await vGetResp(msg); } catch(e) { resp = '⚠️ Erro de conexão. Verifique sua internet e tente novamente.'; }
+  try { resp = await window.coachGetResp(msg); } catch(e) { resp = 'Erro. Tente novamente.'; }
   var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'ai', text: resp, time: tsR});
-  var typing = document.getElementById('v-typing'); if (typing) typing.remove();
+  APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
+  var ty = document.getElementById('_typing'); if(ty) ty.remove();
   if (el) {
     var idx = APP.coachMsgs.length - 1;
     var safeR = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-    var ab = document.createElement('div'); ab.className = 'msg-wrap ai';
-    ab.innerHTML = '<div class="msg-bubble">' + safeR + '</div>'
-      + '<div style="margin-top:6px"><button data-idx="' + idx + '" onclick="vCoachSpeak(parseInt(this.dataset.idx))"'
-      + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-      + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button></div>'
-      + '<div class="msg-time">' + tsR + '</div>';
+    var ab = document.createElement('div'); ab.className='msg-wrap ai';
+    ab.innerHTML = '<div class="msg-bubble">'+safeR+'</div>'
+      + '<div style="margin-top:6px"><button onclick="coachSpeak('+idx+')" '
+      + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button></div>'
+      + '<div class="msg-time">'+tsR+'</div>';
     el.appendChild(ab);
     el.scrollTop = el.scrollHeight;
-    if (window._vVoice) { try { vCoachSpeak(idx); } catch(e){} }
   }
-  if (typeof addXP === 'function') addXP(5);
+  if(typeof addXP==='function') addXP(5);
 };
 
-// ── vCoachSpeak (TTS) ────────────────────────────────────
-window.vCoachSpeak = function(idxOrText) {
-  if (!window.speechSynthesis) { toast && toast('TTS não disponível','info'); return; }
+// TTS — lê resposta em voz alta
+window.coachSpeak = function(idx) {
+  if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  var text = '';
-  if (typeof idxOrText === 'number' || !isNaN(parseInt(idxOrText))) {
-    var m = (APP.coachMsgs||[])[parseInt(idxOrText)];
-    text = m ? (m.text||'') : '';
-  } else { text = String(idxOrText||''); }
-  var clean = text.replace(/\*\*([^*]+)\*\*/g,'$1').replace(/<[^>]*>/g,'').trim().substring(0,500);
-  if (!clean) return;
-  var utt = new SpeechSynthesisUtterance(clean);
-  utt.lang = {pt:'pt-BR',en:'en-US',es:'es-ES',ru:'ru-RU'}[APP.lang||'pt'] || 'pt-BR';
-  utt.rate = 0.9; utt.pitch = 1.0; utt.volume = 1.0;
-  var go = function() {
-    var vs = window.speechSynthesis.getVoices();
-    var v = vs.find(function(x){return x.lang===utt.lang&&x.localService;})
-           || vs.find(function(x){return x.lang.startsWith(APP.lang||'pt');})
-           || vs[0];
-    if (v) utt.voice = v;
-    window.speechSynthesis.speak(utt);
-  };
-  if (window.speechSynthesis.getVoices().length) { go(); }
-  else { window.speechSynthesis.onvoiceschanged = go; }
-  toast && toast('🔊 Reproduzindo...','info',1500);
+  var m = (APP.coachMsgs||[])[idx];
+  if(!m) return;
+  var clean = m.text.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').trim().substring(0,500);
+  var u = new SpeechSynthesisUtterance(clean);
+  u.lang = 'pt-BR'; u.rate = 0.9; u.pitch = 1.0;
+  var vs = window.speechSynthesis.getVoices();
+  var v = vs.find(function(x){return x.lang==='pt-BR'&&x.localService;}) || vs.find(function(x){return x.lang.startsWith('pt');}) || vs[0];
+  if(v) u.voice = v;
+  if(!vs.length) { window.speechSynthesis.onvoiceschanged = function(){ coachSpeak(idx); }; return; }
+  window.speechSynthesis.speak(u);
 };
 
-// ── vCoachStartRec ───────────────────────────────────────
-window.vCoachStartRec = async function() {
-  var mic = document.getElementById('coach-mic-btn') || document.getElementById('mic-btn');
-  var rec = document.getElementById('coach-rec')     || document.getElementById('rec-indicator');
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    toast && toast('❌ Microfone requer HTTPS','error',5000); return;
-  }
-  if (window._vRecorder && window._vRecorder.state !== 'inactive') {
-    try { window._vRecorder.stop(); } catch(e){}
-  }
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    toast && toast('❌ Microfone não suportado','error'); return;
-  }
-  try {
-    var stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
-    window._vChunks = [];
-    window._vStream = stream;
-    var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
-    window._vRecorder = new MediaRecorder(stream, opts);
-    window._vRecorder.ondataavailable = function(e) { if(e.data&&e.data.size>0) window._vChunks.push(e.data); };
-    window._vRecorder.start(100);
-    if (mic) { mic.classList.add('recording'); mic.textContent = '⏹'; }
-    if (rec) rec.style.display = 'flex';
-    window._vRecTimer = setTimeout(function(){ window.vCoachStopRec && window.vCoachStopRec(); }, 45000);
-    toast && toast('🎤 Gravando... solte para enviar','info',2000);
-  } catch(e) {
-    var isIOS = /iPhone|iPad/i.test(navigator.userAgent);
-    var msg = e.name==='NotAllowedError'
-      ? (isIOS ? '❌ Ajustes → Safari → Microfone → Permitir' : '❌ Permita o microfone nas configurações do navegador')
-      : e.name==='NotFoundError' ? '❌ Nenhum microfone encontrado'
-      : '❌ Erro: ' + e.message;
-    toast && toast(msg,'error',6000);
-  }
-};
-
-// ── vCoachStopRec ────────────────────────────────────────
-window.vCoachStopRec = function() {
-  var mic = document.getElementById('coach-mic-btn') || document.getElementById('mic-btn');
-  var rec = document.getElementById('coach-rec')     || document.getElementById('rec-indicator');
-  clearTimeout(window._vRecTimer);
-  if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
-  if (rec) rec.style.display = 'none';
-  if (!window._vRecorder || window._vRecorder.state === 'inactive') return;
-  window._vRecorder.stop();
-  window._vRecorder.onstop = async function() {
-    var stream = window._vStream || window._vRecorder.stream;
-    if (stream) stream.getTracks().forEach(function(t){ t.stop(); });
-    var blob = new Blob(window._vChunks||[], {type: window._vRecorder.mimeType||'audio/webm'});
-    if (blob.size < 500) { toast && toast('Muito curto, tente novamente','info'); return; }
-    toast && toast('🎤 Processando...','info',2000);
-    await new Promise(function(r){ setTimeout(r,900); });
-    var perguntas = [
-      'Como aumentar proteínas na dieta?',
-      'Cardápio para emagrecer com saúde?',
-      'Melhor alimentação pré e pós-treino?',
-      'Quanto de água devo beber por dia?',
-      'Quais suplementos são recomendados?',
-      'Nutrição durante a gestação?',
-      'Como fazer jejum intermitente 16:8?',
-      'Alimentos para reduzir TPM e cólicas?'
-    ];
-    var transcrito = perguntas[Math.floor(Math.random() * perguntas.length)];
-    var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs = APP.coachMsgs || [];
-    APP.coachMsgs.push({role:'user', text:transcrito, time:ts, audio:true});
-    var el = document.getElementById('coach-msgs');
-    if (el) {
-      var ub = document.createElement('div'); ub.className = 'msg-wrap user';
-      ub.innerHTML = '<div class="msg-bubble" style="display:flex;align-items:center;gap:8px">🎤'
-        + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
-        + '<div style="font-size:11px;opacity:.8">"' + transcrito.substring(0,45) + '..."</div>'
-        + '</div></div><div class="msg-time">' + ts + '</div>';
-      el.appendChild(ub);
-      var tb = document.createElement('div'); tb.id = 'v-typing2'; tb.className = 'msg-wrap ai';
-      tb.innerHTML = '<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-      el.appendChild(tb);
-      el.scrollTop = el.scrollHeight;
-    }
-    var resp = '';
-    try { resp = await vGetResp(transcrito); } catch(e) { resp = 'Erro ao processar. Tente digitar! 🙏'; }
-    var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
-    var typing2 = document.getElementById('v-typing2'); if(typing2) typing2.remove();
-    if (el) {
-      var idx = APP.coachMsgs.length - 1;
-      var safeR = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-      var ab = document.createElement('div'); ab.className = 'msg-wrap ai';
-      ab.innerHTML = '<div class="msg-bubble">' + safeR + '</div>'
-        + '<div style="margin-top:6px"><button data-idx="' + idx + '" onclick="vCoachSpeak(parseInt(this.dataset.idx))"'
-        + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-        + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button></div>'
-        + '<div class="msg-time">' + tsR + '</div>';
-      el.appendChild(ab);
-      el.scrollTop = el.scrollHeight;
-      if (window._vVoice) { try { vCoachSpeak(idx); } catch(e){} }
-    }
-    if (typeof addXP === 'function') addXP(8);
-  };
-};
-
-// ── vGetResp (API Anthropic + fallback) ──────────────────
-window.vGetResp = async function(userMsg) {
-  var p = APP.profile || {};
-  var nome = p.name ? p.name.split(' ')[0] : 'voce';
-  var m = (userMsg||'').toLowerCase();
-
-  // Fallback local 12 topicos
-  var fallbacks = {
-    proteina: '💪 Proteinas\n\n• Frango: 31g/100g\n• Atum: 30g/100g\n• Ovos: 13g/100g\n• Whey: 80g/100g\n• Feijao: 9g/100g\n\nMeta: ' + (p.weight?Math.round(p.weight*1.8)+'g/dia':'1.6-2.2g por kg'),
-    agua: '💧 Hidratacao\n\nMeta: ' + (p.weight?Math.round(p.weight*35)+'ml/dia':'2.500ml/dia') + '\n\n• Manha: 2 copos\n• Antes refeicoes: 1 copo\n• Exercicio: +500ml/hora',
-    emagrecer: '🔥 Emagrecimento\n\n• Deficit: 300-500kcal/dia\n• Proteina alta: reduz fome\n• Carbs complexos: aveia, batata-doce\n• Gorduras boas: abacate, azeite\n\nEvite: ultraprocessados, acucar, refrigerante',
-    jejum: '⏱ Jejum 16:8\n\n• 16h jejum + 8h comendo\n• Exemplo: comer 12h-20h\n• Liberado: agua, cafe, cha\n\nBeneficios: perda de peso, melhora insulina\n⚠ Gestantes e diabeticos: consultem medico',
-    gestacao: '🤰 Gestacao\n\n• Acido folico: 600mcg/dia\n• Ferro: 27mg/dia + vitamina C\n• Calcio: 1000mg/dia\n• DHA: 200mg/dia\n\n🚫 Alcool, peixes crus, queijos moles\n⚠ Sempre acompanhe com obstetra!',
-    menstrual: '🩸 Periodo Menstrual\n\n• Magnesio: colicas (amendoas, cacau 70%)\n• Ferro: repoe perdas (carne, feijao)\n• Omega-3: anti-inflamatorio\n• B6: alivia TPM (banana)\n\n🍫 Chocolate amargo 70%+ melhora o humor!',
-    treino: '🏃 Nutricao Esportiva\n\nPre-treino: carb + proteina\nPos-treino: 20-40g proteina\n\n• Creatina: 3-5g/dia\n• Whey: 25-30g pos-treino\n• Cafeina: 3-6mg/kg antes',
-    suplemento: '💊 Suplementos\n\n• Vitamina D3: 2000-4000UI/dia\n• Omega-3: 2-3g/dia\n• Magnesio: 300-400mg/dia\n• Creatina: 3-5g/dia\n• Whey: 25-30g pos-treino',
-    colesterol: '❤ Colesterol\n\n• Aveia, azeite, castanhas, abacate\n• Feijao e lentilha\n\n🚫 Gordura trans, frituras, ultraprocessados',
-    diabetes: '🩸 Diabetes\n\n• Leguminosas, vegetais, graos integrais\n• 5-6 refeicoes/dia\n• Fibra em cada refeicao\n\n⚠ Acompanhamento medico obrigatorio',
-    intestino: '🌱 Intestino\n\nProbioticos: iogurte, kefir, kombucha\nPrebioticos: banana verde, alho, aveia\nFibras: 25-35g/dia\n💧 Hidratacao essencial!',
-    anemia: '🔴 Anemia\n\n• Carne vermelha, figado (ferro heme)\n• Feijao, espinafre (ferro vegetal)\n\n✅ Ferro + vitamina C = absorcao 3x maior\n🚫 Ferro + cafe = absorcao reduzida',
-  };
-  var respLocal = null;
-  if (/prote[íi]n|whey|m[úu]sculo/.test(m)) respLocal = fallbacks.proteina;
-  else if (/[áa]gua|hidrat|beber/.test(m)) respLocal = fallbacks.agua;
-  else if (/emagrec|dieta|card[áa]pio|caloria/.test(m)) respLocal = fallbacks.emagrecer;
-  else if (/jejum|16:8|intermiten/.test(m)) respLocal = fallbacks.jejum;
-  else if (/gestant|gr[áa]vid|gesta/.test(m)) respLocal = fallbacks.gestacao;
-  else if (/menstrual|tpm|c[óo]lica|per[íi]odo/.test(m)) respLocal = fallbacks.menstrual;
-  else if (/treino|exerc[íi]|academia|muscula/.test(m)) respLocal = fallbacks.treino;
-  else if (/suplemento|vitamina|creatina|[ôo]mega/.test(m)) respLocal = fallbacks.suplemento;
-  else if (/colesterol|ldl|hdl/.test(m)) respLocal = fallbacks.colesterol;
-  else if (/diabetes|glicemia|insulina/.test(m)) respLocal = fallbacks.diabetes;
-  else if (/intestino|constip|probi/.test(m)) respLocal = fallbacks.intestino;
-  else if (/anemia|hemoglobin/.test(m)) respLocal = fallbacks.anemia;
-
-  // Sistema rotativo de keys Groq
-  var GROQ_KEYS = [
-    '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',
-    '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',
-    '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',
-    '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'
-  ];
-  var keyIdx = parseInt(localStorage.getItem('v_groq_idx')||'0');
-  var tried = 0;
-  var hist = (APP.coachMsgs||[]).slice(-8).filter(function(x){return x.role&&x.text;}).map(function(x){
-    return {role:x.role==='ai'?'assistant':'user', content:x.text};
-  });
-  var sys = 'Voce e o Coach IA Nutri, nutricionista virtual. Usuario: '+nome
-    +(p.weight?', '+p.weight+'kg':'')
-    +(p.height?', '+p.height+'cm':'')
-    +(p.goal?', objetivo: '+p.goal:'')
-    +'. Responda SEMPRE em portugues brasileiro, de forma pratica e motivadora. Use listas simples. Maximo 200 palavras.';
-
-  while (tried < GROQ_KEYS.length) {
-    var currentKey = GROQ_KEYS[keyIdx % GROQ_KEYS.length];
-    try {
-      var gr = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+currentKey},
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [{role:'system',content:sys}].concat(hist).concat([{role:'user',content:userMsg}]),
-          max_tokens: 500, temperature: 0.7
-        })
-      });
-      if (gr.ok) {
-        var gd = await gr.json();
-        var gtxt = (((gd.choices||[])[0]||{}).message||{}).content||'';
-        if (gtxt.trim().length > 10) {
-          // Rotaciona para proxima key na proxima chamada
-          localStorage.setItem('v_groq_idx', String((keyIdx+1) % GROQ_KEYS.length));
-          return gtxt.trim();
-        }
-      } else if (gr.status === 429) {
-        // Rate limit — tenta proxima key
-        keyIdx = (keyIdx+1) % GROQ_KEYS.length;
-        localStorage.setItem('v_groq_idx', String(keyIdx));
-        tried++;
-        continue;
-      }
-    } catch(e) {}
-    tried++;
-    keyIdx = (keyIdx+1) % GROQ_KEYS.length;
-  }
-
-  // Gemini backup se todas as keys Groq falharem
-  try {
-    var gkey = localStorage.getItem('v_gemini_key') || 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
-    var gcontents = (APP.coachMsgs||[]).slice(-6).filter(function(x){return x.role&&x.text;}).map(function(x){
-      return {role:x.role==='ai'?'model':'user', parts:[{text:x.text}]};
-    });
-    gcontents.push({role:'user',parts:[{text:userMsg}]});
-    var mg = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gkey,
-      {method:'POST',headers:{'Content-Type':'application/json'},
-       body:JSON.stringify({contents:gcontents,generationConfig:{maxOutputTokens:400}})}
-    );
-    if (mg.ok) {
-      var md = await mg.json();
-      var mparts = (((md.candidates||[])[0]||{}).content||{}).parts||[];
-      var mtxt = mparts.map(function(pt){return pt.text||'';}).join('').trim();
-      if (mtxt.length > 10) return mtxt;
-    }
-  } catch(e) {}
-
-  if (respLocal) return respLocal;
-  return 'Ola, '+nome+'! Sou o Coach IA Nutri. Posso ajudar com proteinas, hidratacao, emagrecimento, jejum, gestacao, treino e suplementos. Qual e sua duvida hoje?';
-};
-
-// ── CSS extra inline para garantir teclado Android ──────
-(function() {
-  var s = document.createElement('style');
-  s.textContent = [
-    '.coach-textarea{font-size:16px !important;pointer-events:auto !important;-webkit-user-select:text !important;user-select:text !important;cursor:text !important;-webkit-appearance:none !important;appearance:none !important;}',
-    '.coach-input-wrap{flex-shrink:0 !important;}'
-  ,
-    '.coach-screen{height:100%!important;max-height:100vh;overflow:hidden!important;}',
-    '@supports(height:100dvh){.coach-screen{height:100dvh!important;}.coach-wrap{height:100dvh!important;}}'
-].join('');
-  document.head.appendChild(s);
-})();
-
-
-// ── Listener teclado virtual Android ──────────────────────
-if (window.visualViewport) {
-  var _vpHandler = function() {
-    var vv = window.visualViewport;
-    var offset = window.innerHeight - vv.height;
-    var coachScreen = document.querySelector('.coach-screen');
-    if (coachScreen) {
-      coachScreen.style.height = vv.height + 'px';
-      coachScreen.style.top = vv.offsetTop + 'px';
-    }
-    var appBody = document.getElementById('app-body');
-    if (appBody && APP.tab === 'coach') {
-      appBody.style.height = vv.height + 'px';
-    }
-  };
-  window.visualViewport.addEventListener('resize', _vpHandler);
-  window.visualViewport.addEventListener('scroll', _vpHandler);
-}
-
-
-// ── Gemini Settings Helpers ──────────────────────────────
-window.saveGeminiKey = function() {
-  var inp = document.getElementById('gemini-key-input');
-  var key = inp ? inp.value.trim() : '';
-  var st = document.getElementById('gemini-status');
-  if (!key) {
-    localStorage.removeItem('v_gemini_key');
-    if (st) { st.textContent = '🗑️ Removida'; st.style.color = 'var(--text3)'; }
-    toast && toast('API key removida','info');
-    return;
-  }
-  if (!key.startsWith('AIza')) {
-    if (st) { st.textContent = '❌ Inválida'; st.style.color = '#ef4444'; }
-    toast && toast('❌ Key inválida — deve começar com AIza','error');
-    return;
-  }
-  localStorage.setItem('v_gemini_key', key);
-  if (st) { st.textContent = '✅ Salva'; st.style.color = 'var(--green)'; }
-  toast && toast('✅ API key Gemini salva!','success');
-};
-
-window.testGeminiKey = async function() {
-  var key = localStorage.getItem('v_gemini_key') || 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
-  if (!key) { toast && toast('⚠️ Salve uma API key primeiro','info'); return; }
-  toast && toast('🧪 Testando conexão...','info',2000);
-  try {
-    var r = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,
-      {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({contents:[{role:'user',parts:[{text:'Diga apenas: "Coach IA Nutri ativo!"'}]}]})
-      }
-    );
-    if (r.ok) {
-      var d = await r.json();
-      var txt = (((d.candidates||[])[0]||{}).content||{}).parts||[];
-      txt = txt.map(function(p){return p.text||'';}).join('').trim();
-      toast && toast('✅ ' + (txt||'Conexão OK!'), 'success', 4000);
-    } else {
-      var e = await r.json().catch(function(){return {error:{message:'Erro desconhecido'}};});
-      toast && toast('❌ ' + (e.error&&e.error.message||'API key inválida'), 'error', 5000);
-    }
-  } catch(e) {
-    toast && toast('❌ Erro de rede: '+e.message,'error',4000);
-  }
-};
-
-
-// ── vToggleRec — toque para gravar / toque para parar ──────
+// Mic — toque para gravar / toque para parar
 window.vToggleRec = function() {
   var mic = document.getElementById('mic-btn');
   var rec = document.getElementById('rec-indicator');
-  if (window._vRecorder && window._vRecorder.state === 'recording') {
-    // Está gravando — para
-    if (mic) { mic.textContent = '🎤'; mic.style.background = 'var(--surface2)'; mic.style.border = '1.5px solid var(--border)'; }
-    if (rec) rec.style.display = 'none';
-    vCoachStopRec();
+  if (window._recActive) {
+    // Para gravação
+    window._recActive = false;
+    if(mic){ mic.textContent='🎤'; mic.style.background='var(--surface2)'; mic.style.borderColor='var(--border)'; }
+    if(rec) rec.style.display='none';
+    if(window._recorder && window._recorder.state==='recording') window._recorder.stop();
   } else {
-    // Não está gravando — começa
-    if (mic) { mic.textContent = '⏹'; mic.style.background = 'rgba(239,68,68,.15)'; mic.style.border = '1.5px solid #ef4444'; }
-    if (rec) rec.style.display = 'flex';
-    vCoachStartRec();
+    // Inicia gravação
+    if(location.protocol!=='https:'&&location.hostname!=='localhost'){
+      toast&&toast('❌ Microfone requer HTTPS','error'); return;
+    }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      toast&&toast('❌ Microfone não suportado','error'); return;
+    }
+    navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(stream){
+      window._recActive = true;
+      window._recChunks = [];
+      if(mic){ mic.textContent='⏹'; mic.style.background='rgba(239,68,68,.15)'; mic.style.borderColor='#ef4444'; }
+      if(rec) rec.style.display='flex';
+      var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?{mimeType:'audio/webm;codecs=opus'}:{};
+      window._recorder = new MediaRecorder(stream, opts);
+      window._recorder.ondataavailable = function(e){ if(e.data&&e.data.size>0) window._recChunks.push(e.data); };
+      window._recorder.onstop = function(){
+        stream.getTracks().forEach(function(t){t.stop();});
+        window._recActive = false;
+        var blob = new Blob(window._recChunks||[], {type:'audio/webm'});
+        if(blob.size < 500){ toast&&toast('Muito curto, tente novamente','info'); return; }
+        // Simula transcrição (sem backend de STT)
+        var perguntas=['Como aumentar proteínas?','Cardápio para emagrecer?','Dicas de hidratação?','Jejum intermitente 16:8?','Alimentos na gestação?','Suplementos recomendados?','Nutrição pré-treino?'];
+        var transcrito = perguntas[Math.floor(Math.random()*perguntas.length)];
+        toast&&toast('🎤 "'+transcrito.substring(0,30)+'..."','info',2000);
+        sendCoach(transcrito);
+      };
+      window._recorder.start(100);
+      window._recTimer = setTimeout(function(){ vToggleRec(); }, 60000);
+    }).catch(function(e){
+      var isIOS=/iPhone|iPad/i.test(navigator.userAgent);
+      toast&&toast(e.name==='NotAllowedError'?(isIOS?'❌ Ajustes → Safari → Microfone → Permitir':'❌ Permita o microfone nas configurações'):'❌ '+e.message,'error',5000);
+    });
   }
 };
 
-console.log('[VitalIA] Coach IA v7.1 carregado OK');
+// Aliases retrocompatíveis
+window.startRecording = window.vToggleRec;
+window.stopRecording  = function(){};
+window.speakText      = window.coachSpeak;
+
+// API IA — Groq (primário) + Gemini (backup) + fallback local
+window.coachGetResp = async function(userMsg) {
+  var p = APP.profile||{};
+  var nome = p.name?p.name.split(' ')[0]:'você';
+  var m = (userMsg||'').toLowerCase();
+
+  var fb = {
+    proteina: '💪 Proteínas\n\n• Frango: 31g/100g • Atum: 30g/100g\n• Ovos: 13g/100g • Whey: 80g/100g\n• Feijão: 9g/100g\n\nMeta: '+(p.weight?Math.round(p.weight*1.8)+'g/dia':'1.6–2.2g/kg'),
+    agua: '💧 Hidratação\n\nMeta: '+(p.weight?Math.round(p.weight*35)+'ml/dia':'2.500ml/dia')+'\n• Manhã: 2 copos • Exercício: +500ml/h',
+    emagrecer: '🔥 Emagrecimento\n\n• Déficit: 300-500kcal/dia\n• Proteína alta, carbs complexos\n• Evite ultraprocessados e açúcar',
+    jejum: '⏱ Jejum 16:8\n\n• 16h jejum + 8h comendo\n• Liberado: água, café, chá\n⚠ Gestantes e diabéticos: consultem médico',
+    gestacao: '🤰 Gestação\n\n• Ácido fólico: 600mcg/dia\n• Ferro: 27mg/dia • Cálcio: 1000mg/dia\n⚠ Acompanhe com obstetra!',
+    menstrual: '🩸 Período Menstrual\n\n• Magnésio: cólicas • Ferro: repõe perdas\n• Ômega-3: anti-inflamatório • B6: TPM',
+    treino: '🏃 Treino\n\nPré: carb+proteína\nPós: 20-40g proteína\n• Creatina: 3-5g/dia • Whey: 25-30g',
+    suplemento: '💊 Suplementos\n\n• Vitamina D3: 2000-4000UI • Ômega-3: 2-3g\n• Magnésio: 300-400mg • Creatina: 3-5g',
+    colesterol: '❤ Colesterol\n\n• Aveia, azeite, castanhas, abacate\n🚫 Gordura trans, frituras',
+    diabetes: '🩸 Diabetes\n\n• Leguminosas, vegetais, grãos integrais\n• 5-6 refeições/dia ⚠ Acompanhamento médico',
+  };
+  var respLocal = null;
+  if(/prote[íi]n|whey|m[úu]sculo/.test(m)) respLocal=fb.proteina;
+  else if(/[áa]gua|hidrat/.test(m)) respLocal=fb.agua;
+  else if(/emagrec|dieta|card[áa]pio|caloria/.test(m)) respLocal=fb.emagrecer;
+  else if(/jejum|16:8|intermiten/.test(m)) respLocal=fb.jejum;
+  else if(/gestant|gr[áa]vid|gesta/.test(m)) respLocal=fb.gestacao;
+  else if(/menstrual|tpm|c[óo]lica|per[íi]odo/.test(m)) respLocal=fb.menstrual;
+  else if(/treino|exerc[íi]|academia/.test(m)) respLocal=fb.treino;
+  else if(/suplemento|vitamina|creatina|[ôo]mega/.test(m)) respLocal=fb.suplemento;
+  else if(/colesterol|ldl|hdl/.test(m)) respLocal=fb.colesterol;
+  else if(/diabetes|glicemia/.test(m)) respLocal=fb.diabetes;
+
+  // Groq rotativo
+  var KEYS = ['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','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','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','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'];
+  var ki = parseInt(localStorage.getItem('_gki')||'0');
+  var hist = (APP.coachMsgs||[]).slice(-8).filter(function(x){return x.role&&x.text;}).map(function(x){
+    return {role:x.role==='ai'?'assistant':'user',content:x.text};
+  });
+  var sys = 'Você é o Coach IA Nutri. Usuário: '+nome+(p.weight?', '+p.weight+'kg':'')+(p.goal?', objetivo:'+p.goal:'')+'. Responda em português, prático, máx 200 palavras.';
+  for(var t=0; t<KEYS.length; t++){
+    try{
+      var r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[(ki+t)%KEYS.length]},
+        body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:sys}].concat(hist).concat([{role:'user',content:userMsg}]),max_tokens:400,temperature:0.7})
+      });
+      if(r.ok){
+        var d=await r.json();
+        var txt=(((d.choices||[])[0]||{}).message||{}).content||'';
+        if(txt.trim().length>10){ localStorage.setItem('_gki',String((ki+t+1)%KEYS.length)); return txt.trim(); }
+      } else if(r.status===429){ continue; }
+    }catch(e){}
+  }
+
+  // Gemini backup
+  try{
+    var gk=localStorage.getItem('v_gemini_key')||'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
+    var gc=(APP.coachMsgs||[]).slice(-6).filter(function(x){return x.role&&x.text;}).map(function(x){return{role:x.role==='ai'?'model':'user',parts:[{text:x.text}]};});
+    gc.push({role:'user',parts:[{text:userMsg}]});
+    var mg=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gk,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:gc,generationConfig:{maxOutputTokens:300}})});
+    if(mg.ok){var md=await mg.json();var mt=((((md.candidates||[])[0]||{}).content||{}).parts||[]).map(function(p){return p.text||'';}).join('').trim();if(mt.length>10)return mt;}
+  }catch(e){}
+
+  if(respLocal) return respLocal;
+  return 'Olá, '+nome+'! Sou o Coach IA Nutri. Posso ajudar com proteínas, hidratação, emagrecimento, jejum, gestação, treino e suplementos. Qual é sua dúvida?';
+};
+
+// Alias retrocompatível
+window.sendCoach = window.sendCoach || function(t){ window.sendCoach(t); };
+window.getNutriCoachResponse = window.coachGetResp;
+
+console.log('[VitalIA] Coach IA — versão única limpa carregada ✅');
 
 </script>
+
+
+
+
+
 </body>
 </html>
