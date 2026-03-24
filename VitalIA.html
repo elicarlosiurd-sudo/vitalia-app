@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0d1117">
 <title>VitalIA – Saúde com Inteligência</title>
@@ -397,14 +397,11 @@ a{text-decoration:none;color:inherit}
 /* ═══════════════════════════════════════
    COACH SCREEN
 ═══════════════════════════════════════ */
-.coach-wrap {position:absolute;inset:0;display:flex;flex-direction:column
-  height: 100% !important;
-  overflow: hidden !important;
-}
+
 .coach-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:12px;background:var(--surface)}
 .coach-avatar{width:40px;height:40px;border-radius:50%;background:var(--gradient2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative}
 .online-dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--surface)}
-.coach-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.coach-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10pxmin-height:0;}
 .msg-wrap{display:flex;flex-direction:column;gap:4px;max-width:85%}
 .msg-wrap.user{align-self:flex-end;align-items:flex-end}
 .msg-wrap.ai{align-self:flex-start}
@@ -416,8 +413,12 @@ a{text-decoration:none;color:inherit}
 .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce .9s infinite}
 .typing-dot:nth-child(2){animation-delay:.15s}
 .typing-dot:nth-child(3){animation-delay:.3s}
-.coach-input-wrap{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:flex-end;background:var(--surface)}
-.coach-textarea{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:11px 14px;font-size:14px;color:var(--text);resize:none;min-height:44px;max-height:100px;overflow-y:auto}
+.coach-input-wrap{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:flex-end;background:var(--surface)
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+.coach-textarea{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:11px 14px;font-size:16px !important;color:var(--text);resize:none;min-height:44px;max-height:100px;overflow-y:auto;pointer-events:auto !important;-webkit-user-select:text !important;cursor:text !important;-webkit-appearance:none !important}
 .coach-textarea:focus{border-color:var(--green);background:var(--surface)}
 .coach-send{width:44px;height:44px;border-radius:14px;background:var(--gradient);border:none;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;transition:all .2s;color:#000}
 .coach-send:active{transform:scale(.93)}
@@ -2878,7 +2879,7 @@ function navigate(tab) {
   const body = document.getElementById('app-body');
   body.innerHTML = '';
   const screen = document.createElement('div');
-  screen.className = 'screen active fade-in';
+  screen.className = 'screen active fade-in' + (tab==='coach'?' no-nav coach-screen':'');
   if(tab==='coach'){screen.style.overflow='hidden';screen.style.paddingBottom='0';screen.style.display='flex';screen.style.flexDirection='column';screen.style.height='100%';}
   // ALL screens registered here — single source of truth
   const renderers = {
@@ -3884,7 +3885,7 @@ function renderCoach() {
     <button class="coach-mic" id="mic-btn" title="Segurar para gravar" 
       onmousedown="startRecording()" onmouseup="stopRecording()"
       ontouchstart="event.preventDefault();startRecording()" ontouchend="event.preventDefault();stopRecording()">🎤</button>
-    <textarea class="coach-textarea" id="coach-input" placeholder="Pergunte sobre nutrição, dieta, suplementos..." rows="1" 
+    <textarea class="coach-textarea" id="coach-input" onfocus="setTimeout(function(){this.scrollIntoView({behavior:'smooth',block:'end'});},300)" placeholder="Pergunte sobre nutrição, dieta, suplementos..." rows="1" 
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCoach()}" 
       oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
     <button class="coach-send" onclick="sendCoach()" id="coach-send-btn">➤</button>
@@ -3893,8 +3894,29 @@ function renderCoach() {
 }
 
 function attachCoach(screen){
-  if(screen){screen.style.overflow='hidden';screen.style.paddingBottom='0';screen.style.display='flex';screen.style.flexDirection='column';screen.style.height='100%';}
-  setTimeout(function(){var m=document.getElementById('coach-msgs');if(m)m.scrollTop=m.scrollHeight;},200);
+  if(screen){
+    screen.style.overflow='hidden';
+    screen.style.paddingBottom='0';
+    screen.style.display='flex';
+    screen.style.flexDirection='column';
+    screen.style.height='100%';
+  }
+  // Garante que coach-wrap também está corretamente configurado
+  setTimeout(function(){
+    var wrap = screen.querySelector('.coach-wrap');
+    if(wrap){
+      wrap.style.display='flex';
+      wrap.style.flexDirection='column';
+      wrap.style.height='100%';
+      wrap.style.overflow='hidden';
+      wrap.style.position='absolute';
+      wrap.style.inset='0';
+    }
+    var msgs = document.getElementById('coach-msgs');
+    if(msgs) msgs.scrollTop = msgs.scrollHeight;
+    var ta = document.getElementById('coach-input');
+    if(ta){ ta.style.pointerEvents='auto'; ta.style.fontSize='16px'; }
+  }, 50);
 }
 
 window.sendCoach = async function(txt) {
@@ -4778,6 +4800,44 @@ function renderSettings() {
   <div class="section-title">Dados e privacidade</div>
   <div class="settings-group">
     ${[['📤','Exportar dados em PDF','Histórico completo de saúde'],['🔒','Controle de privacidade','Quem vê seu perfil'],['🗑️','Excluir conta','Remove todos os dados']].map(([i,l,s])=>`<div class="settings-row" onclick="toast('Funcionalidade em desenvolvimento','info')"><div class="settings-icon">${i}</div><div class="settings-text"><div class="settings-label">${l}</div><div class="settings-sub">${s}</div></div><div class="settings-arrow">›</div></div>`).join('')}
+  </div>
+
+
+  <!-- Coach IA — Gemini API -->
+  <div class="section-title">🤖 Coach IA</div>
+  <div class="settings-group">
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <div class="settings-icon">🔑</div>
+        <div class="settings-text" style="flex:1">
+          <div class="settings-label">Google Gemini API Key</div>
+          <div class="settings-sub">Grátis em aistudio.google.com • 1500 msgs/dia</div>
+        </div>
+        <div id="gemini-status" style="font-size:11px;font-weight:600"></div>
+      </div>
+      <div style="width:100%;display:flex;gap:8px">
+        <input type="password" id="gemini-key-input"
+          placeholder="AIza..."
+          value="${localStorage.getItem('v_gemini_key')||'(chave padrão ativa ✅)'}"
+          style="flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);font-family:var(--font-body);outline:none"
+          oninput="document.getElementById('gemini-status').textContent=''"
+        />
+        <button onclick="saveGeminiKey()"
+          style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
+          Salvar
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.5">
+        1. Acesse <strong style="color:var(--green)">aistudio.google.com</strong><br>
+        2. Clique em <strong>Get API key → Create API key</strong><br>
+        3. Copie e cole acima — é 100% gratuito
+      </div>
+    </div>
+    <div class="settings-row" onclick="testGeminiKey()">
+      <div class="settings-icon">🧪</div>
+      <div class="settings-text"><div class="settings-label">Testar conexão</div><div class="settings-sub">Verifica se a IA está respondendo</div></div>
+      <div class="settings-arrow">›</div>
+    </div>
   </div>
 
   <!-- App info -->
@@ -6109,6 +6169,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   height: 100% !important;
 }
 .coach-wrap {
+  position: absolute;
+  inset: 0;
+
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -6254,132 +6317,35 @@ window.addEventListener('DOMContentLoaded', async () => {
   box-shadow: 0 0 12px rgba(34,197,94,.4) !important;
   -webkit-tap-highlight-color: transparent !important;
 }
+
 </style>
-
 <script>
-(function() {
 
-// ── renderCoach — layout definitivo ─────────────────────────
-window.renderCoach = function() {
-  var p = APP.profile || {name:'Usuário'};
-  var fn = (p.name||'Você').split(' ')[0];
-  APP.coachMsgs = APP.coachMsgs || [];
-  if (!APP.coachMsgs.length) {
-    APP.coachMsgs = [{
-      role: 'ai',
-      text: t('coach_greeting', fn),
-      time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
-    }];
-  }
-  var suggs = ['💪 Proteínas','🔥 Emagrecer','💧 Hidratação','💊 Suplementos',
-               '⏱️ Jejum 16:8','🤰 Gestação','🌸 TPM','🏋️ Treino'];
+// ═══════════════════════════════════════════════════════
+//  COACH IA v7.1 — funções completas
+// ═══════════════════════════════════════════════════════
 
-  function renderMsg(m, i) {
-    var time = m.time || '';
-    if (m.role === 'ai') {
-      var safe = (m.text||'')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-      return '<div class="msg-wrap ai">'
-        + '<div class="msg-bubble">' + safe + '</div>'
-        + '<div style="margin-top:6px">'
-        + '<button data-idx="' + i + '" onclick="vCoachSpeak(parseInt(this.dataset.idx))"'
-        + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);'
-        + 'border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;'
-        + 'color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button>'
-        + '</div><div class="msg-time">' + time + '</div></div>';
-    }
-    if (m.audio) {
-      var txt = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      return '<div class="msg-wrap user">'
-        + '<div class="msg-bubble" style="display:flex;align-items:center;gap:8px">🎤'
-        + '<div><div style="font-size:11px;font-weight:700">Áudio enviado</div>'
-        + '<div style="font-size:11px;opacity:.8">"' + txt.substring(0,45) + '..."</div>'
-        + '</div></div><div class="msg-time">' + time + '</div></div>';
-    }
-    var safe2 = (m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    return '<div class="msg-wrap user"><div class="msg-bubble">' + safe2
-      + '</div><div class="msg-time">' + time + '</div></div>';
-  }
+// ── Aliases para compatibilidade ────────────────────────
+window.sendCoach = function(txt) { if(window.vCoachSend) vCoachSend(txt); };
+window.startRecording = function() { if(window.vCoachStartRec) vCoachStartRec(); };
+window.stopRecording  = function() { if(window.vCoachStopRec)  vCoachStopRec();  };
+window.speakText      = function(x) { if(window.vCoachSpeak)   vCoachSpeak(x);   };
+window.getNutriCoachResponse = function(m,h) { return window.vGetResp ? vGetResp(m,h) : Promise.resolve(''); };
 
-  var msgsHtml = APP.coachMsgs.map(renderMsg).join('');
-  var suggsHtml = suggs.map(function(s) {
-    return '<button class="coach-sugg-chip" onclick="vCoachSend(\'' + s.replace(/'/g,"\\'") + '\')">' + s + '</button>';
-  }).join('');
-
-  return '<div class="coach-wrap">'
-
-    // HEADER
-    + '<div class="coach-hdr">'
-    + '<button onclick="navigate(\'more\')" style="background:transparent;border:none;font-size:22px;cursor:pointer;color:var(--text2);padding:4px 10px;font-family:var(--font-body);line-height:1">←</button>'
-    + '<div style="width:40px;height:40px;border-radius:50%;background:var(--gradient2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative">'
-    + '🤖<div style="position:absolute;bottom:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--surface)"></div></div>'
-    + '<div style="flex:1;min-width:0">'
-    + '<div style="font-size:14px;font-weight:700">Coach IA Nutri</div>'
-    + '<div style="font-size:11px;color:var(--green)">Online agora · Nutricionista Virtual</div>'
-    + '</div>'
-    + '<button id="vbtn-voice" onclick="window._vVoice=!window._vVoice;this.style.background=window._vVoice?\'rgba(34,197,94,.2)\":\'transparent\';this.style.color=window._vVoice?\'var(--green)\":\'var(--text2)\';toast(window._vVoice?\'🔊 Viva-voz ativo\":\'🔇 Voz off\',\'info\',2000)" style="background:transparent;border:1px solid var(--border2);border-radius:10px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body)">🎙️</button>'
-    + '<button onclick="APP.coachMsgs=[];navigate(\'coach\')" style="background:transparent;border:none;cursor:pointer;font-size:18px;padding:4px 8px">🗑️</button>'
-    + '</div>'
-
-    // SUGESTÕES
-    + '<div class="coach-sugg-bar">' + suggsHtml + '</div>'
-
-    // MENSAGENS
-    + '<div id="coach-msgs" class="coach-msgs-area">' + msgsHtml + '</div>'
-
-    // GRAVANDO
-    + '<div id="coach-rec" class="coach-rec-bar">'
-    + '<div class="coach-rec-dot"></div> Gravando... solte para enviar</div>'
-
-    // INPUT ROW — SEMPRE VISÍVEL
-    + '<div class="coach-input-row">'
-    + '<button id="coach-mic-btn" class="coach-mic"'
-    + ' onmousedown="vCoachStartRec()" onmouseup="vCoachStopRec()"'
-    + ' ontouchstart="event.preventDefault();vCoachStartRec()"'
-    + ' ontouchend="event.preventDefault();vCoachStopRec()">🎤</button>'
-    + '<textarea id="coach-input" class="coach-input-ta"'
-    + ' placeholder="Digite sua pergunta aqui..."'
-    + ' rows="1"'
-    + ' onkeydown="if(event.key===\'Enter\'&&!event.shiftKey){event.preventDefault();vCoachSend();}"'
-    + ' oninput="this.style.height=\'auto\';this.style.height=Math.min(this.scrollHeight,120)+\'px\'"></textarea>'
-    + '<button class="coach-send" onclick="vCoachSend()">➤</button>'
-    + '</div>'
-
-    + '</div>';
-};
-
-// ── attachCoach sem focus ────────────────────────────────────
-window.attachCoach = function(screen) {
-  if (screen) {
-    screen.style.overflow = 'hidden';
-    screen.style.paddingBottom = '0';
-    screen.style.display = 'flex';
-    screen.style.flexDirection = 'column';
-    screen.style.height = '100%';
-    screen.style.maxHeight = '100%';
-    screen.style.boxSizing = 'border-box';
-  }
-  setTimeout(function() {
-    var msgs = document.getElementById('coach-msgs');
-    if (msgs) msgs.scrollTop = msgs.scrollHeight;
-  }, 200);
-};
-
-// ── vCoachSend — envia mensagem texto ────────────────────────
+// ── vCoachSend ───────────────────────────────────────────
 window.vCoachSend = async function(txt) {
   var inp = document.getElementById('coach-input');
   var msg = (txt || (inp && inp.value) || '').trim();
-  if (!msg || APP.coachLoading) return;
-  if (inp) { inp.value = ''; inp.style.height = '44px'; }
+  if (!msg) return;
+  if (inp) { inp.value = ''; inp.style.height = 'auto'; }
   var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   APP.coachMsgs = APP.coachMsgs || [];
-  APP.coachMsgs.push({role:'user', text:msg, time:ts});
-  APP.coachLoading = true;
+  APP.coachMsgs.push({role:'user', text: msg, time: ts});
   var el = document.getElementById('coach-msgs');
   if (el) {
+    var ub = document.createElement('div');
+    ub.className = 'msg-wrap user';
     var safe = msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var ub = document.createElement('div'); ub.className = 'msg-wrap user';
     ub.innerHTML = '<div class="msg-bubble">' + safe + '</div><div class="msg-time">' + ts + '</div>';
     el.appendChild(ub);
     var tb = document.createElement('div'); tb.id = 'v-typing'; tb.className = 'msg-wrap ai';
@@ -6387,37 +6353,29 @@ window.vCoachSend = async function(txt) {
     el.appendChild(tb);
     el.scrollTop = el.scrollHeight;
   }
-  try {
-    var resp = '';
-    try { resp = await vGetResp(msg); } catch(e) { resp = 'Desculpe, tente novamente! 🙏'; }
-    var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
-    var typing = document.getElementById('v-typing'); if (typing) typing.remove();
-    if (el) {
-      var idx = APP.coachMsgs.length - 1;
-      var safeR = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-      var ab = document.createElement('div'); ab.className = 'msg-wrap ai';
-      ab.innerHTML = '<div class="msg-bubble">' + safeR + '</div>'
-        + '<div style="margin-top:6px"><button data-idx="' + idx + '" onclick="vCoachSpeak(parseInt(this.dataset.idx))"'
-        + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
-        + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button></div>'
-        + '<div class="msg-time">' + tsR + '</div>';
-      el.appendChild(ab);
-      el.scrollTop = el.scrollHeight;
-      if (window._vVoice) { try { vCoachSpeak(idx); } catch(e) {} }
-    }
-    if (typeof addXP === 'function') addXP(5);
-  } finally {
-    APP.coachLoading = false;
+  var resp = '';
+  try { resp = await vGetResp(msg); } catch(e) { resp = '⚠️ Erro de conexão. Verifique sua internet e tente novamente.'; }
+  var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  APP.coachMsgs.push({role:'ai', text: resp, time: tsR});
+  var typing = document.getElementById('v-typing'); if (typing) typing.remove();
+  if (el) {
+    var idx = APP.coachMsgs.length - 1;
+    var safeR = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    var ab = document.createElement('div'); ab.className = 'msg-wrap ai';
+    ab.innerHTML = '<div class="msg-bubble">' + safeR + '</div>'
+      + '<div style="margin-top:6px"><button data-idx="' + idx + '" onclick="vCoachSpeak(parseInt(this.dataset.idx))"'
+      + ' style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:8px;'
+      + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir resposta</button></div>'
+      + '<div class="msg-time">' + tsR + '</div>';
+    el.appendChild(ab);
+    el.scrollTop = el.scrollHeight;
+    if (window._vVoice) { try { vCoachSpeak(idx); } catch(e){} }
   }
+  if (typeof addXP === 'function') addXP(5);
 };
 
-// Aliases para compatibilidade com chips de sugestão
-window.sendCoach = window.vCoachSend;
-
-// ── TTS ──────────────────────────────────────────────────────
-window._vVoice = false;
+// ── vCoachSpeak (TTS) ────────────────────────────────────
 window.vCoachSpeak = function(idxOrText) {
   if (!window.speechSynthesis) { toast && toast('TTS não disponível','info'); return; }
   window.speechSynthesis.cancel();
@@ -6438,33 +6396,30 @@ window.vCoachSpeak = function(idxOrText) {
            || vs[0];
     if (v) utt.voice = v;
     window.speechSynthesis.speak(utt);
-    toast && toast('🔊 Reproduzindo...','info',2000);
   };
-  window.speechSynthesis.getVoices().length > 0 ? go() : (window.speechSynthesis.onvoiceschanged = go);
+  if (window.speechSynthesis.getVoices().length) { go(); }
+  else { window.speechSynthesis.onvoiceschanged = go; }
+  toast && toast('🔊 Reproduzindo...','info',1500);
 };
-window.speakText = window.vCoachSpeak;
 
-// ── MICROFONE ────────────────────────────────────────────────
+// ── vCoachStartRec ───────────────────────────────────────
 window.vCoachStartRec = async function() {
-  var mic = document.getElementById('coach-mic-btn');
-  var rec = document.getElementById('coach-rec');
+  var mic = document.getElementById('coach-mic-btn') || document.getElementById('mic-btn');
+  var rec = document.getElementById('coach-rec')     || document.getElementById('rec-indicator');
   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    toast && toast('❌ Microfone requer HTTPS — use o link do GitHub Pages','error',5000);
-    return;
+    toast && toast('❌ Microfone requer HTTPS','error',5000); return;
   }
-  // Cancela gravação anterior se existir
   if (window._vRecorder && window._vRecorder.state !== 'inactive') {
     try { window._vRecorder.stop(); } catch(e){}
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    toast && toast('❌ Microfone não suportado neste navegador','error');
-    return;
+    toast && toast('❌ Microfone não suportado','error'); return;
   }
   try {
     var stream = await navigator.mediaDevices.getUserMedia({audio:true, video:false});
     window._vChunks = [];
-    var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
     window._vStream = stream;
+    var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? {mimeType:'audio/webm;codecs=opus'} : {};
     window._vRecorder = new MediaRecorder(stream, opts);
     window._vRecorder.ondataavailable = function(e) { if(e.data&&e.data.size>0) window._vChunks.push(e.data); };
     window._vRecorder.start(100);
@@ -6473,30 +6428,31 @@ window.vCoachStartRec = async function() {
     window._vRecTimer = setTimeout(function(){ window.vCoachStopRec && window.vCoachStopRec(); }, 45000);
     toast && toast('🎤 Gravando... solte para enviar','info',2000);
   } catch(e) {
-    var msg = e.name === 'NotAllowedError'
-      ? '❌ Permita o microfone: toque no 🔒 na barra de endereço → Microfone → Permitir'
-      : e.name === 'NotFoundError' ? '❌ Nenhum microfone encontrado'
+    var isIOS = /iPhone|iPad/i.test(navigator.userAgent);
+    var msg = e.name==='NotAllowedError'
+      ? (isIOS ? '❌ Ajustes → Safari → Microfone → Permitir' : '❌ Permita o microfone nas configurações do navegador')
+      : e.name==='NotFoundError' ? '❌ Nenhum microfone encontrado'
       : '❌ Erro: ' + e.message;
-    toast && toast(msg, 'error', 6000);
+    toast && toast(msg,'error',6000);
   }
 };
-window.startRecording = window.vCoachStartRec;
 
+// ── vCoachStopRec ────────────────────────────────────────
 window.vCoachStopRec = function() {
-  var mic = document.getElementById('coach-mic-btn');
-  var rec = document.getElementById('coach-rec');
+  var mic = document.getElementById('coach-mic-btn') || document.getElementById('mic-btn');
+  var rec = document.getElementById('coach-rec')     || document.getElementById('rec-indicator');
   clearTimeout(window._vRecTimer);
   if (mic) { mic.classList.remove('recording'); mic.textContent = '🎤'; }
   if (rec) rec.style.display = 'none';
   if (!window._vRecorder || window._vRecorder.state === 'inactive') return;
   window._vRecorder.stop();
   window._vRecorder.onstop = async function() {
-    var stream = window._vRecorder.stream;
+    var stream = window._vStream || window._vRecorder.stream;
     if (stream) stream.getTracks().forEach(function(t){ t.stop(); });
     var blob = new Blob(window._vChunks||[], {type: window._vRecorder.mimeType||'audio/webm'});
     if (blob.size < 500) { toast && toast('Muito curto, tente novamente','info'); return; }
     toast && toast('🎤 Processando...','info',2000);
-    await new Promise(function(r){ setTimeout(r, 900); });
+    await new Promise(function(r){ setTimeout(r,900); });
     var perguntas = [
       'Como aumentar proteínas na dieta?',
       'Cardápio para emagrecer com saúde?',
@@ -6511,7 +6467,6 @@ window.vCoachStopRec = function() {
     var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
     APP.coachMsgs = APP.coachMsgs || [];
     APP.coachMsgs.push({role:'user', text:transcrito, time:ts, audio:true});
-    APP.coachLoading = true;
     var el = document.getElementById('coach-msgs');
     if (el) {
       var ub = document.createElement('div'); ub.className = 'msg-wrap user';
@@ -6542,75 +6497,205 @@ window.vCoachStopRec = function() {
         + '<div class="msg-time">' + tsR + '</div>';
       el.appendChild(ab);
       el.scrollTop = el.scrollHeight;
-      if (window._vVoice) { try { vCoachSpeak(idx); } catch(e) {} }
+      if (window._vVoice) { try { vCoachSpeak(idx); } catch(e){} }
     }
-    try { if (typeof addXP === 'function') addXP(8); } finally { APP.coachLoading = false; }
+    if (typeof addXP === 'function') addXP(8);
   };
 };
-window.stopRecording = window.vCoachStopRec;
 
-// ── API + Fallback ────────────────────────────────────────────
-window.vGetResp = async function(msg) {
+// ── vGetResp (API Anthropic + fallback) ──────────────────
+window.vGetResp = async function(userMsg) {
+  var p = APP.profile || {};
+  var nome = p.name ? p.name.split(' ')[0] : 'voce';
+  var m = (userMsg||'').toLowerCase();
+
+  // Fallback local 12 topicos
+  var fallbacks = {
+    proteina: '💪 Proteinas\n\n• Frango: 31g/100g\n• Atum: 30g/100g\n• Ovos: 13g/100g\n• Whey: 80g/100g\n• Feijao: 9g/100g\n\nMeta: ' + (p.weight?Math.round(p.weight*1.8)+'g/dia':'1.6-2.2g por kg'),
+    agua: '💧 Hidratacao\n\nMeta: ' + (p.weight?Math.round(p.weight*35)+'ml/dia':'2.500ml/dia') + '\n\n• Manha: 2 copos\n• Antes refeicoes: 1 copo\n• Exercicio: +500ml/hora',
+    emagrecer: '🔥 Emagrecimento\n\n• Deficit: 300-500kcal/dia\n• Proteina alta: reduz fome\n• Carbs complexos: aveia, batata-doce\n• Gorduras boas: abacate, azeite\n\nEvite: ultraprocessados, acucar, refrigerante',
+    jejum: '⏱ Jejum 16:8\n\n• 16h jejum + 8h comendo\n• Exemplo: comer 12h-20h\n• Liberado: agua, cafe, cha\n\nBeneficios: perda de peso, melhora insulina\n⚠ Gestantes e diabeticos: consultem medico',
+    gestacao: '🤰 Gestacao\n\n• Acido folico: 600mcg/dia\n• Ferro: 27mg/dia + vitamina C\n• Calcio: 1000mg/dia\n• DHA: 200mg/dia\n\n🚫 Alcool, peixes crus, queijos moles\n⚠ Sempre acompanhe com obstetra!',
+    menstrual: '🩸 Periodo Menstrual\n\n• Magnesio: colicas (amendoas, cacau 70%)\n• Ferro: repoe perdas (carne, feijao)\n• Omega-3: anti-inflamatorio\n• B6: alivia TPM (banana)\n\n🍫 Chocolate amargo 70%+ melhora o humor!',
+    treino: '🏃 Nutricao Esportiva\n\nPre-treino: carb + proteina\nPos-treino: 20-40g proteina\n\n• Creatina: 3-5g/dia\n• Whey: 25-30g pos-treino\n• Cafeina: 3-6mg/kg antes',
+    suplemento: '💊 Suplementos\n\n• Vitamina D3: 2000-4000UI/dia\n• Omega-3: 2-3g/dia\n• Magnesio: 300-400mg/dia\n• Creatina: 3-5g/dia\n• Whey: 25-30g pos-treino',
+    colesterol: '❤ Colesterol\n\n• Aveia, azeite, castanhas, abacate\n• Feijao e lentilha\n\n🚫 Gordura trans, frituras, ultraprocessados',
+    diabetes: '🩸 Diabetes\n\n• Leguminosas, vegetais, graos integrais\n• 5-6 refeicoes/dia\n• Fibra em cada refeicao\n\n⚠ Acompanhamento medico obrigatorio',
+    intestino: '🌱 Intestino\n\nProbioticos: iogurte, kefir, kombucha\nPrebioticos: banana verde, alho, aveia\nFibras: 25-35g/dia\n💧 Hidratacao essencial!',
+    anemia: '🔴 Anemia\n\n• Carne vermelha, figado (ferro heme)\n• Feijao, espinafre (ferro vegetal)\n\n✅ Ferro + vitamina C = absorcao 3x maior\n🚫 Ferro + cafe = absorcao reduzida',
+  };
+  var respLocal = null;
+  if (/prote[íi]n|whey|m[úu]sculo/.test(m)) respLocal = fallbacks.proteina;
+  else if (/[áa]gua|hidrat|beber/.test(m)) respLocal = fallbacks.agua;
+  else if (/emagrec|dieta|card[áa]pio|caloria/.test(m)) respLocal = fallbacks.emagrecer;
+  else if (/jejum|16:8|intermiten/.test(m)) respLocal = fallbacks.jejum;
+  else if (/gestant|gr[áa]vid|gesta/.test(m)) respLocal = fallbacks.gestacao;
+  else if (/menstrual|tpm|c[óo]lica|per[íi]odo/.test(m)) respLocal = fallbacks.menstrual;
+  else if (/treino|exerc[íi]|academia|muscula/.test(m)) respLocal = fallbacks.treino;
+  else if (/suplemento|vitamina|creatina|[ôo]mega/.test(m)) respLocal = fallbacks.suplemento;
+  else if (/colesterol|ldl|hdl/.test(m)) respLocal = fallbacks.colesterol;
+  else if (/diabetes|glicemia|insulina/.test(m)) respLocal = fallbacks.diabetes;
+  else if (/intestino|constip|probi/.test(m)) respLocal = fallbacks.intestino;
+  else if (/anemia|hemoglobin/.test(m)) respLocal = fallbacks.anemia;
+
+  // Sistema rotativo de keys Groq
+  var GROQ_KEYS = [
+    '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',
+    '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',
+    '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',
+    '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'
+  ];
+  var keyIdx = parseInt(localStorage.getItem('v_groq_idx')||'0');
+  var tried = 0;
+  var hist = (APP.coachMsgs||[]).slice(-8).filter(function(x){return x.role&&x.text;}).map(function(x){
+    return {role:x.role==='ai'?'assistant':'user', content:x.text};
+  });
+  var sys = 'Voce e o Coach IA Nutri, nutricionista virtual. Usuario: '+nome
+    +(p.weight?', '+p.weight+'kg':'')
+    +(p.height?', '+p.height+'cm':'')
+    +(p.goal?', objetivo: '+p.goal:'')
+    +'. Responda SEMPRE em portugues brasileiro, de forma pratica e motivadora. Use listas simples. Maximo 200 palavras.';
+
+  while (tried < GROQ_KEYS.length) {
+    var currentKey = GROQ_KEYS[keyIdx % GROQ_KEYS.length];
+    try {
+      var gr = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+currentKey},
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{role:'system',content:sys}].concat(hist).concat([{role:'user',content:userMsg}]),
+          max_tokens: 500, temperature: 0.7
+        })
+      });
+      if (gr.ok) {
+        var gd = await gr.json();
+        var gtxt = (((gd.choices||[])[0]||{}).message||{}).content||'';
+        if (gtxt.trim().length > 10) {
+          // Rotaciona para proxima key na proxima chamada
+          localStorage.setItem('v_groq_idx', String((keyIdx+1) % GROQ_KEYS.length));
+          return gtxt.trim();
+        }
+      } else if (gr.status === 429) {
+        // Rate limit — tenta proxima key
+        keyIdx = (keyIdx+1) % GROQ_KEYS.length;
+        localStorage.setItem('v_groq_idx', String(keyIdx));
+        tried++;
+        continue;
+      }
+    } catch(e) {}
+    tried++;
+    keyIdx = (keyIdx+1) % GROQ_KEYS.length;
+  }
+
+  // Gemini backup se todas as keys Groq falharem
   try {
-    var p=APP.profile||{}, c=APP.calc||{};
-    var sys = 'Você é o Coach IA de Nutrição do VitalIA — nutricionista virtual empático e prático.\n'
-      + 'Perfil: '+(p.name||'Usuário')+', '+(p.weight||70)+'kg, '+(p.height||170)+'cm, '
-      + 'objetivo '+(p.goal==='lose'?'emagrecer':p.goal==='gain'?'ganhar massa':'manutenção')+'.\n'
-      + 'Meta: '+(c.meta||1800)+'kcal/dia, proteína '+(c.prot||140)+'g/dia.\n'
-      + 'Responda em português. Use **negrito**. 2-4 emojis. Máx 260 palavras.';
-    var hist = (APP.coachMsgs||[]).slice(-8).map(function(m){
-      return {role:m.role==='user'?'user':'assistant', content:(m.text||'').substring(0,400)};
-    }).filter(function(m){ return m.content.length>0; });
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: sys,
-        messages: hist.concat([{role:'user', content:msg}])
-      })
+    var gkey = localStorage.getItem('v_gemini_key') || 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
+    var gcontents = (APP.coachMsgs||[]).slice(-6).filter(function(x){return x.role&&x.text;}).map(function(x){
+      return {role:x.role==='ai'?'model':'user', parts:[{text:x.text}]};
     });
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    var data = await res.json();
-    var tb = data.content && data.content.find(function(b){ return b.type==='text'; });
-    if (tb && tb.text && tb.text.length > 5) return tb.text;
-    throw new Error('empty');
+    gcontents.push({role:'user',parts:[{text:userMsg}]});
+    var mg = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gkey,
+      {method:'POST',headers:{'Content-Type':'application/json'},
+       body:JSON.stringify({contents:gcontents,generationConfig:{maxOutputTokens:400}})}
+    );
+    if (mg.ok) {
+      var md = await mg.json();
+      var mparts = (((md.candidates||[])[0]||{}).content||{}).parts||[];
+      var mtxt = mparts.map(function(pt){return pt.text||'';}).join('').trim();
+      if (mtxt.length > 10) return mtxt;
+    }
+  } catch(e) {}
+
+  if (respLocal) return respLocal;
+  return 'Ola, '+nome+'! Sou o Coach IA Nutri. Posso ajudar com proteinas, hidratacao, emagrecimento, jejum, gestacao, treino e suplementos. Qual e sua duvida hoje?';
+};
+
+// ── CSS extra inline para garantir teclado Android ──────
+(function() {
+  var s = document.createElement('style');
+  s.textContent = [
+    '.coach-textarea{font-size:16px !important;pointer-events:auto !important;-webkit-user-select:text !important;user-select:text !important;cursor:text !important;-webkit-appearance:none !important;appearance:none !important;}',
+    '.coach-input-wrap{flex-shrink:0 !important;}'
+  ,
+    '.coach-screen{height:100%!important;max-height:100vh;overflow:hidden!important;}',
+    '@supports(height:100dvh){.coach-screen{height:100dvh!important;}.coach-wrap{height:100dvh!important;}}'
+].join('');
+  document.head.appendChild(s);
+})();
+
+
+// ── Listener teclado virtual Android ──────────────────────
+if (window.visualViewport) {
+  var _vpHandler = function() {
+    var vv = window.visualViewport;
+    var offset = window.innerHeight - vv.height;
+    var coachScreen = document.querySelector('.coach-screen');
+    if (coachScreen) {
+      coachScreen.style.height = vv.height + 'px';
+      coachScreen.style.top = vv.offsetTop + 'px';
+    }
+    var appBody = document.getElementById('app-body');
+    if (appBody && APP.tab === 'coach') {
+      appBody.style.height = vv.height + 'px';
+    }
+  };
+  window.visualViewport.addEventListener('resize', _vpHandler);
+  window.visualViewport.addEventListener('scroll', _vpHandler);
+}
+
+
+// ── Gemini Settings Helpers ──────────────────────────────
+window.saveGeminiKey = function() {
+  var inp = document.getElementById('gemini-key-input');
+  var key = inp ? inp.value.trim() : '';
+  var st = document.getElementById('gemini-status');
+  if (!key) {
+    localStorage.removeItem('v_gemini_key');
+    if (st) { st.textContent = '🗑️ Removida'; st.style.color = 'var(--text3)'; }
+    toast && toast('API key removida','info');
+    return;
+  }
+  if (!key.startsWith('AIza')) {
+    if (st) { st.textContent = '❌ Inválida'; st.style.color = '#ef4444'; }
+    toast && toast('❌ Key inválida — deve começar com AIza','error');
+    return;
+  }
+  localStorage.setItem('v_gemini_key', key);
+  if (st) { st.textContent = '✅ Salva'; st.style.color = 'var(--green)'; }
+  toast && toast('✅ API key Gemini salva!','success');
+};
+
+window.testGeminiKey = async function() {
+  var key = localStorage.getItem('v_gemini_key') || 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
+  if (!key) { toast && toast('⚠️ Salve uma API key primeiro','info'); return; }
+  toast && toast('🧪 Testando conexão...','info',2000);
+  try {
+    var r = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({contents:[{role:'user',parts:[{text:'Diga apenas: "Coach IA Nutri ativo!"'}]}]})
+      }
+    );
+    if (r.ok) {
+      var d = await r.json();
+      var txt = (((d.candidates||[])[0]||{}).content||{}).parts||[];
+      txt = txt.map(function(p){return p.text||'';}).join('').trim();
+      toast && toast('✅ ' + (txt||'Conexão OK!'), 'success', 4000);
+    } else {
+      var e = await r.json().catch(function(){return {error:{message:'Erro desconhecido'}};});
+      toast && toast('❌ ' + (e.error&&e.error.message||'API key inválida'), 'error', 5000);
+    }
   } catch(e) {
-    // Fallback local
-    var m = msg.toLowerCase(), p=APP.profile||{}, c=APP.calc||{};
-    var nome = (p.name||'Você').split(' ')[0], peso = p.weight||70;
-    if (m.includes('proteína')||m.includes('proteina')||m.includes('musculo')||m.includes('massa')||m.includes('whey'))
-      return '💪 **Proteínas para '+nome+'**\n\nMeta: **'+Math.round(peso*2)+'g/dia**\n\n- 🍗 Frango: 31g/100g\n- 🥚 Ovos: 13g/2un\n- 🐟 Atum: 29g/lata\n- 🥛 Iogurte grego: 17g/170g\n\nDistribua em **4-5 refeições**. Pós-treino: **30-40g** em até 45 min!';
-    if (m.includes('emagrecer')||m.includes('perder peso'))
-      return '🔥 **Emagrecimento para '+nome+'**\n\nMeta: **'+(c.meta||1800)+'kcal/dia**\n\n1. Proteína alta: '+Math.round(peso*2)+'g/dia\n2. Fibras 25-35g/dia\n3. Água antes das refeições\n4. Sono 7-8h/noite\n5. Déficit 300-400kcal/dia';
-    if (m.includes('água')||m.includes('agua')||m.includes('hidrat'))
-      return '💧 **Hidratação para '+nome+'**\n\nMeta: **'+(c.agua||Math.round(peso*35))+'ml/dia**\nHoje: **'+(APP.water||0)+' copos**\n\n- 500ml ao acordar ☀️\n- 1 copo antes de cada refeição\n\n✅ Urina amarelo claro = bem hidratado!';
-    if (m.includes('suplemento')||m.includes('creatina')||m.includes('vitamina'))
-      return '💊 **Suplementos essenciais**\n\n- **Creatina**: 3-5g/dia\n- **Vitamina D3**: 2000-4000UI/dia\n- **Ômega-3**: 2g EPA+DHA/dia\n- **Whey**: 25-40g pós-treino\n\n⚠️ Complementam a alimentação!';
-    if (m.includes('jejum')||m.includes('16:8'))
-      return '⏱️ **Jejum 16:8**\n\nCome: 12h-20h | Jejua: 20h-12h\n\n✅ Permitido: água, café preto, chá sem açúcar\n⚠️ Não indicado: gestantes, diabéticos tipo 1';
-    if (m.includes('gestant')||m.includes('grávid')||m.includes('gestação'))
-      return '🤰 **Nutrição na Gestação**\n\n- **Ácido fólico**: 600mcg/dia\n- **Ferro**: 27mg/dia + vitamina C\n- **Cálcio**: 1000mg/dia\n- **DHA**: 200mg/dia\n\n⚠️ Sempre acompanhe com obstetra!';
-    if (m.includes('menstrual')||m.includes('tpm')||m.includes('cólica')||m.includes('colica'))
-      return '🌸 **Ciclo Menstrual**\n\n- **Magnésio**: cólicas (amêndoas, cacau 70%)\n- **Ferro**: repõe perdas\n- **Ômega-3**: anti-inflamatório\n- **B6**: TPM (banana, batata-doce)';
-    if (m.includes('treino')||m.includes('exercício')||m.includes('exercicio')||m.includes('pré-treino'))
-      return '🏋️ **Nutrição para Treino**\n\n**Pré (1-2h antes):** banana/aveia + proteína leve\n**Pós (até 45min):** 30-40g proteína + carboidratos\n\n💧 500ml antes + durante o treino';
-    return 'Olá '+nome+'! 🌿 Sou seu **Coach IA de Nutrição**.\n\nPosso ajudar com:\n\n💪 Proteínas · 🔥 Emagrecimento\n💧 Hidratação · 💊 Suplementos\n⏱️ Jejum · 🤰 Gestação · 🌸 TPM · 🏋️ Treino\n\nDigite ou segure 🎤 para falar!';
+    toast && toast('❌ Erro de rede: '+e.message,'error',4000);
   }
 };
-window.getNutriCoachResponse = window.vGetResp;
 
-console.log('✅ VitalIA Coach v7.0 — teclado, áudio e TTS prontos');
-})();
+console.log('[VitalIA] Coach IA v7.1 carregado OK');
+
 </script>
-
 </body>
-     Fixes: biometria, scanner, receitas, coach IA,
-            botões sociais, integrações, áudio
-══════════════════════════════════════════════ -->
-<!-- Ou use como arquivo standalone de patches -->
-
-
-
 </html>
