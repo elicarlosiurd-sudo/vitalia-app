@@ -413,12 +413,8 @@ a{text-decoration:none;color:inherit}
 .typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce .9s infinite}
 .typing-dot:nth-child(2){animation-delay:.15s}
 .typing-dot:nth-child(3){animation-delay:.3s}
-.coach-input-wrap{padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:flex-end;background:var(--surface);
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-}
-.coach-textarea{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:11px 14px;font-size:16px !important;color:var(--text);resize:none;min-height:44px;max-height:100px;overflow-y:auto;pointer-events:auto !important;-webkit-user-select:text !important;cursor:text !important;-webkit-appearance:none !important}
+
+
 .coach-textarea:focus{border-color:var(--green);background:var(--surface)}
 .coach-send{width:44px;height:44px;border-radius:14px;background:var(--gradient);border:none;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;transition:all .2s;color:#000}
 .coach-send:active{transform:scale(.93)}
@@ -585,46 +581,10 @@ a{text-decoration:none;color:inherit}
 #quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
 
 
-/* Coach IA — elemento real #coach-input */
-#coach-input {
-  flex: 1;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 22px;
-  padding: 12px 16px;
-  font-size: 16px !important;
-  color: var(--text);
-  font-family: var(--font-body);
-  outline: none;
-  -webkit-appearance: none;
-  appearance: none;
-  box-sizing: border-box;
-  height: 44px;
-  touch-action: manipulation;
-}
-#coach-input:focus {
-  border-color: var(--green);
-}
-#mic-btn {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  cursor: pointer;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: all .2s;
-}
-#mic-btn.recording {
-  background: rgba(239,68,68,.15);
-  border-color: #ef4444;
-}
+
+
+
+
 </style>
 </head>
 <body>
@@ -2921,7 +2881,7 @@ function navigate(tab) {
   body.innerHTML = '';
   const screen = document.createElement('div');
   screen.className = 'screen active fade-in' + (tab==='coach'?' no-nav coach-screen':'');
-  if(tab==='coach'){screen.style.overflow='hidden';screen.style.paddingBottom='0';screen.style.display='flex';screen.style.flexDirection='column';screen.style.height='100%';}
+  if(tab==='coach'){screen.style.overflow='hidden';screen.style.paddingBottom='0';screen.style.display='flex';screen.style.flexDirection='column';screen.style.bottom='var(--nav-h,60px)';}
   // ALL screens registered here — single source of truth
   const renderers = {
     home:renderHome, nutrition:renderNutrition, recipes:renderRecipes,
@@ -3885,617 +3845,7 @@ function doScan(code) {
 /* ═══════════════════════════════════════
    COACH SCREEN
 ═══════════════════════════════════════ */
-function renderCoach() {
-  const p = APP.profile||{name:'Usuário'};
-  if(!APP.coachMsgs.length) APP.coachMsgs=[{role:'ai',text:t('coach_greeting',p.name?.split(' ')[0]),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}];
-  const suggs=[
-    '💪 Como aumentar proteínas?','💧 Quanto devo beber de água?',
-    '🔥 Cardápio para emagrecer','🥗 Sou gestante, o que comer?',
-    '🩸 Período menstrual','🏃 Nutrição pré e pós-treino',
-    '💊 Qual suplemento?','⏱️ Jejum intermitente',
-  ];
-  const msgsHtml=APP.coachMsgs.map(function(m){
-    return '<div class="msg-wrap '+m.role+'">'
-      +'<div class="msg-bubble">'+(m.text||'')+'</div>'
-      +'<div class="msg-time">'+(m.time||'')+'</div>'
-      +'</div>';
-  }).join('');
-  const suggsHtml=suggs.map(function(s){
-    return '<button onclick="sendCoach(this.dataset.s)" data-s="'+s+'" style="flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap;font-family:var(--font-body)">'+s+'</button>';
-  }).join('');
-  return '<div style="display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;background:var(--bg)">'
-    +'<div style="flex-shrink:0;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface)">'
-    +  '<button onclick="navigate(\'more\')" style="background:transparent;border:none;cursor:pointer;font-size:20px;color:var(--text);padding:4px 8px">←</button>'
-    +  '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div>'
-    +  '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Coach IA Nutri</div>'
-    +  '<div style="font-size:11px;color:var(--green)">Online agora • Nutricionista Virtual</div></div>'
-    +  '<button onclick="clearCoachHistory()" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--text3)">🗑️</button>'
-    +'</div>'
-    +'<div style="flex-shrink:0;display:flex;gap:8px;overflow-x:auto;padding:10px 14px;scrollbar-width:none;border-bottom:1px solid var(--border)">'
-    +suggsHtml
-    +'</div>'
-    +'<div id="coach-msgs" style="flex:1;min-height:0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px">'
-    +msgsHtml
-    +'</div>'
-    +'<div id="rec-indicator" style="display:none;flex-shrink:0;align-items:center;justify-content:center;gap:8px;padding:8px 16px;background:rgba(239,68,68,.1);font-size:12px;color:#ef4444">'
-    +  '<div style="width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite"></div>'
-    +  ' <span id="rec-label">🔴 Gravando... Toque no mic para parar</span>'
-    +'</div>'
-    +'<div style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--surface)">'
-    +  '<button id="mic-btn" onclick="vToggleRec()" style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation">🎤</button>'
-    +  '<input type="text" id="coach-input" placeholder="Pergunte sobre nutrição..." '
-    +  'onkeydown="if(event.key===\'Enter\'){event.preventDefault();sendCoach();}" '
-    +  'autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false" '
-    +  'style="flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:22px;padding:12px 16px;font-size:16px;color:var(--text);font-family:var(--font-body);outline:none;-webkit-appearance:none;appearance:none;box-sizing:border-box;height:44px">'
-    +  '<button onclick="sendCoach()" style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;cursor:pointer;font-size:20px;color:#000;font-weight:700;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent">➤</button>'
-    +'</div>'
-    +'</div>';
-}
 
-function attachCoach(screen){
-  if(screen){
-    screen.style.overflow='hidden';
-    screen.style.paddingBottom='0';
-    screen.style.display='flex';
-    screen.style.flexDirection='column';
-    screen.style.height='100%';
-  }
-  // Garante que coach-wrap também está corretamente configurado
-  setTimeout(function(){
-    var wrap = screen.querySelector('.coach-wrap');
-    if(wrap){
-      wrap.style.display='flex';
-      wrap.style.flexDirection='column';
-      wrap.style.height='100%';
-      wrap.style.overflow='hidden';
-      wrap.style.position='absolute';
-      wrap.style.inset='0';
-    }
-    var msgs = document.getElementById('coach-msgs');
-    if(msgs) msgs.scrollTop = msgs.scrollHeight;
-    var ta = document.getElementById('coach-input');
-    if(ta){ ta.style.pointerEvents='auto'; ta.style.fontSize='16px'; }
-  }, 50);
-}
-
-window.sendCoach = async function(txt) {
-  const inp = document.getElementById('coach-input');
-  const msg = txt || inp?.value?.trim();
-  if(!msg||APP.coachLoading) return;
-  if(inp) inp.value='';
-  const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'user',text:msg,time});
-  APP.coachLoading=true; navigate('coach');
-  const resp = await getNutriCoachResponse(msg);
-  APP.coachMsgs.push({role:'ai',text:resp,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),tts:true});
-  APP.coachLoading=false; addXP(5); navigate('coach');
-};
-
-window.playAudioMsg = function(audioSrc) {
-  toast('▶ Reproduzindo áudio...', 'info', 2000);
-};
-
-window.clearCoachHistory = function() {
-  APP.coachMsgs = [];
-  navigate('coach');
-};
-
-// Text-to-Speech usando Web Speech API
-window.speakText = function(text) {
-  if(!window.speechSynthesis) { toast('TTS não suportado neste dispositivo','info'); return; }
-  window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text.substring(0,300));
-  utt.lang = 'pt-BR'; utt.rate = 0.95; utt.pitch = 1.0;
-  // Tenta voz em português
-  const voices = window.speechSynthesis.getVoices();
-  const ptVoice = voices.find(v => v.lang.startsWith('pt'));
-  if(ptVoice) utt.voice = ptVoice;
-  window.speechSynthesis.speak(utt);
-  toast('🔊 Reproduzindo resposta...','info',2000);
-};
-
-// Gravação de áudio
-let mediaRecorder = null, audioChunks = [];
-
-window.startRecording = async function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-    audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-    mediaRecorder.start();
-    if(mic) mic.classList.add('recording');
-    if(rec) rec.style.display = 'flex';
-  } catch(e) {
-    toast('❌ Permita acesso ao microfone nas configurações','error', 4000);
-  }
-};
-
-window.stopRecording = function() {
-  const mic = document.getElementById('mic-btn');
-  const rec = document.getElementById('rec-indicator');
-  if(!mediaRecorder || mediaRecorder.state==='inactive') return;
-  mediaRecorder.stop();
-  if(mic) mic.classList.remove('recording');
-  if(rec) rec.style.display = 'none';
-  mediaRecorder.onstop = async () => {
-    const blob = new Blob(audioChunks, {type:'audio/webm'});
-    if(blob.size < 1000) { toast('Gravação muito curta','info'); return; }
-    // Simulate transcription (in production use Whisper API)
-    const time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    const transcriptions = [
-      'Quais alimentos são ricos em proteína?',
-      'Como devo me alimentar antes do treino?',
-      'Tenho diabetes, o que posso comer?',
-      'Qual a diferença entre whey e caseína?',
-      'Como perder barriga rápido com alimentação?',
-    ];
-    const transcribed = transcriptions[Math.floor(Math.random()*transcriptions.length)];
-    toast('🎤 Áudio transcrito!','success', 2000);
-    APP.coachMsgs.push({role:'user', text:`🎤 ${transcribed}`, time, audio: true});
-    APP.coachLoading = true; navigate('coach');
-    const resp = await getNutriCoachResponse(transcribed);
-    APP.coachMsgs.push({role:'ai', text:resp, time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), tts:true});
-    APP.coachLoading = false; addXP(5); navigate('coach');
-  };
-};
-
-// Coach IA com conhecimento completo de nutricionista
-async function getNutriCoachResponse(msg) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      const m = msg.toLowerCase();
-      const p = APP.profile || {};
-      const lang = APP.lang || 'pt';
-      const nome = p.name?.split(' ')[0] || {'pt':'você','en':'you','es':'tú','ru':'вы'}[lang]||'você';
-      const peso = p.weight || 70;
-      const meta = p.goal || 'lose';
-      const calc = APP.calc || {};
-
-      // ── Language-aware keywords ────────────────
-      const keywords = {
-        gestante: {
-          pt: ['gestant','grávid','gravidez'],
-          en: ['pregnant','pregnancy','gestational','prenatal'],
-          es: ['gestante','embaraz','prenat'],
-          ru: ['беремен','гестац','дородов']
-        },
-        menstrual: {
-          pt: ['menstrual','cólica','tpm','período','menstruaç'],
-          en: ['menstrual','period','cramp','pms','cycle'],
-          es: ['menstrual','cólico','menstruac','período'],
-          ru: ['менструац','спазм','предменстр','цикл']
-        },
-        proteina: {
-          pt: ['proteína','músculo','massa','whey'],
-          en: ['protein','muscle','mass','whey'],
-          es: ['proteína','músculo','masa','whey'],
-          ru: ['белок','протеин','мышц','масс']
-        },
-        emagrecer: {
-          pt: ['emagrecer','perder peso','déficit','gordura','queimar'],
-          en: ['lose weight','diet','deficit','fat','slim'],
-          es: ['adelgazar','perder peso','déficit','grasa'],
-          ru: ['похудет','снизить вес','дефицит','жир']
-        },
-        agua: {
-          pt: ['água','hidrat'],
-          en: ['water','hydrat'],
-          es: ['agua','hidrat'],
-          ru: ['вода','гидрат']
-        },
-        suplemento: {
-          pt: ['suplemento','creatina','bcaa','vitamina','ômega'],
-          en: ['supplement','creatine','bcaa','vitamin','omega'],
-          es: ['suplemento','creatina','bcaa','vitamina','omega'],
-          ru: ['добавк','креатин','витамин','омега']
-        },
-        jejum: {
-          pt: ['jejum','16:8','intermitente'],
-          en: ['fasting','intermittent','16:8'],
-          es: ['ayuno','intermitente','16:8'],
-          ru: ['голодан','интервал','16:8']
-        },
-        treino: {
-          pt: ['treino','academia','musculaç','exercício'],
-          en: ['workout','gym','training','exercise'],
-          es: ['entrenamiento','gimnasio','ejercicio'],
-          ru: ['тренировк','спортзал','упражнен']
-        },
-        menstrual_es: {
-          pt: [],
-          en: [],
-          es: ['menstrual','regla','menstruación'],
-          ru: []
-        }
-      };
-
-      // Helper: check if message matches keywords for given topic
-      function matches(topic) {
-        const kws = keywords[topic]?.[lang] || keywords[topic]?.['pt'] || [];
-        return kws.some(k => m.includes(k));
-      }
-
-      // Responses by language
-      const responses = {
-        gestante: {
-          pt: `🤰 *Nutrição para Gestantes*\n\nOlá, ${nome}! A alimentação na gravidez é fundamental.\n\n**Nutrientes essenciais:**\n• **Ácido fólico** — 400-800mcg/dia (folhas verdes, feijão)\n• **Ferro** — 27mg/dia (carne vermelha + vitamina C)\n• **Cálcio** — 1000mg/dia (leite, iogurte, brócolis)\n• **Ômega-3 / DHA** — 200mg/dia (salmão, sardinha, chia)\n• **Colina** — 450mg/dia (3 ovos/dia)\n\n**Evitar na gestação:**\n🚫 Álcool — zero tolerância\n🚫 Peixes grandes crus (atum, cação)\n🚫 Queijos moles não pasteurizados\n🚫 Cafeína acima de 200mg/dia\n\n⚠️ Sempre consulte seu obstetra e nutricionista!`,
-          en: `🤰 *Nutrition for Pregnant Women*\n\nHello, ${nome}! Nutrition during pregnancy is essential.\n\n**Key nutrients:**\n• **Folic acid** — 400-800mcg/day (leafy greens, beans)\n• **Iron** — 27mg/day (red meat + vitamin C)\n• **Calcium** — 1000mg/day (dairy, broccoli)\n• **Omega-3 / DHA** — 200mg/day (salmon, sardine, chia)\n• **Choline** — 450mg/day (3 eggs/day)\n\n**Avoid during pregnancy:**\n🚫 Alcohol — zero tolerance\n🚫 Raw large fish (tuna, shark)\n🚫 Unpasteurized soft cheeses\n🚫 More than 200mg caffeine/day\n\n⚠️ Always consult your OB and nutritionist!`,
-          es: `🤰 *Nutrición para Gestantes*\n\n¡Hola, ${nome}! La alimentación en el embarazo es fundamental.\n\n**Nutrientes esenciales:**\n• **Ácido fólico** — 400-800mcg/día (verduras, frijoles)\n• **Hierro** — 27mg/día (carne roja + vitamina C)\n• **Calcio** — 1000mg/día (lácteos, brócoli)\n• **Omega-3 / DHA** — 200mg/día (salmón, sardina, chía)\n• **Colina** — 450mg/día (3 huevos/día)\n\n**Evitar en el embarazo:**\n🚫 Alcohol — tolerancia cero\n🚫 Pescados grandes crudos (atún, tiburón)\n🚫 Quesos blandos no pasteurizados\n🚫 Más de 200mg de cafeína/día\n\n⚠️ ¡Siempre consulta a tu obstetra y nutricionista!`,
-          ru: `🤰 *Питание при беременности*\n\nЗдравствуйте, ${nome}! Питание во время беременности крайне важно.\n\n**Ключевые нутриенты:**\n• **Фолиевая кислота** — 400-800мкг/день (зелень, бобы)\n• **Железо** — 27мг/день (красное мясо + витамин С)\n• **Кальций** — 1000мг/день (молочные, брокколи)\n• **Омега-3 / DHA** — 200мг/день (лосось, сардина, чиа)\n• **Холин** — 450мг/день (3 яйца/день)\n\n**Избегать при беременности:**\n🚫 Алкоголь — полный запрет\n🚫 Сырая крупная рыба (тунец, акула)\n🚫 Мягкие непастеризованные сыры\n🚫 Более 200мг кофеина/день\n\n⚠️ Всегда консультируйтесь с врачом и нутрициологом!`
-        },
-        menstrual: {
-          pt: `🌸 *Nutrição no Período Menstrual*\n\n**Nutrientes prioritários:**\n• **Magnésio** — reduz cólicas (amêndoas, cacau, sementes)\n• **Ferro** — repõe perdas do fluxo (carnes + vitamina C)\n• **Ômega-3** — anti-inflamatório (sardinha, chia, linhaça)\n• **Vitamina B6** — alivia TPM (banana, batata-doce)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacau (magnésio + serotonina)\n✅ Espinafre + limão (ferro + absorção)\n✅ Gengibre e cúrcuma (anti-inflamatórios)\n✅ Abacate (gorduras boas + B6)\n\n**Evitar:**\n🚫 Cafeína excessiva (piora cólicas)\n🚫 Sal excessivo (aumenta inchaço)\n🚫 Açúcar refinado (piora humor)`,
-          en: `🌸 *Nutrition During Your Period*\n\n**Priority nutrients:**\n• **Magnesium** — reduces cramps (almonds, cocoa, seeds)\n• **Iron** — replenishes losses (meat + vitamin C)\n• **Omega-3** — anti-inflammatory (sardine, chia, flaxseed)\n• **Vitamin B6** — eases PMS (banana, sweet potato)\n\n**Recommended foods:**\n✅ 70%+ dark chocolate (magnesium + serotonin)\n✅ Spinach + lemon (iron + absorption)\n✅ Ginger and turmeric (anti-inflammatories)\n✅ Avocado (healthy fats + B6)\n\n**Avoid:**\n🚫 Excess caffeine (worsens cramps)\n🚫 Excess salt (increases bloating)\n🚫 Refined sugar (worsens mood)`,
-          es: `🌸 *Nutrición durante la Menstruación*\n\n**Nutrientes prioritarios:**\n• **Magnesio** — reduce cólicos (almendras, cacao, semillas)\n• **Hierro** — repone pérdidas (carnes + vitamina C)\n• **Omega-3** — antiinflamatorio (sardina, chía, lino)\n• **Vitamina B6** — alivia el SPM (banana, batata)\n\n**Alimentos recomendados:**\n✅ Chocolate 70%+ cacao (magnesio + serotonina)\n✅ Espinacas + limón (hierro + absorción)\n✅ Jengibre y cúrcuma (antiinflamatorios)\n✅ Aguacate (grasas buenas + B6)\n\n**Evitar:**\n🚫 Exceso de cafeína (empeora cólicos)\n🚫 Exceso de sal (aumenta hinchazón)\n🚫 Azúcar refinada (empeora el humor)`,
-          ru: `🌸 *Питание во время менструации*\n\n**Приоритетные нутриенты:**\n• **Магний** — снижает спазмы (миндаль, какао, семена)\n• **Железо** — восполняет потери (мясо + витамин С)\n• **Омега-3** — противовоспалительное (сардина, чиа)\n• **Витамин B6** — облегчает ПМС (банан, батат)\n\n**Рекомендуемые продукты:**\n✅ Тёмный шоколад 70%+ (магний + серотонин)\n✅ Шпинат + лимон (железо + усвоение)\n✅ Имбирь и куркума (противовоспалительные)\n✅ Авокадо (полезные жиры + B6)\n\n**Избегать:**\n🚫 Избыток кофеина (усиливает спазмы)\n🚫 Избыток соли (увеличивает отёки)\n🚫 Рафинированный сахар (ухудшает настроение)`
-        },
-        proteina: {
-          pt: `💪 *Proteínas — Guia Completo*\n\nSua meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/dia**\n\n**Melhores fontes:**\n🥚 Ovos — 13g/2 unidades\n🍗 Frango — 31g/100g\n🐟 Atum — 29g/lata\n🥛 Iogurte grego — 17g/170g\n🫘 Feijão — 9g/100g\n\n**Dicas de distribuição:**\n• 4-5 refeições com 25-40g proteína cada\n• Pós-treino: 30-40g em até 45 min\n• Antes de dormir: caseína (cottage, iogurte)\n\n💊 Whey: ótimo complemento se não atingir a meta pela alimentação.`,
-          en: `💪 *Protein — Complete Guide*\n\nYour goal: **${calc.prot||Math.round((p.weight||70)*1.8)}g/day**\n\n**Best sources:**\n🥚 Eggs — 13g/2 units\n🍗 Chicken breast — 31g/100g\n🐟 Canned tuna — 29g/can\n🥛 Greek yogurt — 17g/170g\n🫘 Beans — 9g/100g\n\n**Distribution tips:**\n• 4-5 meals with 25-40g protein each\n• Post-workout: 30-40g within 45 min\n• Before bed: casein (cottage, yogurt)\n\n💊 Whey: great supplement if you can't hit your target through food alone.`,
-          es: `💪 *Proteínas — Guía Completa*\n\nTu meta: **${calc.prot||Math.round((p.weight||70)*1.8)}g/día**\n\n**Mejores fuentes:**\n🥚 Huevos — 13g/2 unidades\n🍗 Pechuga de pollo — 31g/100g\n🐟 Atún en lata — 29g/lata\n🥛 Yogur griego — 17g/170g\n🫘 Frijoles — 9g/100g\n\n**Consejos de distribución:**\n• 4-5 comidas con 25-40g proteína cada una\n• Post-entreno: 30-40g en 45 minutos\n• Antes de dormir: caseína (requesón, yogur)\n\n💊 Whey: excelente suplemento si no alcanzas tu meta con la alimentación.`,
-          ru: `💪 *Белок — Полное руководство*\n\nВаша цель: **${calc.prot||Math.round((p.weight||70)*1.8)}г/день**\n\n**Лучшие источники:**\n🥚 Яйца — 13г/2 штуки\n🍗 Куриная грудка — 31г/100г\n🐟 Консервированный тунец — 29г/банка\n🥛 Греческий йогурт — 17г/170г\n🫘 Бобовые — 9г/100г\n\n**Советы по распределению:**\n• 4-5 приёмов по 25-40г белка\n• После тренировки: 30-40г в течение 45 мин\n• Перед сном: казеин (творог, йогурт)\n\n💊 Сывороточный протеин: отлично подходит, если не достигаете нормы из пищи.`
-        },
-        emagrecer: {
-          pt: `🔥 *Estratégia de Emagrecimento*\n\nSeu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/dia\n\n**Estratégias comprovadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/dia) — preserva músculo\n2️⃣ Fibras (25-35g/dia) — saciedade prolongada\n3️⃣ Água: ${calc.agua||2100}ml/dia antes das refeições\n4️⃣ Carboidratos complexos (aveia, arroz integral, batata-doce)\n5️⃣ Sono de qualidade (cortisol alto = mais fome)\n\n**Evitar:**\n🚫 Déficit acima de 500kcal (perde músculo)\n🚫 Ultraprocessados\n🚫 Pular refeições`,
-          en: `🔥 *Weight Loss Strategy*\n\nYour TDEE: ~${calc.tdee||2200}kcal | Goal: ${calc.meta||1800}kcal\nDeficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/day\n\n**Proven strategies:**\n1️⃣ High protein (${calc.prot||Math.round((p.weight||70)*1.8)}g/day) — preserve muscle\n2️⃣ Fiber (25-35g/day) — extended satiety\n3️⃣ Water: ${calc.agua||2100}ml/day before meals\n4️⃣ Complex carbs (oats, brown rice, sweet potato)\n5️⃣ Quality sleep (high cortisol = more hunger)\n\n**Avoid:**\n🚫 Deficit over 500kcal (muscle loss)\n🚫 Ultra-processed foods\n🚫 Skipping meals`,
-          es: `🔥 *Estrategia para Adelgazar*\n\nTu TDEE: ~${calc.tdee||2200}kcal | Meta: ${calc.meta||1800}kcal\nDéficit: ${(calc.tdee||2200)-(calc.meta||1800)}kcal/día\n\n**Estrategias probadas:**\n1️⃣ Proteína alta (${calc.prot||Math.round((p.weight||70)*1.8)}g/día) — preserva músculo\n2️⃣ Fibra (25-35g/día) — saciedad prolongada\n3️⃣ Agua: ${calc.agua||2100}ml/día antes de las comidas\n4️⃣ Carbohidratos complejos (avena, arroz integral)\n5️⃣ Sueño de calidad (cortisol alto = más hambre)\n\n**Evitar:**\n🚫 Déficit superior a 500kcal (pierde músculo)\n🚫 Alimentos ultraprocesados\n🚫 Saltarse comidas`,
-          ru: `🔥 *Стратегия похудения*\n\nВаш TDEE: ~${calc.tdee||2200}ккал | Цель: ${calc.meta||1800}ккал\nДефицит: ${(calc.tdee||2200)-(calc.meta||1800)}ккал/день\n\n**Проверенные стратегии:**\n1️⃣ Высокий белок (${calc.prot||Math.round((p.weight||70)*1.8)}г/день) — сохраняет мышцы\n2️⃣ Клетчатка (25-35г/день) — длительное насыщение\n3️⃣ Вода: ${calc.agua||2100}мл/день перед едой\n4️⃣ Сложные углеводы (овсянка, бурый рис)\n5️⃣ Качественный сон (высокий кортизол = больше голода)\n\n**Избегать:**\n🚫 Дефицит более 500ккал (потеря мышц)\n🚫 Ультра-обработанные продукты\n🚫 Пропуск приёмов пищи`
-        },
-        default: {
-          pt: `Olá, ${nome}! 🌿 Sou seu coach de nutrição e esportes. Posso te ajudar com:\n\n• 💪 Proteínas e ganho de massa\n• 🔥 Emagrecimento e déficit calórico\n• 💧 Hidratação ideal\n• 💊 Suplementação (whey, creatina, BCAA)\n• ⏱️ Jejum intermitente\n• 🏋️ Nutrição pré e pós-treino\n• 🤰 Alimentação na gestação\n• 🌸 Nutrição no período menstrual\n\nO que você gostaria de saber?`,
-          en: `Hello, ${nome}! 🌿 I'm your nutrition and sports coach. I can help you with:\n\n• 💪 Protein and muscle gain\n• 🔥 Weight loss and caloric deficit\n• 💧 Optimal hydration\n• 💊 Supplementation (whey, creatine, BCAA)\n• ⏱️ Intermittent fasting\n• 🏋️ Pre and post-workout nutrition\n• 🤰 Pregnancy nutrition\n• 🌸 Nutrition during your period\n\nWhat would you like to know?`,
-          es: `¡Hola, ${nome}! 🌿 Soy tu coach de nutrición y deportes. Puedo ayudarte con:\n\n• 💪 Proteínas y ganancia muscular\n• 🔥 Adelgazamiento y déficit calórico\n• 💧 Hidratación óptima\n• 💊 Suplementación (whey, creatina, BCAA)\n• ⏱️ Ayuno intermitente\n• 🏋️ Nutrición pre y post-entreno\n• 🤰 Alimentación en el embarazo\n• 🌸 Nutrición durante la menstruación\n\n¿Qué te gustaría saber?`,
-          ru: `Привет, ${nome}! 🌿 Я ваш коуч по питанию и спорту. Я помогу вам с:\n\n• 💪 Белком и набором мышечной массы\n• 🔥 Похудением и калорийным дефицитом\n• 💧 Оптимальной гидратацией\n• 💊 Добавками (протеин, креатин, BCAA)\n• ⏱️ Интервальным голоданием\n• 🏋️ Питанием до и после тренировки\n• 🤰 Питанием при беременности\n• 🌸 Питанием во время менструации\n\nЧто бы вы хотели узнать?`
-        }
-      };
-
-      // Match topic and return language-aware response
-      const getLangResp = (topic) => (responses[topic]?.[lang] || responses[topic]?.['pt'] || '');
-
-      // ── Gestante ─────────────────────────────
-      if(matches('gestante') || m.includes('gestant') || m.includes('grávid') || m.includes('gravidez') || m.includes('pregnant') || m.includes('embaraz') || m.includes('беремен')) {
-        resolve(getLangResp('gestante') || responses.gestante.pt);
-        return;
-      }
-
-      // ── Menstruação / Período ─────────────────
-      if(matches('menstrual') || m.includes('menstrual') || m.includes('período') || m.includes('cólica') || m.includes('colica') || m.includes('tpm') || m.includes('cramp') || m.includes('period') || m.includes('ayuno') || m.includes('менструац')) {
-        resolve(getLangResp('menstrual'));
-        return;
-      }
-
-      // ── Suplementos ───────────────────────────
-      if(m.includes('suplemento') || m.includes('whey') || m.includes('creatina') || m.includes('bcaa') || m.includes('proteína em pó') || m.includes('termogênico') || m.includes('pre-workout') || m.includes('pré-treino')) {
-        resolve(`💊 *Guia Completo de Suplementos*
-
-**WHEY PROTEIN**
-• Melhor horário: até 30 min após treino
-• Dose: 25-40g por dose
-• Tipos: Concentrado (+ econômico), Isolado (+ puro), Hidrolisado (+ absorção rápida)
-• Para quem: qualquer pessoa com dificuldade de atingir cota proteica
-
-**CREATINA MONOHIDRATADA**
-• Melhor custo-benefício: 3-5g/dia sempre (sem ciclar)
-• Não precisa fase de carga
-• Para quem: treinos de força, HIIT, explosão muscular
-• Resultados visíveis: 4-8 semanas
-
-**BCAA**
-• Dose: 5-10g antes ou durante treino
-• Honestidade: se você já consome whey suficiente, é pouco necessário
-• Mais útil em treinos em jejum
-
-**VITAMINA D + K2**
-• A maioria dos brasileiros tem deficiência
-• Dose: 2000-4000 UI/dia (conforme exame)
-• Fundamental para imunidade, ossos e hormônios
-
-**ÔMEGA-3**
-• 2g EPA+DHA/dia
-• Anti-inflamatório, saúde cardiovascular e cerebral
-• Tomar com refeição gordurosa para melhor absorção
-
-⚠️ Suplementos são complementos, não substituem alimentação equilibrada. Consulte um nutricionista para personalizar!`);
-        return;
-      }
-
-      // ── Pré e pós treino ─────────────────────
-      if(m.includes('treino') || m.includes('pré-treino') || m.includes('pre treino') || m.includes('pós-treino') || m.includes('musculação') || m.includes('academia')) {
-        resolve(`🏋️ *Nutrição para Treino*
-
-**PRÉ-TREINO (1-2h antes)**
-🍌 Carboidrato + proteína moderada
-• Frango + batata-doce
-• Ovo mexido + tapioca
-• Banana + pasta de amendoim
-• Arroz + feijão (treinos mais longos)
-⚡ Cafeína 200-400mg = ótimo pré-natural (café, chá verde)
-
-**DURANTE O TREINO**
-💧 Água: 500-700ml/hora de treino
-🍌 Acima de 90 min: banana ou maltodextrina
-
-**PÓS-TREINO (até 2h depois)**
-💪 PROTEÍNA + carbo rápido
-• Whey + banana
-• Frango + arroz branco
-• Ovo + pão integral
-• Iogurte grego + granola
-📊 Meta: 0.3-0.4g proteína/kg de peso logo após
-
-**Para ${nome} (${peso}kg):**
-Proteína pós-treino ideal: ~${Math.round(peso*0.35)}g
-Ex: ${Math.round(peso*0.35/25)} doses de whey ou ${Math.round(peso*0.35/31*100)}g de peito de frango`);
-        return;
-      }
-
-      // ── Emagrecimento ─────────────────────────
-      if(m.includes('emagrecer') || m.includes('perder peso') || m.includes('barriga') || m.includes('gordura') || m.includes('dieta') || m.includes('deficit') || (meta==='lose' && m.includes('como'))) {
-        const metaCal = calc.meta || 1600;
-        resolve(`🔥 *Estratégia de Emagrecimento para ${nome}*
-
-**Sua meta calórica:** ~${metaCal} kcal/dia
-(Déficit de ~400 kcal = ~1,5kg/mês de gordura)
-
-**As 5 regras de ouro:**
-1️⃣ Priorize proteína (2g/kg) — preserva músculo e sacia mais
-2️⃣ Reduza ultraprocessados, não os carboidratos integrais
-3️⃣ Coma de 3 em 3 horas — evita picos de fome
-4️⃣ Durma 7-8h — sono ruim aumenta grelina (hormônio da fome)
-5️⃣ Musculação > só cardio para emagrecer com saúde
-
-**Alimentos termogênicos naturais:**
-🌶️ Pimenta caiena, ☕ Café, 🫚 Azeite, 🫚 TCM
-🍵 Chá verde, 🫚 Gengibre, 🥥 Coco
-
-**Alimentos ELIMINAR:**
-❌ Refrigerantes e sucos industriais
-❌ Farinha branca e açúcar refinado
-❌ Frituras e fast food
-❌ Álcool (7 kcal/g, sem valor nutricional)
-
-**Cardápio exemplo ${metaCal} kcal:**
-☀️ Café: omelete (2 ovos) + café preto
-🌤️ Lanche: maçã + castanhas (30g)
-☀️ Almoço: frango (150g) + salada grande + 3 col arroz integral
-🌙 Jantar: peixe (150g) + legumes assados`);
-        return;
-      }
-
-      // ── Ganho de massa ────────────────────────
-      if(m.includes('massa') || m.includes('ganhar peso') || m.includes('ganho') || m.includes('bulking') || m.includes('hipertrofia') || (meta==='gain')) {
-        const metaCal = calc.meta || 2400;
-        resolve(`💪 *Estratégia de Ganho de Massa para ${nome}*
-
-**Sua meta calórica:** ~${metaCal} kcal/dia
-(Superávit de ~300 kcal = ganho limpo de músculo)
-
-**Distribuição de macros:**
-🥩 Proteína: ${Math.round(peso*2)}g/dia (${Math.round(peso*2*4)} kcal)
-🍚 Carboidratos: ${Math.round((metaCal - peso*2*4 - 70*9)/4)}g/dia
-🥑 Gorduras: ~70g/dia (${70*9} kcal)
-
-**Top alimentos para ganho limpo:**
-• 🥚 Ovos inteiros — proteína completa + colesterol bom
-• 🐔 Frango/Peru — proteína magra, versátil
-• 🐄 Carne vermelha magra — creatina natural + ferro
-• 🌾 Aveia — carbo de baixo índice glicêmico
-• 🍚 Arroz branco pós-treino — carbo de absorção rápida
-• 🥑 Abacate — gordura boa + calorias densas
-• 🥜 Pasta de amendoim — proteína + gordura boa
-• 🍠 Batata-doce — vitaminas + carbo para treino
-
-**Frequência alimentar:** 5-6 refeições por dia
-**Hidratação:** Mínimo ${Math.round(peso*35)}ml/dia`);
-        return;
-      }
-
-      // ── Jejum intermitente ────────────────────
-      if(m.includes('jejum') || m.includes('16:8') || m.includes('18:6') || m.includes('omad') || m.includes('janela')) {
-        resolve(`⏱️ *Jejum Intermitente — Guia Completo*
-
-**Protocolos mais usados:**
-
-🔹 **16:8** (mais popular)
-• Jejua 16h, come em janela de 8h
-• Ex: come 12h-20h, jejua 20h-12h
-• Ideal para iniciantes e lifestyle sustentável
-
-🔹 **18:6** (avançado)
-• Jejua 18h, come em janela de 6h
-• Ex: come 13h-19h
-• Resultados mais rápidos
-
-🔹 **OMAD** (extremo)
-• Uma refeição por dia
-• Apenas para experientes e com supervisão
-
-🔹 **5:2**
-• 5 dias normal, 2 dias com 500-600 kcal
-• Bom para quem tem dificuldade de restringir diário
-
-**O que pode durante o jejum:**
-✅ Água (deve beber bastante)
-✅ Café preto sem açúcar
-✅ Chá sem açúcar
-✅ Sal (ajuda na retenção de eletrólitos)
-
-**Dicas para o primeiro jejum:**
-1. Comece pelo 12:12 por 1 semana
-2. Progrida para 14:10 na semana 2
-3. Chegue ao 16:8 na semana 3
-4. O café da manhã pode ser apenas café preto
-
-⚠️ Gestantes, diabéticos e pessoas com histórico de distúrbios alimentares devem consultar médico antes!`);
-        return;
-      }
-
-      // ── Proteínas e macros ────────────────────
-      if(m.includes('proteína') || m.includes('proteina') || m.includes('macro') || m.includes('carboidrato') || m.includes('gordura boa')) {
-        resolve(`📊 *Macronutrientes — Guia Completo*
-
-**PROTEÍNAS** (4 kcal/g)
-• Função: construção muscular, saciedade, imunidade
-• Meta geral: 1,6-2,2g/kg/dia
-• Para ${nome} (${peso}kg): ${Math.round(peso*2)}-${Math.round(peso*2.2)}g/dia
-• Fontes: frango, ovos, peixe, carne magra, whey, iogurte grego, leguminosas
-
-**CARBOIDRATOS** (4 kcal/g)
-• Função: energia principal, especialmente para o cérebro
-• Prefira de baixo IG: aveia, arroz integral, batata-doce, frutas
-• Evite: açúcar refinado, farinha branca, ultraprocessados
-
-**GORDURAS BOAS** (9 kcal/g)
-• Função: hormônios, vitaminas lipossolúveis, saciedade
-• Boas fontes: azeite, abacate, castanhas, salmão, ovos
-• Evite: gordura trans, frituras, óleos vegetais refinados
-
-**Para ${nome}:**
-🥩 Proteína: ~${Math.round(peso*2)}g (${Math.round(peso*2*4)} kcal)
-🍚 Carboidratos: ~${calc.carbs||180}g (${Math.round((calc.carbs||180)*4)} kcal)
-🥑 Gorduras: ~${calc.fat||60}g (${Math.round((calc.fat||60)*9)} kcal)
-🔥 Total: ~${calc.meta||1800} kcal`);
-        return;
-      }
-
-      // ── Vitaminas e micronutrientes ───────────
-      if(m.includes('vitamina') || m.includes('mineral') || m.includes('ferro') || m.includes('cálcio') || m.includes('magnésio') || m.includes('zinco')) {
-        resolve(`🌿 *Vitaminas e Minerais Essenciais*
-
-**VITAMINA D** — O "hormônio do sol"
-• 80% dos brasileiros têm deficiência!
-• Fontes: sol (15-20 min/dia), ovos, peixes gordos
-• Suplementação: 2000-4000 UI/dia (verificar com exame)
-
-**FERRO**
-• Mulheres: 18mg/dia | Homens: 8mg/dia | Gestantes: 27mg/dia
-• Fontes animais (heme): carne vermelha, fígado, aves
-• Fontes vegetais (não-heme): feijão, lentilha, espinafre
-• 💡 Consuma com Vitamina C para melhor absorção!
-
-**CÁLCIO**
-• 1000-1200mg/dia
-• Fontes: leite, iogurte, queijo, brócolis, gergelim
-
-**MAGNÉSIO**
-• Fundamental para mais de 300 reações no corpo
-• Fontes: banana, abacate, castanhas, chocolate amargo
-• Ajuda no sono e reduz cólicas
-
-**ZINCO**
-• Imunidade, testosterona, cicatrização
-• Fontes: carne vermelha, frutos do mar, castanha de caju
-
-**ÔMEGA-3**
-• EPA+DHA: 1-2g/dia
-• Fontes: salmão, sardinha, atum, chia, linhaça
-• Poderoso anti-inflamatório natural`);
-        return;
-      }
-
-      // ── Diabetes / Glicemia ───────────────────
-      if(m.includes('diabet') || m.includes('glicemia') || m.includes('açúcar no sangue') || m.includes('insulin')) {
-        resolve(`🩺 *Nutrição para Diabetes e Controle Glicêmico*
-
-**Princípios fundamentais:**
-1. Priorize alimentos de **baixo índice glicêmico (IG)**
-2. Distribua os carboidratos ao longo do dia
-3. Nunca fique mais de 4h sem comer
-4. Combine carbo + proteína + gordura boa em cada refeição
-
-**Alimentos de BAIXO IG (seguros):**
-✅ Aveia, arroz integral, leguminosas
-✅ Vegetais em geral, folhas verdes
-✅ Frutas: maçã, pera, morango, frutas vermelhas
-✅ Proteínas magras: frango, peixe, ovos
-✅ Gorduras boas: azeite, abacate, castanhas
-
-**Alimentos de ALTO IG (evitar):**
-❌ Açúcar, mel, xaropes em excesso
-❌ Pão branco, arroz branco em excesso
-❌ Batata inglesa, mandioca em grande quantidade
-❌ Sucos de fruta (mesmo naturais)
-❌ Refrigerantes e bebidas adoçadas
-
-⚠️ IMPORTANTE: Diabetes requer acompanhamento médico e nutricional individualizado. As orientações acima são gerais. Consulte seu endocrinologista e nutricionista!`);
-        return;
-      }
-
-      // ── Água e hidratação ─────────────────────
-      if(m.includes('água') || m.includes('hidrat') || m.includes('beber') || m.includes('sede')) {
-        const aguaMeta = calc.aguaMl || Math.round((p.weight||70)*35);
-        resolve(`💧 *Hidratação Adequada*
-
-**Sua meta:** ${aguaMeta}ml/dia (~${Math.ceil(aguaMeta/250)} copos de 250ml)
-
-**Por que a água é tão importante:**
-• Regula temperatura corporal
-• Transporta nutrientes e oxigênio
-• Elimina toxinas pelos rins
-• Melhora desempenho físico e mental
-• Auxilia na perda de peso (reduz apetite)
-
-**Sinais de desidratação:**
-🟡 Urina amarela escura
-🟡 Dor de cabeça
-🟡 Cansaço sem motivo
-🟡 Dificuldade de concentração
-🔴 Urina laranja = desidratação grave
-
-**Dicas para beber mais água:**
-1. Comece o dia com 1 copo de água antes do café
-2. Beba 1 copo antes de cada refeição
-3. Tenha sempre uma garrafa visível
-4. Use o app para registrar cada copo ✅
-5. Chás sem açúcar também contam!
-
-**Atenção:** exercício intenso exige +500-700ml/hora de treino`);
-        return;
-      }
-
-      // ── Resposta geral inteligente ─────────────
-      const respostas = [
-        `Olá ${nome}! 👋 Sou seu Coach IA com conhecimento completo de nutrição e nutrição esportiva.
-
-Posso te ajudar com:
-
-🥗 **Emagrecimento** — déficit calórico, cardápio, estratégias
-💪 **Ganho de massa** — superávit, macros, treino
-⏱️ **Jejum intermitente** — protocolos e como começar
-🤰 **Nutrição gestante** — alimentos seguros e proibidos
-🩸 **Período menstrual** — como reduzir cólicas com alimentação
-💊 **Suplementos** — whey, creatina, vitaminas, o que funciona
-🏋️ **Pré e pós-treino** — quando e o que comer
-🩺 **Condições especiais** — diabetes, pressão, colesterol
-🌿 **Vitaminas e minerais** — deficiências e fontes
-
-O que você quer saber? Pode digitar ou usar os chips acima! 😊`,
-        `${nome}, ótima pergunta! Para te dar uma resposta mais precisa, me conta:
-
-• Seu objetivo atual: emagrecer, ganhar massa ou manter?
-• Você treina? Qual modalidade?
-• Tem alguma restrição alimentar ou condição de saúde?
-
-Com esses detalhes, posso montar um plano personalizado! 💪`,
-        `Baseado no seu perfil, ${nome}:
-
-📊 **Suas métricas:**
-• Meta calórica: ~${calc.meta||1800} kcal/dia
-• Proteína ideal: ~${Math.round((p.weight||70)*2)}g/dia
-• Água: ~${Math.round((p.weight||70)*35)}ml/dia
-
-🎯 **Foco para ${meta==='lose'?'emagrecimento':meta==='gain'?'ganho de massa':'manutenção'}:**
-${meta==='lose'?'Déficit de 400 kcal + priorizar proteína (2g/kg) + reduzir ultraprocessados':meta==='gain'?'Superávit de 300 kcal + 5-6 refeições/dia + whey pós-treino':'Manter as calorias da TDEE + variação alimentar + monitoramento semanal'}
-
-Quer um cardápio detalhado? Me diga!`,
-      ];
-      resolve(respostas[Math.floor(Math.random()*respostas.length)]);
-    }, 1000 + Math.random()*1000);
-  });
-}
 
 
 
@@ -6199,34 +5549,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 <!-- ══════════════════════════════════════════════
      VitalIA overlay fixes — Inject before <style>
-/* Coach IA — layout garantido */
-.coach-screen {
-  overflow: hidden !important;
-  padding-bottom: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-}
-.coach-wrap {
-  position: absolute;
-  inset: 0;
 
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: var(--bg);
-}
-.coach-hdr {
-  flex-shrink: 0;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--surface);
-}
+
+
 .coach-sugg-bar {
   flex-shrink: 0;
   display: flex;
@@ -6252,49 +5577,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 }
-.coach-msgs-area {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
-.coach-rec-bar {
-  display: none;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(248,113,113,.1);
-  border-top: 1px solid rgba(248,113,113,.2);
-  font-size: 12px;
-  color: var(--red);
-  font-weight: 700;
-}
-.coach-rec-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--red);
-  animation: recBlink .8s infinite;
-}
+
+
+
 /* INPUT ROW — NUNCA SOME */
-.coach-input-row {
-  flex-shrink: 0 !important;
-  background: var(--surface) !important;
-  border-top: 1px solid var(--border) !important;
-  padding: 10px 12px !important;
-  padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
-  display: flex !important;
-  gap: 8px !important;
-  align-items: flex-end !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
- z-index: 10 !important; position: relative !important; }
+
 .coach-mic {
   width: 44px !important;
   height: 44px !important;
@@ -6322,18 +5609,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   50% { box-shadow: 0 0 0 8px rgba(248,113,113,0); }
 }
 /* TEXTAREA — font-size:16px obrigatório para Android abrir teclado */
-.coach-input-ta {
-  flex: 1 !important; background: var(--surface2) !important;
-  border: 1.5px solid var(--border) !important; border-radius: 14px !important;
-  padding: 12px 14px !important; font-size: 16px !important;
-  color: var(--text) !important; resize: none !important;
-  min-height: 44px !important; max-height: 120px !important;
-  overflow-y: auto !important; font-family: var(--font-body) !important;
-  -webkit-user-select: text !important; user-select: text !important;
-  cursor: text !important; pointer-events: auto !important;
-  -webkit-appearance: none !important; appearance: none !important;
-  outline: none !important; box-sizing: border-box !important; line-height: 1.4 !important;
-}
+
 .coach-input-ta:focus { border-color: var(--green) !important; background: var(--surface) !important; }
 .coach-input-ta:focus {
   border-color: var(--green) !important;
@@ -6357,198 +5633,573 @@ window.addEventListener('DOMContentLoaded', async () => {
   -webkit-tap-highlight-color: transparent !important;
 }
 
+
+/* ═══════════════════════════════════════
+   COACH IA — CSS ÚNICO E LIMPO
+═══════════════════════════════════════ */
+.coach-screen {
+  position: absolute;
+  inset: 0;
+  bottom: var(--nav-h, 68px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  z-index: 10;
+  height: auto !important;
+}
+#coach-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.coach-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.coach-sugg-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+.coach-sugg-row::-webkit-scrollbar { display: none; }
+.coach-sugg-chip {
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+}
+#coach-msgs {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+#rec-indicator {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(239,68,68,.1);
+  font-size: 12px;
+  color: #ef4444;
+  border-top: 1px solid rgba(239,68,68,.2);
+}
+#coach-input-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+#coach-mic-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#coach-mic-btn.recording {
+  background: rgba(239,68,68,.15);
+  border-color: #ef4444;
+}
+#coach-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  height: 44px;
+  touch-action: manipulation;
+}
+#coach-input:focus { border-color: var(--green); }
+#coach-send-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #000;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
 </style>
+
+
+
+
+
+
+
 <script>
 
-// ═══════════════════════════════════════════════
-//  COACH IA — versão única limpa
-//  DOM real: #coach-input #mic-btn #coach-msgs #rec-indicator
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  COACH IA — módulo único limpo v8.0
+//  DOM: #coach-wrap #coach-msgs #coach-input-bar
+//       #coach-input #coach-send-btn #coach-mic-btn #rec-indicator
+// ═══════════════════════════════════════════════════════════════
 
-// sendCoach — chamado pelo input e pelos chips
-window.sendCoach = async function(txt) {
+// ── renderCoach ─────────────────────────────────────────────────
+function renderCoach() {
+  var p = APP.profile || { name: 'Usuário' };
+  if (!APP.coachMsgs || !APP.coachMsgs.length) {
+    APP.coachMsgs = [{
+      role: 'ai',
+      text: 'Olá, ' + (p.name ? p.name.split(' ')[0] : 'você') + '! 👋 Sou seu Coach IA Nutri. Como posso te ajudar hoje?',
+      time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    }];
+  }
+  var suggs = [
+    '💪 Como aumentar proteínas?',
+    '💧 Quanto devo beber de água?',
+    '🔥 Cardápio para emagrecer',
+    '🥗 Sou gestante, o que comer?',
+    '🩸 Período menstrual',
+    '🏃 Nutrição pré e pós-treino',
+    '💊 Qual suplemento devo tomar?',
+    '⏱️ Jejum intermitente 16:8',
+  ];
+
+  var msgsHtml = APP.coachMsgs.map(function(m) {
+    var safe = (m.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+    var audioBtn = '';
+    if (m.role === 'ai') {
+      audioBtn = '<div style="margin-top:6px">'
+        + '<button onclick="coachTTS(this)" data-text="' + encodeURIComponent(m.text || '') + '" '
+        + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:8px;'
+        + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body);'
+        + '-webkit-tap-highlight-color:transparent">🔊 Ouvir</button></div>';
+    }
+    if (m.audioUrl) {
+      audioBtn += '<div style="margin-top:6px"><audio controls src="' + m.audioUrl + '" style="max-width:100%;height:36px"></audio></div>';
+    }
+    return '<div class="msg-wrap ' + m.role + '">'
+      + '<div class="msg-bubble">' + safe + '</div>'
+      + audioBtn
+      + '<div class="msg-time">' + (m.time || '') + '</div>'
+      + '</div>';
+  }).join('');
+
+  var suggsHtml = suggs.map(function(s) {
+    return '<button class="coach-sugg-chip" onclick="sendCoachMsg(this.dataset.s)" data-s="' + s + '">' + s + '</button>';
+  }).join('');
+
+  return '<div id="coach-wrap">'
+    + '<div class="coach-header">'
+    +   '<button onclick="navigate(\'more\')" style="background:transparent;border:none;cursor:pointer;font-size:20px;color:var(--text);padding:4px 8px;-webkit-tap-highlight-color:transparent">←</button>'
+    +   '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🤖</div>'
+    +   '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--text)">Coach IA Nutri</div>'
+    +   '<div style="font-size:11px;color:var(--green)">Online agora • Nutricionista Virtual</div></div>'
+    +   '<button onclick="clearCoachHistory()" style="background:transparent;border:none;cursor:pointer;font-size:18px;color:var(--text3);-webkit-tap-highlight-color:transparent">🗑️</button>'
+    + '</div>'
+    + '<div class="coach-sugg-row">' + suggsHtml + '</div>'
+    + '<div id="coach-msgs">' + msgsHtml + '</div>'
+    + '<div id="rec-indicator">'
+    +   '<div style="width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 1s infinite"></div>'
+    +   '<span>🔴 Gravando... toque no mic para parar</span>'
+    + '</div>'
+    + '<div id="coach-input-bar">'
+    +   '<button id="coach-mic-btn" onclick="toggleCoachRec()" style="font-size:22px">🎤</button>'
+    +   '<input id="coach-input" type="text" placeholder="Pergunte sobre nutrição..." '
+    +   'autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">'
+    +   '<button id="coach-send-btn" onclick="sendCoachMsg()">➤</button>'
+    + '</div>'
+    + '</div>';
+}
+
+// ── attachCoach ─────────────────────────────────────────────────
+function attachCoach(screen) {
+  // Garante classe no screen
+  if (screen) {
+    screen.className = (screen.className || '') + ' coach-screen';
+    screen.style.paddingBottom = '0';
+    screen.style.overflow = 'hidden';
+  }
+  // Bind eventos no input
+  setTimeout(function() {
+    var inp = document.getElementById('coach-input');
+    var msgs = document.getElementById('coach-msgs');
+    if (inp) {
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); sendCoachMsg(); }
+      });
+      // Foco suave — não força no load (evita bug Android)
+      // inp.focus() removido intencionalmente
+    }
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  }, 100);
+}
+
+// ── clearCoachHistory ────────────────────────────────────────────
+window.clearCoachHistory = function() {
+  APP.coachMsgs = [];
+  navigate('coach');
+};
+
+// ── sendCoachMsg — envia mensagem de texto ───────────────────────
+window.sendCoachMsg = async function(txt) {
   var inp = document.getElementById('coach-input');
   var msg = (txt || (inp ? inp.value : '')).trim();
   if (!msg) return;
   if (inp) inp.value = '';
-  var ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs = APP.coachMsgs || [];
-  APP.coachMsgs.push({role:'user', text:msg, time:ts});
-  var el = document.getElementById('coach-msgs');
-  if (el) {
-    var safe = msg.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var ub = document.createElement('div');
-    ub.className = 'msg-wrap user';
-    ub.innerHTML = '<div class="msg-bubble">'+safe+'</div><div class="msg-time">'+ts+'</div>';
-    el.appendChild(ub);
-    var tb = document.createElement('div'); tb.id='_typing'; tb.className='msg-wrap ai';
-    tb.innerHTML = '<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
-    el.appendChild(tb);
-    el.scrollTop = el.scrollHeight;
-  }
+  appendUserMsg(msg);
+  var typingId = appendTyping();
   var resp = '';
-  try { resp = await window.coachGetResp(msg); } catch(e) { resp = 'Erro. Tente novamente.'; }
-  var tsR = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  APP.coachMsgs.push({role:'ai', text:resp, time:tsR});
-  var ty = document.getElementById('_typing'); if(ty) ty.remove();
-  if (el) {
-    var idx = APP.coachMsgs.length - 1;
-    var safeR = resp.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
-    var ab = document.createElement('div'); ab.className='msg-wrap ai';
-    ab.innerHTML = '<div class="msg-bubble">'+safeR+'</div>'
-      + '<div style="margin-top:6px"><button onclick="coachSpeak('+idx+')" '
-      + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body)">🔊 Ouvir</button></div>'
-      + '<div class="msg-time">'+tsR+'</div>';
-    el.appendChild(ab);
-    el.scrollTop = el.scrollHeight;
-  }
-  if(typeof addXP==='function') addXP(5);
+  try { resp = await coachGetAIResp(msg); } catch(e) { resp = 'Erro de conexão. Tente novamente.'; }
+  removeTyping(typingId);
+  appendBotMsg(resp);
+  if (typeof addXP === 'function') addXP(5);
 };
 
-// TTS — lê resposta em voz alta
-window.coachSpeak = function(idx) {
-  if(!window.speechSynthesis) return;
+// Alias para compatibilidade com chips antigos
+window.sendCoach = window.sendCoachMsg;
+
+// ── appendUserMsg ────────────────────────────────────────────────
+function appendUserMsg(text) {
+  var ts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  APP.coachMsgs = APP.coachMsgs || [];
+  APP.coachMsgs.push({ role: 'user', text: text, time: ts });
+  var el = document.getElementById('coach-msgs');
+  if (!el) return;
+  var safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  var div = document.createElement('div');
+  div.className = 'msg-wrap user';
+  div.innerHTML = '<div class="msg-bubble">' + safe + '</div><div class="msg-time">' + ts + '</div>';
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── appendTyping ─────────────────────────────────────────────────
+function appendTyping() {
+  var el = document.getElementById('coach-msgs');
+  if (!el) return null;
+  var id = '_t' + Date.now();
+  var div = document.createElement('div');
+  div.className = 'msg-wrap ai'; div.id = id;
+  div.innerHTML = '<div class="msg-bubble"><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  if (!id) return;
+  var el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+// ── appendBotMsg ─────────────────────────────────────────────────
+function appendBotMsg(text, audioUrl) {
+  var ts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  APP.coachMsgs = APP.coachMsgs || [];
+  var entry = { role: 'ai', text: text, time: ts };
+  if (audioUrl) entry.audioUrl = audioUrl;
+  APP.coachMsgs.push(entry);
+  var el = document.getElementById('coach-msgs');
+  if (!el) return;
+  var safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g,'<br>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  var div = document.createElement('div');
+  div.className = 'msg-wrap ai';
+  var audioHtml = '<div style="margin-top:6px">'
+    + '<button onclick="coachTTS(this)" data-text="' + encodeURIComponent(text) + '" '
+    + 'style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:8px;'
+    + 'padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green);font-family:var(--font-body);'
+    + '-webkit-tap-highlight-color:transparent">🔊 Ouvir</button></div>';
+  if (audioUrl) {
+    audioHtml += '<div style="margin-top:6px"><audio controls src="' + audioUrl + '" style="max-width:100%;height:36px"></audio></div>';
+  }
+  div.innerHTML = '<div class="msg-bubble">' + safe + '</div>' + audioHtml + '<div class="msg-time">' + ts + '</div>';
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── coachTTS — Text-to-Speech local (opcional) ───────────────────
+window.coachTTS = function(btn) {
+  if (!window.speechSynthesis) { toast && toast('TTS não suportado', 'info'); return; }
+  var text = decodeURIComponent(btn.dataset.text || '');
+  if (!text) return;
   window.speechSynthesis.cancel();
-  var m = (APP.coachMsgs||[])[idx];
-  if(!m) return;
-  var clean = m.text.replace(/<[^>]*>/g,'').replace(/\*\*/g,'').trim().substring(0,500);
+  var clean = text.replace(/<[^>]*>/g, '').trim().substring(0, 500);
   var u = new SpeechSynthesisUtterance(clean);
   u.lang = 'pt-BR'; u.rate = 0.9; u.pitch = 1.0;
-  var vs = window.speechSynthesis.getVoices();
-  var v = vs.find(function(x){return x.lang==='pt-BR'&&x.localService;}) || vs.find(function(x){return x.lang.startsWith('pt');}) || vs[0];
-  if(v) u.voice = v;
-  if(!vs.length) { window.speechSynthesis.onvoiceschanged = function(){ coachSpeak(idx); }; return; }
-  window.speechSynthesis.speak(u);
+  var go = function() {
+    var vs = window.speechSynthesis.getVoices();
+    var v = vs.find(function(x) { return x.lang === 'pt-BR' && x.localService; })
+          || vs.find(function(x) { return x.lang.startsWith('pt'); }) || vs[0];
+    if (v) u.voice = v;
+    window.speechSynthesis.speak(u);
+  };
+  if (window.speechSynthesis.getVoices().length) { go(); }
+  else { window.speechSynthesis.onvoiceschanged = go; }
 };
 
-// Mic — toque para gravar / toque para parar
-window.vToggleRec = function() {
-  var mic = document.getElementById('mic-btn');
-  var rec = document.getElementById('rec-indicator');
-  if (window._recActive) {
-    // Para gravação
-    window._recActive = false;
-    if(mic){ mic.textContent='🎤'; mic.style.background='var(--surface2)'; mic.style.borderColor='var(--border)'; }
-    if(rec) rec.style.display='none';
-    if(window._recorder && window._recorder.state==='recording') window._recorder.stop();
-  } else {
-    // Inicia gravação
-    if(location.protocol!=='https:'&&location.hostname!=='localhost'){
-      toast&&toast('❌ Microfone requer HTTPS','error'); return;
-    }
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      toast&&toast('❌ Microfone não suportado','error'); return;
-    }
-    navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(stream){
-      window._recActive = true;
-      window._recChunks = [];
-      if(mic){ mic.textContent='⏹'; mic.style.background='rgba(239,68,68,.15)'; mic.style.borderColor='#ef4444'; }
-      if(rec) rec.style.display='flex';
-      var opts = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?{mimeType:'audio/webm;codecs=opus'}:{};
-      window._recorder = new MediaRecorder(stream, opts);
-      window._recorder.ondataavailable = function(e){ if(e.data&&e.data.size>0) window._recChunks.push(e.data); };
-      window._recorder.onstop = function(){
-        stream.getTracks().forEach(function(t){t.stop();});
-        window._recActive = false;
-        var blob = new Blob(window._recChunks||[], {type:'audio/webm'});
-        if(blob.size < 500){ toast&&toast('Muito curto, tente novamente','info'); return; }
-        // Simula transcrição (sem backend de STT)
-        var perguntas=['Como aumentar proteínas?','Cardápio para emagrecer?','Dicas de hidratação?','Jejum intermitente 16:8?','Alimentos na gestação?','Suplementos recomendados?','Nutrição pré-treino?'];
-        var transcrito = perguntas[Math.floor(Math.random()*perguntas.length)];
-        toast&&toast('🎤 "'+transcrito.substring(0,30)+'..."','info',2000);
-        sendCoach(transcrito);
-      };
-      window._recorder.start(100);
-      window._recTimer = setTimeout(function(){ vToggleRec(); }, 60000);
-    }).catch(function(e){
-      var isIOS=/iPhone|iPad/i.test(navigator.userAgent);
-      toast&&toast(e.name==='NotAllowedError'?(isIOS?'❌ Ajustes → Safari → Microfone → Permitir':'❌ Permita o microfone nas configurações'):'❌ '+e.message,'error',5000);
-    });
+// ── playAudioMsg — reprodução real de áudio por URL ──────────────
+window.playAudioMsg = function(audioUrl) {
+  if (!audioUrl) { toast && toast('Nenhum áudio disponível', 'info'); return; }
+  // Reprodução real com Audio()
+  try {
+    var a = new Audio(audioUrl);
+    a.play().catch(function(e) { toast && toast('Erro ao reproduzir: ' + e.message, 'error'); });
+  } catch(e) {
+    toast && toast('Formato de áudio não suportado', 'error');
   }
 };
 
-// Aliases retrocompatíveis
-window.startRecording = window.vToggleRec;
-window.stopRecording  = function(){};
-window.speakText      = window.coachSpeak;
+// ── toggleCoachRec — tap para gravar / tap para parar ────────────
+window.toggleCoachRec = function() {
+  var micBtn = document.getElementById('coach-mic-btn');
+  var recBar = document.getElementById('rec-indicator');
+  if (window._coachRecording) {
+    // Para gravação
+    window._coachRecording = false;
+    clearTimeout(window._coachRecTimer);
+    if (micBtn) { micBtn.classList.remove('recording'); micBtn.textContent = '🎤'; }
+    if (recBar) recBar.style.display = 'none';
+    if (window._coachRecorder && window._coachRecorder.state === 'recording') {
+      window._coachRecorder.stop();
+    }
+  } else {
+    // Inicia gravação
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      toast && toast('❌ Microfone requer HTTPS', 'error', 5000); return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast && toast('❌ Microfone não suportado neste navegador', 'error'); return;
+    }
+    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+      .then(function(stream) {
+        window._coachRecording = true;
+        window._coachRecChunks = [];
+        if (micBtn) { micBtn.classList.add('recording'); micBtn.textContent = '⏹'; }
+        if (recBar) recBar.style.display = 'flex';
+        var opts = {};
+        try { if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) opts = { mimeType: 'audio/webm;codecs=opus' }; } catch(e){}
+        window._coachRecorder = new MediaRecorder(stream, opts);
+        window._coachRecorder.ondataavailable = function(e) {
+          if (e.data && e.data.size > 0) window._coachRecChunks.push(e.data);
+        };
+        window._coachRecorder.onstop = function() {
+          window._coachRecording = false;
+          stream.getTracks().forEach(function(t) { t.stop(); });
+          if (micBtn) { micBtn.classList.remove('recording'); micBtn.textContent = '🎤'; }
+          if (recBar) recBar.style.display = 'none';
+          var blob = new Blob(window._coachRecChunks || [], { type: window._coachRecorder.mimeType || 'audio/webm' });
+          if (blob.size < 500) { toast && toast('Muito curto, tente novamente', 'info'); return; }
+          sendAudioToBackend(blob);
+        };
+        window._coachRecorder.start(100);
+        // Timeout de segurança: para após 60s
+        window._coachRecTimer = setTimeout(function() { toggleCoachRec(); }, 60000);
+        toast && toast('🎤 Gravando... toque para parar', 'info', 2000);
+      })
+      .catch(function(e) {
+        var isIOS = /iPhone|iPad/i.test(navigator.userAgent);
+        var msg = e.name === 'NotAllowedError'
+          ? (isIOS ? '❌ Ajustes → Safari → Microfone → Permitir' : '❌ Permita o microfone nas configurações do navegador')
+          : '❌ ' + e.message;
+        toast && toast(msg, 'error', 6000);
+      });
+  }
+};
 
-// API IA — Groq (primário) + Gemini (backup) + fallback local
-window.coachGetResp = async function(userMsg) {
-  var p = APP.profile||{};
-  var nome = p.name?p.name.split(' ')[0]:'você';
-  var m = (userMsg||'').toLowerCase();
+// ── sendAudioToBackend — envio REAL do blob gravado ──────────────
+// TODO: conecte ao seu endpoint de transcrição (ex: Supabase Edge Function, Whisper API, etc.)
+async function sendAudioToBackend(blob) {
+  // Exibe bolha de áudio no chat com player real
+  var ts = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  var blobUrl = URL.createObjectURL(blob);
+  var el = document.getElementById('coach-msgs');
+  if (el) {
+    var div = document.createElement('div');
+    div.className = 'msg-wrap user';
+    div.innerHTML = '<div class="msg-bubble" style="display:flex;flex-direction:column;gap:6px">'
+      + '<div style="font-size:11px;font-weight:700">🎤 Áudio gravado</div>'
+      + '<audio controls src="' + blobUrl + '" style="max-width:100%;height:36px"></audio>'
+      + '</div><div class="msg-time">' + ts + '</div>';
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+  }
 
+  // TODO: conecte ao seu endpoint de transcrição real aqui
+  // --- INTEGRAÇÃO REAL ---
+  // Descomente e adapte quando tiver um endpoint de transcrição:
+  //
+  // try {
+  //   var formData = new FormData();
+  //   formData.append('audio', blob, 'recording.webm');
+  //   var resp = await fetch('SEU_ENDPOINT_AQUI/transcribe', { method: 'POST', body: formData });
+  //   var data = await resp.json();
+  //   var transcribed = data.text || '';
+  //   if (transcribed) {
+  //     appendUserMsg(transcribed);
+  //     var typingId = appendTyping();
+  //     var aiResp = await coachGetAIResp(transcribed);
+  //     removeTyping(typingId);
+  //     appendBotMsg(aiResp);
+  //   }
+  // } catch(e) {
+  //   appendBotMsg('⚠️ Erro ao processar áudio: ' + e.message);
+  // }
+
+  // Enquanto sem backend: informa o usuário claramente (sem inventar transcrição)
+  appendBotMsg('🎤 Áudio gravado com sucesso! Para transcrição real, configure o endpoint em `sendAudioToBackend()`. Por enquanto, prefira digitar sua pergunta.');
+}
+
+// ── coachGetAIResp — API Groq (primário) + Gemini (backup) ───────
+var _GROQ_KEYS = [
+  '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',
+  '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',
+  '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',
+  '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',
+];
+var _GEMINI_KEY = 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
+
+async function coachGetAIResp(userMsg) {
+  var p = APP.profile || {};
+  var nome = p.name ? p.name.split(' ')[0] : 'você';
+  var m = (userMsg || '').toLowerCase();
+
+  // Fallback local por tópico
   var fb = {
-    proteina: '💪 Proteínas\n\n• Frango: 31g/100g • Atum: 30g/100g\n• Ovos: 13g/100g • Whey: 80g/100g\n• Feijão: 9g/100g\n\nMeta: '+(p.weight?Math.round(p.weight*1.8)+'g/dia':'1.6–2.2g/kg'),
-    agua: '💧 Hidratação\n\nMeta: '+(p.weight?Math.round(p.weight*35)+'ml/dia':'2.500ml/dia')+'\n• Manhã: 2 copos • Exercício: +500ml/h',
-    emagrecer: '🔥 Emagrecimento\n\n• Déficit: 300-500kcal/dia\n• Proteína alta, carbs complexos\n• Evite ultraprocessados e açúcar',
-    jejum: '⏱ Jejum 16:8\n\n• 16h jejum + 8h comendo\n• Liberado: água, café, chá\n⚠ Gestantes e diabéticos: consultem médico',
-    gestacao: '🤰 Gestação\n\n• Ácido fólico: 600mcg/dia\n• Ferro: 27mg/dia • Cálcio: 1000mg/dia\n⚠ Acompanhe com obstetra!',
-    menstrual: '🩸 Período Menstrual\n\n• Magnésio: cólicas • Ferro: repõe perdas\n• Ômega-3: anti-inflamatório • B6: TPM',
-    treino: '🏃 Treino\n\nPré: carb+proteína\nPós: 20-40g proteína\n• Creatina: 3-5g/dia • Whey: 25-30g',
-    suplemento: '💊 Suplementos\n\n• Vitamina D3: 2000-4000UI • Ômega-3: 2-3g\n• Magnésio: 300-400mg • Creatina: 3-5g',
-    colesterol: '❤ Colesterol\n\n• Aveia, azeite, castanhas, abacate\n🚫 Gordura trans, frituras',
-    diabetes: '🩸 Diabetes\n\n• Leguminosas, vegetais, grãos integrais\n• 5-6 refeições/dia ⚠ Acompanhamento médico',
+    proteina: '💪 **Proteínas**\n\nMelhores fontes:\n• Frango grelhado: 31g/100g\n• Atum: 30g/100g\n• Ovos: 13g/100g\n• Whey: 80g/100g\n• Feijão: 9g/100g\n\nSua meta: ' + (p.weight ? Math.round(p.weight * 1.8) + 'g/dia' : '1.6–2.2g por kg de peso'),
+    agua: '💧 **Hidratação**\n\nMeta diária: ' + (p.weight ? Math.round(p.weight * 35) + 'ml' : '2.500ml') + '\n\n• Manhã: 2 copos ao acordar\n• Antes das refeições: 1 copo\n• Exercício: +500ml/hora',
+    emagrecer: '🔥 **Emagrecimento**\n\n• Déficit calórico: 300-500kcal/dia\n• Proteína alta reduz fome\n• Carboidratos complexos: aveia, batata-doce\n• Evite ultraprocessados e açúcar',
+    jejum: '⏱ **Jejum Intermitente 16:8**\n\n• 16h jejum + 8h comendo\n• Exemplo: comer das 12h às 20h\n• Liberado: água, café preto, chá\n\n⚠ Gestantes e diabéticos: consultem médico',
+    gestacao: '🤰 **Gestação**\n\n• Ácido fólico: 600mcg/dia\n• Ferro: 27mg/dia + vitamina C\n• Cálcio: 1000mg/dia\n• DHA: 200mg/dia\n\n⚠ Sempre acompanhe com obstetra!',
+    menstrual: '🩸 **Período Menstrual**\n\n• Magnésio: cólicas (amêndoas, cacau 70%)\n• Ferro: repõe perdas\n• Ômega-3: anti-inflamatório\n• B6: alivia TPM (banana)',
+    treino: '🏃 **Nutrição Esportiva**\n\nPré-treino: carboidrato + proteína\nPós-treino: 20-40g proteína\n\n• Creatina: 3-5g/dia\n• Whey: 25-30g pós-treino',
+    suplemento: '💊 **Suplementos**\n\n• Vitamina D3: 2000-4000UI/dia\n• Ômega-3: 2-3g/dia\n• Magnésio: 300-400mg/dia\n• Creatina: 3-5g/dia',
+    colesterol: '❤ **Colesterol**\n\n• Aveia, azeite, castanhas, abacate\n• Feijão e lentilha\n🚫 Gordura trans e frituras',
+    diabetes: '🩸 **Diabetes**\n\n• Leguminosas, vegetais, grãos integrais\n• 5-6 refeições por dia\n⚠ Acompanhamento médico obrigatório',
+    intestino: '🌱 **Saúde Intestinal**\n\nProbióticos: iogurte, kefir, kombucha\nPrebióticos: banana verde, alho, aveia\nFibras: 25-35g/dia',
+    anemia: '🔴 **Anemia**\n\n• Carne vermelha, fígado (ferro heme)\n• Feijão, espinafre (ferro vegetal)\n✅ Ferro + vitamina C = absorção 3x maior',
   };
+
   var respLocal = null;
-  if(/prote[íi]n|whey|m[úu]sculo/.test(m)) respLocal=fb.proteina;
-  else if(/[áa]gua|hidrat/.test(m)) respLocal=fb.agua;
-  else if(/emagrec|dieta|card[áa]pio|caloria/.test(m)) respLocal=fb.emagrecer;
-  else if(/jejum|16:8|intermiten/.test(m)) respLocal=fb.jejum;
-  else if(/gestant|gr[áa]vid|gesta/.test(m)) respLocal=fb.gestacao;
-  else if(/menstrual|tpm|c[óo]lica|per[íi]odo/.test(m)) respLocal=fb.menstrual;
-  else if(/treino|exerc[íi]|academia/.test(m)) respLocal=fb.treino;
-  else if(/suplemento|vitamina|creatina|[ôo]mega/.test(m)) respLocal=fb.suplemento;
-  else if(/colesterol|ldl|hdl/.test(m)) respLocal=fb.colesterol;
-  else if(/diabetes|glicemia/.test(m)) respLocal=fb.diabetes;
+  if (/prote[íi]n|whey|m[úu]sculo/.test(m)) respLocal = fb.proteina;
+  else if (/[áa]gua|hidrat|beber/.test(m)) respLocal = fb.agua;
+  else if (/emagrec|dieta|card[áa]pio|caloria/.test(m)) respLocal = fb.emagrecer;
+  else if (/jejum|16:8|intermiten/.test(m)) respLocal = fb.jejum;
+  else if (/gestant|gr[áa]vid|gesta/.test(m)) respLocal = fb.gestacao;
+  else if (/menstrual|tpm|c[óo]lica|per[íi]odo/.test(m)) respLocal = fb.menstrual;
+  else if (/treino|exerc[íi]|academia|muscula/.test(m)) respLocal = fb.treino;
+  else if (/suplemento|vitamina|creatina|[ôo]mega/.test(m)) respLocal = fb.suplemento;
+  else if (/colesterol|ldl|hdl/.test(m)) respLocal = fb.colesterol;
+  else if (/diabetes|glicemia|insulina/.test(m)) respLocal = fb.diabetes;
+  else if (/intestino|constip|probi/.test(m)) respLocal = fb.intestino;
+  else if (/anemia|hemoglobin/.test(m)) respLocal = fb.anemia;
 
   // Groq rotativo
-  var KEYS = ['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','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','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','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'];
-  var ki = parseInt(localStorage.getItem('_gki')||'0');
-  var hist = (APP.coachMsgs||[]).slice(-8).filter(function(x){return x.role&&x.text;}).map(function(x){
-    return {role:x.role==='ai'?'assistant':'user',content:x.text};
+  var ki = parseInt(localStorage.getItem('_gki') || '0');
+  var hist = (APP.coachMsgs || []).slice(-8).filter(function(x) { return x.role && x.text; }).map(function(x) {
+    return { role: x.role === 'ai' ? 'assistant' : 'user', content: x.text };
   });
-  var sys = 'Você é o Coach IA Nutri. Usuário: '+nome+(p.weight?', '+p.weight+'kg':'')+(p.goal?', objetivo:'+p.goal:'')+'. Responda em português, prático, máx 200 palavras.';
-  for(var t=0; t<KEYS.length; t++){
-    try{
-      var r = await fetch('https://api.groq.com/openai/v1/chat/completions',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+KEYS[(ki+t)%KEYS.length]},
-        body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:sys}].concat(hist).concat([{role:'user',content:userMsg}]),max_tokens:400,temperature:0.7})
+  var sys = 'Você é o Coach IA Nutri, nutricionista virtual. Usuário: ' + nome
+    + (p.weight ? ', ' + p.weight + 'kg' : '')
+    + (p.height ? ', ' + p.height + 'cm' : '')
+    + (p.goal ? ', objetivo: ' + p.goal : '')
+    + '. Responda SEMPRE em português brasileiro, de forma prática e motivadora. Use markdown simples (**negrito**, listas com •). Máximo 200 palavras.';
+
+  for (var t = 0; t < _GROQ_KEYS.length; t++) {
+    try {
+      var r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _GROQ_KEYS[(ki + t) % _GROQ_KEYS.length] },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'system', content: sys }].concat(hist).concat([{ role: 'user', content: userMsg }]),
+          max_tokens: 400, temperature: 0.7
+        })
       });
-      if(r.ok){
-        var d=await r.json();
-        var txt=(((d.choices||[])[0]||{}).message||{}).content||'';
-        if(txt.trim().length>10){ localStorage.setItem('_gki',String((ki+t+1)%KEYS.length)); return txt.trim(); }
-      } else if(r.status===429){ continue; }
-    }catch(e){}
+      if (r.ok) {
+        var d = await r.json();
+        var txt = (((d.choices || [])[0] || {}).message || {}).content || '';
+        if (txt.trim().length > 10) {
+          localStorage.setItem('_gki', String((ki + t + 1) % _GROQ_KEYS.length));
+          return txt.trim();
+        }
+      } else if (r.status === 429) { continue; }
+    } catch(e) {}
   }
 
   // Gemini backup
-  try{
-    var gk=localStorage.getItem('v_gemini_key')||'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
-    var gc=(APP.coachMsgs||[]).slice(-6).filter(function(x){return x.role&&x.text;}).map(function(x){return{role:x.role==='ai'?'model':'user',parts:[{text:x.text}]};});
-    gc.push({role:'user',parts:[{text:userMsg}]});
-    var mg=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+gk,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:gc,generationConfig:{maxOutputTokens:300}})});
-    if(mg.ok){var md=await mg.json();var mt=((((md.candidates||[])[0]||{}).content||{}).parts||[]).map(function(p){return p.text||'';}).join('').trim();if(mt.length>10)return mt;}
-  }catch(e){}
+  try {
+    var gk = localStorage.getItem('v_gemini_key') || _GEMINI_KEY;
+    var gc = (APP.coachMsgs || []).slice(-6).filter(function(x) { return x.role && x.text; }).map(function(x) {
+      return { role: x.role === 'ai' ? 'model' : 'user', parts: [{ text: x.text }] };
+    });
+    gc.push({ role: 'user', parts: [{ text: userMsg }] });
+    var mg = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + gk, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: gc, generationConfig: { maxOutputTokens: 300 } })
+    });
+    if (mg.ok) {
+      var md = await mg.json();
+      var mt = ((((md.candidates || [])[0] || {}).content || {}).parts || []).map(function(pt) { return pt.text || ''; }).join('').trim();
+      if (mt.length > 10) return mt;
+    }
+  } catch(e) {}
 
-  if(respLocal) return respLocal;
-  return 'Olá, '+nome+'! Sou o Coach IA Nutri. Posso ajudar com proteínas, hidratação, emagrecimento, jejum, gestação, treino e suplementos. Qual é sua dúvida?';
-};
+  // Fallback local
+  if (respLocal) return respLocal;
+  return 'Olá, ' + nome + '! Sou o Coach IA Nutri. Posso ajudar com proteínas, hidratação, emagrecimento, jejum, gestação, treino e suplementos. Qual é sua dúvida hoje?';
+}
 
-// Alias retrocompatível
-window.sendCoach = window.sendCoach || function(t){ window.sendCoach(t); };
-window.getNutriCoachResponse = window.coachGetResp;
+// Aliases retrocompatíveis
+window.getNutriCoachResponse = function(msg) { return coachGetAIResp(msg); };
 
-console.log('[VitalIA] Coach IA — versão única limpa carregada ✅');
+console.log('[VitalIA] Coach IA v8.0 — módulo único limpo ✅');
 
 </script>
-
-
-
-
-
 </body>
 </html>
