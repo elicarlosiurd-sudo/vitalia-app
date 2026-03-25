@@ -677,6 +677,11 @@ a{text-decoration:none;color:inherit}
   text-shadow:0 0 10px rgba(34,197,94,.3);
   letter-spacing:.2px;
 }
+
+/* Back button on secondary screens */
+.screen-header { display:flex; align-items:center; }
+.back-btn-inline { background:transparent; border:none; font-size:22px; color:var(--text); cursor:pointer; padding:0 8px 0 0; line-height:1; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+.back-btn-inline:active { opacity:.6; }
 </style>
 </head>
 <body>
@@ -2247,6 +2252,159 @@ const RECIPES = [
   {id:1173,emoji:'🫐',name:'Smoothie Suave 20',cat:'juice',time:'30min',diff:'facil',cal:207,prot:17,carb:37,fat:17,fiber:6,gi:59,score:8,tags:['Vegano','Detox'],ingredients:['Ingredientes frescos e naturais'],steps:['Prepare os ingredientes.','Cozinhe conforme indicado.','Sirva imediatamente.'],nutrition:{calories:207,protein:'17g',carbs:'37g',fat:'17g',fiber:'6g'},rating:4.9,reviews:67,goal:'health'},
   {id:1174,emoji:'🥧',name:'Torta Fit Doce 20',cat:'dinner',time:'35min',diff:'facil',cal:358,prot:30,carb:38,fat:18,fiber:7,gi:60,score:9,tags:['Integral','Alta proteina'],ingredients:['Ingredientes frescos e naturais'],steps:['Prepare os ingredientes.','Cozinhe conforme indicado.','Sirva imediatamente.'],nutrition:{calories:358,protein:'30g',carbs:'38g',fat:'18g',fiber:'7g'},rating:3.9,reviews:68,goal:'lose'},
   {id:1175,emoji:'🍚',name:'Arroz Amargo 20',cat:'lunch',time:'40min',diff:'medio',cal:459,prot:37,carb:39,fat:19,fiber:8,gi:61,score:10,tags:['Integral','Completo'],ingredients:['Ingredientes frescos e naturais'],steps:['Prepare os ingredientes.','Cozinhe conforme indicado.','Sirva imediatamente.'],nutrition:{calories:459,protein:'37g',carbs:'39g',fat:'19g',fiber:'8g'},rating:4.0,reviews:69,goal:'gain'}
+,
+
+// ── LOTE 1 (IDs 2001-2050) ─────────────────────────
+{id:2001,emoji:'🥗',name:'Bowl Detox Verde',cat:'lunch',time:'10min',diff:'fácil',cal:280,prot:12,carb:28,fat:14,fiber:8,gi:32,score:9,tags:['detox','emagrecer','vegano','sem lactose','salada','leve'],ingredients:['2 xíc - Rúcula e espinafre','1 uni - Pepino fatiado','1/2 uni - Abacate','2 col - Azeite + limão','30g - Sementes de girassol'],steps:['Monte a base de folhas no bowl','Adicione pepino e abacate fatiado','Regue com azeite e limão','Finalize com sementes'],nutrition:{calories:280,protein:'12g',carbs:'28g',fat:'14g',fiber:'8g'},rating:4.8,reviews:312,goal:'lose',special:'',specialNote:''},
+
+{id:2002,emoji:'🍳',name:'Omelete de Claras c/ Peito',cat:'breakfast',time:'8min',diff:'fácil',cal:310,prot:38,carb:4,fat:14,fiber:1,gi:20,score:10,tags:['massa muscular','ovo','frango','alta proteina','hipertrofia','pos-treino'],ingredients:['4 uni - Claras de ovo','80g - Peito de frango desfiado','1 uni - Tomate picado','Sal, pimenta e cúrcuma','1 col - Azeite'],steps:['Bata as claras levemente','Refogue o frango com tomate 2min','Adicione as claras e tampe','Cozinhe 3min em fogo baixo'],nutrition:{calories:310,protein:'38g',carbs:'4g',fat:'14g',fiber:'1g'},rating:4.9,reviews:587,goal:'gain',special:'pos-treino',specialNote:'Janela anabólica ideal: consuma até 30min após treino'},
+
+{id:2003,emoji:'🥤',name:'Shake Proteico de Banana',cat:'breakfast',time:'5min',diff:'fácil',cal:390,prot:35,carb:42,fat:6,fiber:4,gi:55,score:9,tags:['massa muscular','lanche rápido','hipertrofia','pre-treino','banana','shake'],ingredients:['1 scoop - Whey Protein baunilha','1 uni - Banana madura','200ml - Leite desnatado','1 col - Aveia em flocos','Gelo a gosto'],steps:['Bata tudo no liquidificador 1min','Sirva gelado imediatamente'],nutrition:{calories:390,protein:'35g',carbs:'42g',fat:'6g',fiber:'4g'},rating:4.7,reviews:823,goal:'gain',special:'pre-treino',specialNote:'Carboidrato + proteína: combo ideal pré-treino'},
+
+{id:2004,emoji:'🍲',name:'Sopa Detox de Legumes',cat:'dinner',time:'25min',diff:'fácil',cal:190,prot:8,carb:32,fat:4,fiber:7,gi:35,score:9,tags:['detox','emagrecer','vegano','sem gluten','sopa','jantar leve'],ingredients:['1 uni - Abobrinha','1 uni - Cenoura','100g - Brócolis','1 uni - Cebola e alho','1L - Caldo de legumes','Cúrcuma e gengibre'],steps:['Refogue cebola e alho','Adicione legumes picados','Cubra com caldo e cozinhe 15min','Tempere com cúrcuma e gengibre'],nutrition:{calories:190,protein:'8g',carbs:'32g',fat:'4g',fiber:'7g'},rating:4.6,reviews:445,goal:'lose',special:'',specialNote:''},
+
+{id:2005,emoji:'🥞',name:'Panqueca de Aveia Fit',cat:'breakfast',time:'12min',diff:'fácil',cal:320,prot:18,carb:38,fat:8,fiber:5,gi:45,score:9,tags:['emagrecer','massa muscular','ovo','sem gluten','cafe da manha','doce fit'],ingredients:['3 col - Aveia em flocos','2 uni - Ovos inteiros','1 uni - Banana','Canela a gosto','1 col - Pasta de amendoim'],steps:['Bata aveia, ovos e banana no liquidificador','Asse em frigideira antiaderente 2min cada lado','Sirva com pasta de amendoim'],nutrition:{calories:320,protein:'18g',carbs:'38g',fat:'8g',fiber:'5g'},rating:4.8,reviews:698,goal:'maintain',special:'',specialNote:''},
+
+{id:2006,emoji:'🐟',name:'Salmão Grelhado c/ Aspargos',cat:'dinner',time:'20min',diff:'médio',cal:420,prot:42,carb:8,fat:24,fiber:4,gi:22,score:10,tags:['massa muscular','emagrecer','sem gluten','sem lactose','omega3','jantar'],ingredients:['200g - Filé de salmão','150g - Aspargos frescos','2 col - Azeite','1 uni - Limão','Sal, pimenta e dill'],steps:['Tempere o salmão com limão e dill','Grelhe 4min cada lado','Salteie aspargos em azeite 3min','Sirva junto'],nutrition:{calories:420,protein:'42g',carbs:'8g',fat:'24g',fiber:'4g'},rating:4.9,reviews:567,goal:'gain',special:'',specialNote:''},
+
+{id:2007,emoji:'🥙',name:'Wrap de Frango Fit',cat:'lunch',time:'15min',diff:'fácil',cal:380,prot:32,carb:36,fat:10,fiber:5,gi:48,score:9,tags:['frango','emagrecer','massa muscular','lanche rapido','proteina','almoco'],ingredients:['1 uni - Tortilha integral','120g - Frango grelhado fatiado','Alface, tomate e cebola','2 col - Iogurte grego (molho)','Limão e ervas'],steps:['Grelhe o frango e fatie','Monte o wrap com os legumes','Adicione molho de iogurte','Enrole firmemente e sirva'],nutrition:{calories:380,protein:'32g',carbs:'36g',fat:'10g',fiber:'5g'},rating:4.7,reviews:423,goal:'lose',special:'',specialNote:''},
+
+{id:2008,emoji:'🫐',name:'Smoothie Antioxidante',cat:'breakfast',time:'5min',diff:'fácil',cal:210,prot:8,carb:38,fat:3,fiber:6,gi:40,score:9,tags:['detox','emagrecer','vegano','tpm','antioxidante','lanche rapido'],ingredients:['1 xíc - Mirtilo congelado','1/2 uni - Banana','150ml - Leite de amêndoa','1 col - Chia','1 col - Mel puro'],steps:['Bata tudo no liquidificador','Sirva gelado com chia por cima'],nutrition:{calories:210,protein:'8g',carbs:'38g',fat:'3g',fiber:'6g'},rating:4.7,reviews:389,goal:'health',special:'menstrual',specialNote:'Mirtilos ricos em antioxidantes: ótimos para TPM'},
+
+{id:2009,emoji:'🥩',name:'Picanha Magra com Batata Doce',cat:'dinner',time:'30min',diff:'médio',cal:520,prot:45,carb:38,fat:18,fiber:4,gi:50,score:9,tags:['massa muscular','hipertrofia','sem gluten','sem lactose','carne','pos-treino'],ingredients:['200g - Picanha magra','1 uni - Batata-doce média','Alecrim e alho','2 col - Azeite','Sal grosso'],steps:['Tempere a carne com alho e alecrim','Grelhe 4min cada lado ao ponto','Asse a batata-doce 20min','Sirva fatiado'],nutrition:{calories:520,protein:'45g',carbs:'38g',fat:'18g',fiber:'4g'},rating:4.8,reviews:634,goal:'gain',special:'pos-treino',specialNote:'Proteína completa + carboidrato de baixo IG'},
+
+{id:2010,emoji:'🥗',name:'Salada Niçoise Fit',cat:'lunch',time:'15min',diff:'fácil',cal:350,prot:28,carb:22,fat:16,fiber:5,gi:30,score:9,tags:['emagrecer','sem gluten','sem lactose','proteina','salada','omega3'],ingredients:['1 lata - Atum em água (120g)','2 uni - Ovos cozidos','100g - Feijão verde cozido','10 uni - Azeitonas pretas','2 col - Azeite + mostarda dijon'],steps:['Monte a salada com folhas verdes','Distribua atum, ovos e feijão','Finalize com azeitonas','Emulsione azeite com mostarda e regue'],nutrition:{calories:350,protein:'28g',carbs:'22g',fat:'16g',fiber:'5g'},rating:4.7,reviews:298,goal:'lose',special:'',specialNote:''},
+
+{id:2011,emoji:'🍌',name:'Açaí Fit Proteico',cat:'snack',time:'5min',diff:'fácil',cal:340,prot:15,carb:48,fat:10,fiber:7,gi:45,score:9,tags:['massa muscular','pos-treino','lanche rapido','banana','energia','doce fit'],ingredients:['200g - Polpa de açaí sem açúcar','1 scoop - Whey Protein','1 uni - Banana','30g - Granola sem açúcar','1 col - Mel'],steps:['Bata açaí, whey e banana','Sirva no bowl com granola e mel'],nutrition:{calories:340,protein:'15g',carbs:'48g',fat:'10g',fiber:'7g'},rating:4.8,reviews:756,goal:'gain',special:'pos-treino',specialNote:''},
+
+{id:2012,emoji:'🧆',name:'Bolinhos de Lentilha',cat:'snack',time:'20min',diff:'médio',cal:260,prot:14,carb:34,fat:7,fiber:10,gi:28,score:9,tags:['vegano','sem gluten','emagrecer','proteina','lanche','fibra'],ingredients:['200g - Lentilha cozida','1 uni - Cenoura ralada','2 col - Farinha de grão-de-bico','Alho, cominho e coentro','2 col - Azeite para assar'],steps:['Amasse a lentilha e misture tudo','Modele bolinhos com as mãos','Asse a 200°C por 15min virando'],nutrition:{calories:260,protein:'14g',carbs:'34g',fat:'7g',fiber:'10g'},rating:4.6,reviews:334,goal:'lose',special:'',specialNote:''},
+
+{id:2013,emoji:'🍳',name:'Ovo Mexido com Espinafre e Feta',cat:'breakfast',time:'8min',diff:'fácil',cal:290,prot:22,carb:5,fat:20,fiber:2,gi:18,score:9,tags:['emagrecer','ovo','sem gluten','alta proteina','cafe da manha','keto'],ingredients:['3 uni - Ovos inteiros','50g - Espinafre fresco','30g - Queijo feta','1 col - Azeite','Pimenta preta'],steps:['Refogue espinafre 1min no azeite','Adicione ovos batidos e mexa','Finalize com feta e pimenta'],nutrition:{calories:290,protein:'22g',carbs:'5g',fat:'20g',fiber:'2g'},rating:4.8,reviews:512,goal:'lose',special:'',specialNote:''},
+
+{id:2014,emoji:'🥜',name:'Energy Ball de Amendoim',cat:'snack',time:'15min',diff:'fácil',cal:180,prot:7,carb:18,fat:10,fiber:3,gi:35,score:8,tags:['lanche rapido','doce fit','vegano','sem gluten','energia','pre-treino'],ingredients:['4 col - Pasta de amendoim','3 col - Aveia em flocos','2 col - Mel','1 col - Cacau em pó','Coco ralado para cobrir'],steps:['Misture tudo até formar massa','Modele bolinhas com as mãos','Role no coco ralado','Leve à geladeira 10min'],nutrition:{calories:180,protein:'7g',carbs:'18g',fat:'10g',fiber:'3g'},rating:4.7,reviews:623,goal:'maintain',special:'pre-treino',specialNote:''},
+
+{id:2015,emoji:'🍛',name:'Frango ao Curry com Arroz Integral',cat:'dinner',time:'30min',diff:'médio',cal:490,prot:38,carb:52,fat:12,fiber:5,gi:50,score:9,tags:['frango','massa muscular','sem gluten','sem lactose','almoco','ganho de massa'],ingredients:['180g - Peito de frango','1 xíc - Arroz integral cozido','100ml - Leite de coco','2 col - Curry em pó','Cebola, alho e gengibre'],steps:['Refogue cebola, alho e gengibre','Adicione frango em cubos e curry','Junte leite de coco e cozinhe 15min','Sirva sobre o arroz'],nutrition:{calories:490,protein:'38g',carbs:'52g',fat:'12g',fiber:'5g'},rating:4.8,reviews:489,goal:'gain',special:'',specialNote:''},
+
+{id:2016,emoji:'🥬',name:'Caldo Verde Detox',cat:'dinner',time:'20min',diff:'fácil',cal:160,prot:6,carb:22,fat:5,fiber:6,gi:30,score:8,tags:['detox','emagrecer','vegano','sem gluten','sopa','jantar leve'],ingredients:['3 un - Batata pequena','1 maço - Couve fatiada fina','1 un - Cebola','2 col - Azeite','Sal e pimenta'],steps:['Cozinhe batata e bata com cebola','Volte ao fogo e adicione a couve','Cozinhe 2min e tempere','Regue com azeite'],nutrition:{calories:160,protein:'6g',carbs:'22g',fat:'5g',fiber:'6g'},rating:4.5,reviews:267,goal:'lose',special:'',specialNote:''},
+
+{id:2017,emoji:'🫑',name:'Frango Recheado com Espinafre',cat:'dinner',time:'35min',diff:'médio',cal:380,prot:46,carb:6,fat:18,fiber:2,gi:15,score:10,tags:['frango','emagrecer','sem gluten','sem lactose','proteina','jantar'],ingredients:['200g - Peito de frango','50g - Espinafre refogado','30g - Queijo cottage','Alho e azeite','Palito para fechar'],steps:['Faça um corte no frango (bolso)','Recheie com espinafre e cottage','Prenda com palito','Grelhe 7min cada lado'],nutrition:{calories:380,protein:'46g',carbs:'6g',fat:'18g',fiber:'2g'},rating:4.9,reviews:398,goal:'lose',special:'',specialNote:''},
+
+{id:2018,emoji:'🍠',name:'Purê de Batata Doce Fit',cat:'snack',time:'20min',diff:'fácil',cal:240,prot:5,carb:50,fat:3,fiber:6,gi:44,score:9,tags:['emagrecer','vegano','sem gluten','pre-treino','energia','carboidrato'],ingredients:['300g - Batata-doce','100ml - Leite de coco','Canela e noz-moscada','1 col - Mel','Sal a gosto'],steps:['Cozinhe a batata-doce até amolecer','Amasse e misture com leite de coco','Tempere com canela e mel','Sirva quente ou frio'],nutrition:{calories:240,protein:'5g',carbs:'50g',fat:'3g',fiber:'6g'},rating:4.6,reviews:311,goal:'maintain',special:'pre-treino',specialNote:''},
+
+{id:2019,emoji:'🥑',name:'Torrada de Abacate com Ovo',cat:'breakfast',time:'8min',diff:'fácil',cal:330,prot:16,carb:28,fat:18,fiber:6,gi:40,score:9,tags:['emagrecer','ovo','lanche rapido','sem lactose','cafe da manha','gordura boa'],ingredients:['2 fat - Pão integral','1/2 uni - Abacate maduro','2 uni - Ovos mexidos','Limão, sal e pimenta','Pimenta calabresa'],steps:['Torre o pão','Amasse abacate com limão e sal','Espalhe no pão e adicione ovo mexido','Finalize com pimenta calabresa'],nutrition:{calories:330,protein:'16g',carbs:'28g',fat:'18g',fiber:'6g'},rating:4.8,reviews:891,goal:'lose',special:'',specialNote:''},
+
+{id:2020,emoji:'🍗',name:'Frango Xadrez Fitness',cat:'lunch',time:'20min',diff:'médio',cal:360,prot:40,carb:20,fat:12,fiber:4,gi:35,score:9,tags:['frango','massa muscular','sem gluten','sem lactose','almoco','oriental'],ingredients:['180g - Peito de frango em cubos','1 uni - Pimentão vermelho e verde','1 uni - Cebola roxa','3 col - Shoyu light','1 col - Amido de milho diluído'],steps:['Sele o frango em wok quente','Adicione legumes e refogue 3min','Junte shoyu e amido','Mexa até engrossar'],nutrition:{calories:360,protein:'40g',carbs:'20g',fat:'12g',fiber:'4g'},rating:4.7,reviews:445,goal:'gain',special:'',specialNote:''},
+
+{id:2021,emoji:'🫐',name:'Mousse de Proteína de Mirtilo',cat:'dessert',time:'10min',diff:'fácil',cal:200,prot:22,carb:18,fat:3,fiber:3,gi:30,score:9,tags:['emagrecer','doce fit','alta proteina','sem gluten','sobremesa','tpm'],ingredients:['200g - Iogurte grego 0%','1 scoop - Whey Protein baunilha','1/2 xíc - Mirtilo','1 col - Mel','Gelatina s/ sabor (2g)'],steps:['Hidrate a gelatina em água fria 5min','Dissolva em banho-maria','Misture com iogurte e whey','Adicione mirtilo e refrigere 30min'],nutrition:{calories:200,protein:'22g',carbs:'18g',fat:'3g',fiber:'3g'},rating:4.8,reviews:523,goal:'lose',special:'menstrual',specialNote:'Magnésio + proteína: ideal para TPM'},
+
+{id:2022,emoji:'🥦',name:'Risoto de Couve-flor Proteico',cat:'lunch',time:'25min',diff:'médio',cal:310,prot:28,carb:18,fat:14,fiber:6,gi:28,score:9,tags:['emagrecer','sem gluten','keto','low carb','almoco','vegetariano'],ingredients:['1 uni - Couve-flor (arroz no ralador)','2 col - Azeite','100g - Queijo cottage','30g - Parmesão ralado','Alho e cebola'],steps:['Rale a couve-flor (arroz falso)','Refogue com alho e cebola 5min','Adicione cottage e parmesão','Mexa até cremoso'],nutrition:{calories:310,protein:'28g',carbs:'18g',fat:'14g',fiber:'6g'},rating:4.7,reviews:378,goal:'lose',special:'',specialNote:''},
+
+{id:2023,emoji:'🥣',name:'Overnight Oats de Cacau',cat:'breakfast',time:'5min',diff:'fácil',cal:360,prot:20,carb:50,fat:8,fiber:8,gi:42,score:9,tags:['emagrecer','massa muscular','sem gluten','cafe da manha','doce fit','preparar na noite'],ingredients:['5 col - Aveia em flocos','150ml - Leite de amêndoa','1 scoop - Whey Chocolate','1 col - Cacau em pó','Frutas vermelhas para topping'],steps:['Misture aveia, leite, whey e cacau','Cubra e leve à geladeira overnight','Na manhã, adicione as frutas'],nutrition:{calories:360,protein:'20g',carbs:'50g',fat:'8g',fiber:'8g'},rating:4.9,reviews:712,goal:'maintain',special:'',specialNote:''},
+
+{id:2024,emoji:'🍤',name:'Camarão Grelhado com Legumes',cat:'dinner',time:'20min',diff:'fácil',cal:290,prot:34,carb:12,fat:10,fiber:4,gi:25,score:10,tags:['emagrecer','sem gluten','sem lactose','proteina','jantar','frutos do mar'],ingredients:['200g - Camarão limpo','1 uni - Abobrinha fatiada','1 uni - Pimentão','Alho, azeite e páprica','Suco de limão'],steps:['Tempere camarão com alho e páprica','Grelhe 2min cada lado','Salteie legumes em azeite 4min','Finalize com limão'],nutrition:{calories:290,protein:'34g',carbs:'12g',fat:'10g',fiber:'4g'},rating:4.8,reviews:456,goal:'lose',special:'',specialNote:''},
+
+{id:2025,emoji:'🍚',name:'Bowl Proteico de Atum',cat:'lunch',time:'10min',diff:'fácil',cal:400,prot:35,carb:42,fat:8,fiber:5,gi:45,score:9,tags:['emagrecer','massa muscular','sem lactose','lanche rapido','atum','proteina'],ingredients:['1 lata - Atum em água (120g)','1 xíc - Arroz integral cozido','1/2 uni - Abacate','2 col - Shoyu light','Gergelim a gosto'],steps:['Monte o bowl com arroz','Distribua atum e abacate fatiado','Regue com shoyu','Finalize com gergelim'],nutrition:{calories:400,protein:'35g',carbs:'42g',fat:'8g',fiber:'5g'},rating:4.7,reviews:534,goal:'gain',special:'',specialNote:''},
+
+{id:2026,emoji:'🧁',name:'Muffin de Proteína Fit',cat:'snack',time:'25min',diff:'médio',cal:180,prot:14,carb:18,fat:5,fiber:3,gi:38,score:8,tags:['doce fit','lanche rapido','massa muscular','ovo','sem lactose','lanche'],ingredients:['2 uni - Ovos','1 scoop - Whey Baunilha','3 col - Aveia','1 uni - Banana madura','1 col - Fermento em pó'],steps:['Bata todos os ingredientes','Coloque em forminhas de muffin','Asse a 180°C por 18min','Espere esfriar'],nutrition:{calories:180,protein:'14g',carbs:'18g',fat:'5g',fiber:'3g'},rating:4.6,reviews:467,goal:'maintain',special:'',specialNote:''},
+
+{id:2027,emoji:'🥒',name:'Água Detox de Pepino e Hortelã',cat:'juice',time:'5min',diff:'fácil',cal:20,prot:0,carb:4,fat:0,fiber:1,gi:10,score:8,tags:['detox','emagrecer','vegano','sem gluten','hydratacao','anti-inflamatorio'],ingredients:['1L - Água filtrada','1/2 uni - Pepino fatiado','10 fol - Hortelã fresca','1 uni - Limão fatiado','Gelo a gosto'],steps:['Fatie pepino e limão','Coloque na jarra com água','Adicione hortelã e gelo','Deixe infusionar 30min na geladeira'],nutrition:{calories:20,protein:'0g',carbs:'4g',fat:'0g',fiber:'1g'},rating:4.6,reviews:678,goal:'lose',special:'',specialNote:''},
+
+{id:2028,emoji:'🫕',name:'Ensopado de Grão-de-Bico',cat:'dinner',time:'30min',diff:'fácil',cal:380,prot:18,carb:52,fat:10,fiber:14,gi:28,score:9,tags:['vegano','sem gluten','emagrecer','fibra','proteina vegetal','almoco'],ingredients:['1 lata - Grão-de-bico cozido','1 lata - Tomate pelado','1 uni - Cebola e 3 alhos','2 col - Azeite','Páprica defumada e cominho'],steps:['Refogue cebola e alho no azeite','Adicione tomate e grão-de-bico','Tempere e cozinhe 15min','Sirva com pão integral ou arroz'],nutrition:{calories:380,protein:'18g',carbs:'52g',fat:'10g',fiber:'14g'},rating:4.7,reviews:389,goal:'health',special:'',specialNote:''},
+
+{id:2029,emoji:'🥝',name:'Salada de Frutas Antioxidante',cat:'snack',time:'8min',diff:'fácil',cal:160,prot:3,carb:38,fat:1,fiber:5,gi:42,score:8,tags:['tpm','detox','vegano','sem gluten','fruta','lanche rapido'],ingredients:['1 uni - Kiwi','1/2 xíc - Mirtilo','1 uni - Laranja','1 col - Mel','1 col - Chia'],steps:['Corte as frutas em pedaços','Misture com mel e chia','Sirva imediatamente'],nutrition:{calories:160,protein:'3g',carbs:'38g',fat:'1g',fiber:'5g'},rating:4.5,reviews:234,goal:'health',special:'menstrual',specialNote:'Vitamina C + antioxidantes: alívio da TPM'},
+
+{id:2030,emoji:'🫐',name:'Vitamina de Frutas Vermelhas Gestante',cat:'breakfast',time:'5min',diff:'fácil',cal:280,prot:10,carb:44,fat:6,fiber:5,gi:38,score:10,tags:['gestante','tpm','vegano','sem gluten','folato','ferro'],ingredients:['1 xíc - Morango e mirtilo','1 uni - Banana','200ml - Leite de amêndoa enriquecido','1 col - Semente de linhaça','1 col - Mel'],steps:['Bata tudo no liquidificador','Sirva imediatamente com sementes'],nutrition:{calories:280,protein:'10g',carbs:'44g',fat:'6g',fiber:'5g'},rating:4.9,reviews:445,goal:'health',special:'gestante',specialNote:'Rico em folato e ferro: essencial no 1º trimestre'},
+
+{id:2031,emoji:'🍝',name:'Macarrão de Abobrinha com Frango',cat:'lunch',time:'20min',diff:'fácil',cal:290,prot:36,carb:14,fat:10,fiber:4,gi:20,score:9,tags:['frango','emagrecer','sem gluten','low carb','keto','almoco'],ingredients:['2 uni - Abobrinhas (espiralizadas)','150g - Peito de frango grelhado','100ml - Molho de tomate caseiro','2 col - Azeite','Manjericão fresco'],steps:['Espiralize as abobrinhas (macarrão)','Refogue no azeite 2min','Adicione frango fatiado e molho','Finalize com manjericão'],nutrition:{calories:290,protein:'36g',carbs:'14g',fat:'10g',fiber:'4g'},rating:4.8,reviews:556,goal:'lose',special:'',specialNote:''},
+
+{id:2032,emoji:'🧀',name:'Omelete de Cottage e Ervas',cat:'breakfast',time:'10min',diff:'fácil',cal:250,prot:28,carb:4,fat:13,fiber:1,gi:15,score:9,tags:['ovo','emagrecer','sem gluten','alta proteina','cafe da manha','rapido'],ingredients:['3 uni - Ovos','4 col - Queijo cottage','Cebolinha, tomilho e salsa','1 col - Azeite','Sal e pimenta'],steps:['Bata ovos com cottage e ervas','Aqueça azeite em frigideira','Despeje e dobre quando firmar'],nutrition:{calories:250,protein:'28g',carbs:'4g',fat:'13g',fiber:'1g'},rating:4.8,reviews:478,goal:'lose',special:'',specialNote:''},
+
+{id:2033,emoji:'🫚',name:'Salteado de Tofu com Legumes',cat:'lunch',time:'15min',diff:'fácil',cal:310,prot:20,carb:24,fat:14,fiber:6,gi:32,score:9,tags:['vegano','sem gluten','sem lactose','proteina vegetal','emagrecer','almoco'],ingredients:['200g - Tofu firme em cubos','1 uni - Brócolis','1 uni - Cenoura','3 col - Shoyu light','Alho e gengibre ralado'],steps:['Prense o tofu e corte em cubos','Doure no azeite 4min cada lado','Refogue legumes e alho','Adicione shoyu e gengibre'],nutrition:{calories:310,protein:'20g',carbs:'24g',fat:'14g',fiber:'6g'},rating:4.6,reviews:312,goal:'health',special:'',specialNote:''},
+
+{id:2034,emoji:'🍋',name:'Geleia de Chia com Limão',cat:'snack',time:'10min',diff:'fácil',cal:120,prot:4,carb:20,fat:4,fiber:8,gi:15,score:9,tags:['detox','emagrecer','vegano','sem gluten','fibra','doce fit'],ingredients:['3 col - Chia','250ml - Leite de coco','1 uni - Suco de limão','1 col - Mel','Raspas de limão'],steps:['Misture chia com leite de coco','Adicione limão e mel','Refrigere 30min','Sirva com raspas de limão'],nutrition:{calories:120,protein:'4g',carbs:'20g',fat:'4g',fiber:'8g'},rating:4.7,reviews:389,goal:'lose',special:'',specialNote:''},
+
+{id:2035,emoji:'🥗',name:'Salada Grega Fit',cat:'lunch',time:'10min',diff:'fácil',cal:280,prot:12,carb:18,fat:18,fiber:4,gi:25,score:9,tags:['emagrecer','sem gluten','vegetariano','salada','mediterranea','almoco'],ingredients:['Alface, tomate e pepino','60g - Queijo feta','20 uni - Azeitonas kalamata','2 col - Azeite + orégano','1 col - Vinagre balsâmico'],steps:['Pique os legumes grosseiramente','Distribua feta e azeitonas','Tempere com azeite e orégano','Regue com balsâmico'],nutrition:{calories:280,protein:'12g',carbs:'18g',fat:'18g',fiber:'4g'},rating:4.8,reviews:567,goal:'lose',special:'',specialNote:''},
+
+{id:2036,emoji:'🍲',name:'Strogonoff de Frango Fit',cat:'dinner',time:'25min',diff:'médio',cal:420,prot:40,carb:22,fat:16,fiber:3,gi:42,score:9,tags:['frango','massa muscular','sem gluten','proteina','jantar','comfort food'],ingredients:['200g - Peito de frango em tiras','200ml - Iogurte grego (creme)','100g - Champignon fatiado','1 col - Mostarda','Alho, sal e páprica'],steps:['Sele o frango em fogo alto','Adicione champignon e refogue','Junte iogurte e mostarda','Cozinhe 5min em fogo baixo'],nutrition:{calories:420,protein:'40g',carbs:'22g',fat:'16g',fiber:'3g'},rating:4.8,reviews:634,goal:'gain',special:'',specialNote:''},
+
+{id:2037,emoji:'🫘',name:'Pasta de Feijão Branco',cat:'snack',time:'10min',diff:'fácil',cal:200,prot:10,carb:28,fat:6,fiber:8,gi:30,score:8,tags:['vegano','sem gluten','fibra','proteina vegetal','lanche','espalhavel'],ingredients:['1 lata - Feijão branco cozido','2 col - Azeite','2 den - Alho assado','Suco de 1 limão','Sal e ervas'],steps:['Escorra o feijão e bata no processador','Adicione azeite, alho e limão','Processe até cremoso','Sirva com legumes crus'],nutrition:{calories:200,protein:'10g',carbs:'28g',fat:'6g',fiber:'8g'},rating:4.6,reviews:289,goal:'health',special:'',specialNote:''},
+
+{id:2038,emoji:'🥤',name:'Suco Verde Detox Completo',cat:'juice',time:'5min',diff:'fácil',cal:100,prot:3,carb:22,fat:1,fiber:4,gi:25,score:9,tags:['detox','emagrecer','vegano','sem gluten','anti-inflamatorio','manha'],ingredients:['1 maço - Couve folha','1 uni - Maçã verde','1 uni - Pepino','1 col - Gengibre','Suco de 1 limão + 200ml água'],steps:['Lave bem todos os ingredientes','Bata no liquidificador com água','Coe se preferir ou beba integral','Consuma em jejum'],nutrition:{calories:100,protein:'3g',carbs:'22g',fat:'1g',fiber:'4g'},rating:4.7,reviews:723,goal:'lose',special:'',specialNote:''},
+
+{id:2039,emoji:'🥚',name:'Egg Muffin de Peru',cat:'breakfast',time:'20min',diff:'fácil',cal:200,prot:24,carb:3,fat:10,fiber:1,gi:10,score:9,tags:['ovo','emagrecer','sem gluten','alta proteina','preparar antecipado','keto'],ingredients:['6 uni - Ovos','100g - Peito de peru em cubos','1 uni - Pimentão vermelho','30g - Queijo cottage','Sal e ervas finas'],steps:['Preaqueça o forno a 180°C','Misture ovos batidos com peru e pimentão','Distribua em forminhas','Asse 15min até firmar'],nutrition:{calories:200,protein:'24g',carbs:'3g',fat:'10g',fiber:'1g'},rating:4.8,reviews:456,goal:'lose',special:'',specialNote:'Rende 6 muffins: prepare e refrigere por 3 dias'},
+
+{id:2040,emoji:'🫐',name:'Chia Pudding de Baunilha',cat:'snack',time:'5min',diff:'fácil',cal:230,prot:8,carb:28,fat:10,fiber:10,gi:20,score:9,tags:['emagrecer','vegano','sem gluten','fibra','doce fit','preparar na noite'],ingredients:['4 col - Chia','250ml - Leite de amêndoa','1 col - Extrato de baunilha','1 col - Mel','Frutas vermelhas para topping'],steps:['Misture chia com leite e baunilha','Adoce com mel e misture bem','Refrigere overnight','Sirva com frutas vermelhas'],nutrition:{calories:230,protein:'8g',carbs:'28g',fat:'10g',fiber:'10g'},rating:4.9,reviews:834,goal:'lose',special:'',specialNote:''},
+
+{id:2041,emoji:'🥩',name:'Hambúrguer Fit de Frango',cat:'lunch',time:'20min',diff:'fácil',cal:350,prot:38,carb:22,fat:12,fiber:3,gi:42,score:9,tags:['frango','massa muscular','emagrecer','proteina','almoco','lanche'],ingredients:['200g - Frango moído','1 col - Mostarda dijon','Alho e cebola ralados','Folhas de alface','2 fat - Pão integral'],steps:['Tempere frango moído e modele','Grelhe 5min cada lado','Monte no pão com alface','Finalize com mostarda'],nutrition:{calories:350,protein:'38g',carbs:'22g',fat:'12g',fiber:'3g'},rating:4.7,reviews:567,goal:'gain',special:'',specialNote:''},
+
+{id:2042,emoji:'🌿',name:'Chá Detox de Gengibre e Limão',cat:'juice',time:'5min',diff:'fácil',cal:15,prot:0,carb:3,fat:0,fiber:0,gi:5,score:8,tags:['detox','emagrecer','anti-inflamatorio','tpm','imunidade','manha'],ingredients:['3 fat - Gengibre fresco','1 uni - Limão (suco)','1 col - Mel','300ml - Água quente','Canela em pau'],steps:['Ferva a água com gengibre 3min','Coe e adicione suco de limão','Adoce com mel','Beba quente em jejum'],nutrition:{calories:15,protein:'0g',carbs:'3g',fat:'0g',fiber:'0g'},rating:4.7,reviews:892,goal:'lose',special:'menstrual',specialNote:'Gengibre anti-inflamatório: alivia cólicas e TPM'},
+
+{id:2043,emoji:'🫕',name:'Curry de Lentilha Vermelho',cat:'dinner',time:'25min',diff:'médio',cal:390,prot:20,carb:56,fat:8,fiber:16,gi:30,score:9,tags:['vegano','sem gluten','proteina vegetal','fibra','almoco','emagrecer'],ingredients:['200g - Lentilha vermelha','200ml - Leite de coco','2 col - Curry','Cebola, alho e gengibre','Tomate em cubos e coentro'],steps:['Refogue cebola, alho e gengibre','Adicione lentilha, tomate e curry','Junte leite de coco e água','Cozinhe 15min até cremoso'],nutrition:{calories:390,protein:'20g',carbs:'56g',fat:'8g',fiber:'16g'},rating:4.8,reviews:423,goal:'health',special:'',specialNote:''},
+
+{id:2044,emoji:'🥗',name:'Bowl Açafrão Gestante',cat:'lunch',time:'20min',diff:'fácil',cal:440,prot:22,carb:52,fat:14,fiber:8,gi:40,score:10,tags:['gestante','folato','ferro','omega3','sem gluten','almoco'],ingredients:['1 xíc - Quinoa cozida','100g - Grão-de-bico','1/2 uni - Abacate','Espinafre e tomate cereja','2 col - Azeite + limão + açafrão'],steps:['Cozinhe a quinoa com açafrão','Monte o bowl com todos ingredientes','Tempere com azeite e limão','Finalize com sementes de sésamo'],nutrition:{calories:440,protein:'22g',carbs:'52g',fat:'14g',fiber:'8g'},rating:4.9,reviews:312,goal:'health',special:'gestante',specialNote:'Folato + ferro + DHA: trio essencial na gravidez'},
+
+{id:2045,emoji:'🍫',name:'Brigadeiro Fit de Cacau',cat:'dessert',time:'20min',diff:'fácil',cal:120,prot:8,carb:14,fat:4,fiber:2,gi:28,score:8,tags:['doce fit','emagrecer','vegano','sem gluten','sobremesa','tpm'],ingredients:['200g - Grão-de-bico cozido','2 col - Cacau em pó 100%','3 col - Mel','1 col - Extrato de baunilha','Cacau para cobrir'],steps:['Bata o grão-de-bico no processador','Adicione cacau, mel e baunilha','Processe até massa lisa','Modele bolinhas e role no cacau'],nutrition:{calories:120,protein:'8g',carbs:'14g',fat:'4g',fiber:'2g'},rating:4.7,reviews:567,goal:'health',special:'menstrual',specialNote:''},
+
+{id:2046,emoji:'🥦',name:'Frango com Brócolis Salteado',cat:'lunch',time:'15min',diff:'fácil',cal:330,prot:42,carb:12,fat:12,fiber:5,gi:18,score:10,tags:['frango','massa muscular','emagrecer','sem gluten','sem lactose','rapido'],ingredients:['180g - Peito de frango fatiado','200g - Brócolis em floretes','3 col - Shoyu light','2 den - Alho fatiado','1 col - Gergelim'],steps:['Sele o frango em fogo alto','Adicione brócolis e alho','Refogue 3min','Finalize com shoyu e gergelim'],nutrition:{calories:330,protein:'42g',carbs:'12g',fat:'12g',fiber:'5g'},rating:4.9,reviews:723,goal:'gain',special:'',specialNote:''},
+
+{id:2047,emoji:'🫓',name:'Toast Proteico de Ricota',cat:'breakfast',time:'5min',diff:'fácil',cal:260,prot:18,carb:26,fat:8,fiber:3,gi:40,score:8,tags:['emagrecer','cafe da manha','lanche rapido','vegetariano','proteina','rapido'],ingredients:['2 fat - Pão integral','4 col - Ricota fresca','Tomate cereja cortado','Azeite e orégano','Folhas de manjericão'],steps:['Torre o pão','Espalhe a ricota generosamente','Adicione tomate e manjericão','Regue com azeite e orégano'],nutrition:{calories:260,protein:'18g',carbs:'26g',fat:'8g',fiber:'3g'},rating:4.6,reviews:445,goal:'lose',special:'',specialNote:''},
+
+{id:2048,emoji:'🥣',name:'Granola Proteica Caseira',cat:'breakfast',time:'25min',diff:'fácil',cal:280,prot:10,carb:36,fat:12,fiber:5,gi:45,score:9,tags:['vegano','sem gluten','cafe da manha','energia','pre-treino','doce fit'],ingredients:['2 xíc - Aveia em flocos','3 col - Mel','2 col - Azeite ou óleo de coco','3 col - Sementes mistas','1 col - Canela em pó'],steps:['Misture aveia com mel, óleo e canela','Espalhe na assadeira','Asse 20min a 160°C mexendo','Adicione sementes após esfriar'],nutrition:{calories:280,protein:'10g',carbs:'36g',fat:'12g',fiber:'5g'},rating:4.7,reviews:567,goal:'maintain',special:'',specialNote:'Rende 8 porções. Armazene em pote fechado.'},
+
+{id:2049,emoji:'🍜',name:'Sopa de Frango com Gengibre',cat:'dinner',time:'30min',diff:'fácil',cal:320,prot:34,carb:24,fat:8,fiber:4,gi:35,score:9,tags:['frango','emagrecer','sem gluten','sopa','anti-inflamatorio','imunidade'],ingredients:['200g - Peito de frango','1L - Caldo de frango caseiro','1 uni - Cenoura e aipo','20g - Gengibre fresco ralado','Cúrcuma e pimenta preta'],steps:['Cozinhe frango no caldo 15min','Desfie e reserve','Adicione legumes e gengibre','Cozinhe 10min e sirva'],nutrition:{calories:320,protein:'34g',carbs:'24g',fat:'8g',fiber:'4g'},rating:4.8,reviews:478,goal:'health',special:'',specialNote:''},
+
+{id:2050,emoji:'🫒',name:'Pesto de Couve Sem Lactose',cat:'snack',time:'10min',diff:'fácil',cal:180,prot:4,carb:6,fat:16,fiber:2,gi:15,score:8,tags:['vegano','sem gluten','sem lactose','detox','espalhavel','lanche'],ingredients:['1 maço - Couve folha','40g - Castanha de caju','2 col - Azeite','1 den - Alho','Suco de limão e sal'],steps:['Branqueie a couve 30s em água quente','Escorra e bata com demais ingredientes','Processe até textura de pesto','Use em macarrão, torradas ou carnes'],nutrition:{calories:180,protein:'4g',carbs:'6g',fat:'16g',fiber:'2g'},rating:4.6,reviews:234,goal:'health',special:'',specialNote:''}
+,
+  {id:2051,emoji:'🥗',name:'Bowl Detox Verde',cat:'lunch',time:'10min',diff:'fácil',cal:210,prot:8,carb:22,fat:10,fiber:7,gi:28,score:9,tags:['detox','vegano','emagrecer','sem lactose'],ingredients:['2 xíc - Espinafre fresco','1/2 - Pepino fatiado','1 - Kiwi picado','1 col - Azeite de oliva','Suco de 1/2 limão','Sal a gosto'],steps:['Lave bem o espinafre e escorra.','Fatie o pepino e pique o kiwi.','Monte a bowl e regue com azeite e limão.','Tempere com sal e sirva.'],nutrition:{calories:210,protein:'8g',carbs:'22g',fat:'10g',fiber:'7g'},rating:4.6,reviews:143,goal:'lose',special:'',specialNote:''},
+{id:2052,emoji:'🍳',name:'Omelete Proteico Duplo',cat:'breakfast',time:'8min',diff:'fácil',cal:320,prot:28,carb:3,fat:22,fiber:1,gi:15,score:9,tags:['ovo','alta proteina','massa muscular','sem gluten'],ingredients:['4 - Ovos grandes','80g - Peito de frango desfiado','1 col - Azeite','Sal e pimenta a gosto'],steps:['Bata os ovos com sal e pimenta.','Misture o frango desfiado aos ovos.','Cozinhe em frigideira antiaderente em fogo médio.','Dobre e sirva quente.'],nutrition:{calories:320,protein:'28g',carbs:'3g',fat:'22g',fiber:'1g'},rating:4.8,reviews:267,goal:'gain',special:'pos-treino',specialNote:'Rico em leucina para síntese proteica pós-treino.'},
+{id:2053,emoji:'🥤',name:'Shake Pré-Treino Energia',cat:'snack',time:'5min',diff:'fácil',cal:285,prot:22,carb:35,fat:5,fiber:4,gi:52,score:9,tags:['pre-treino','massa muscular','lanche rapido','alta proteina'],ingredients:['1 dose - Whey protein baunilha','1 - Banana madura','200ml - Leite desnatado','1 col - Mel','Gelo a gosto'],steps:['Coloque todos os ingredientes no liquidificador.','Bata por 30 segundos.','Sirva imediatamente gelado.'],nutrition:{calories:285,protein:'22g',carbs:'35g',fat:'5g',fiber:'4g'},rating:4.7,reviews:389,goal:'gain',special:'pre-treino',specialNote:'Consuma 30 min antes do treino para energia ideal.'},
+{id:2054,emoji:'🐔',name:'Frango Grelhado Limão',cat:'lunch',time:'20min',diff:'fácil',cal:230,prot:38,carb:2,fat:7,fiber:0,gi:10,score:10,tags:['frango','emagrecer','alta proteina','sem gluten'],ingredients:['200g - Peito de frango','Suco de 1 limão','2 dentes - Alho picado','1 col - Azeite','Sal e ervas a gosto'],steps:['Marine o frango com limão, alho e sal por 10 min.','Grelhe na frigideira com azeite por 8 min de cada lado.','Verifique se está cozido e sirva.'],nutrition:{calories:230,protein:'38g',carbs:'2g',fat:'7g',fiber:'0g'},rating:4.9,reviews:512,goal:'lose',special:'',specialNote:''},
+{id:2055,emoji:'🌱',name:'Tofu Xis Vegano',cat:'lunch',time:'15min',diff:'fácil',cal:260,prot:18,carb:20,fat:12,fiber:5,gi:32,score:8,tags:['vegano','sem lactose','alta proteina','detox'],ingredients:['150g - Tofu firme fatiado','2 xíc - Alface picada','1 - Tomate picado','1 col - Mostarda','2 fatias - Pão integral'],steps:['Tempere o tofu com sal, páprica e azeite.','Doure o tofu na frigideira por 3 min cada lado.','Monte o sanduíche com alface, tomate e mostarda.'],nutrition:{calories:260,protein:'18g',carbs:'20g',fat:'12g',fiber:'5g'},rating:4.5,reviews:78,goal:'maintain',special:'',specialNote:''},
+{id:2056,emoji:'🤰',name:'Risoto de Lentilha Gestante',cat:'lunch',time:'30min',diff:'médio',cal:340,prot:18,carb:48,fat:8,fiber:12,gi:42,score:9,tags:['gestante','sem gluten','alta fibra','ferro'],ingredients:['1 xíc - Lentilha laranja','2 xíc - Caldo de legumes','1 - Cenoura picada','1 - Cebola picada','1 col - Azeite','Sal e cúrcuma'],steps:['Refogue a cebola e a cenoura no azeite por 3 min.','Adicione a lentilha e o caldo.','Cozinhe por 20 min mexendo ocasionalmente.','Tempere com cúrcuma e sal.'],nutrition:{calories:340,protein:'18g',carbs:'48g',fat:'8g',fiber:'12g'},rating:4.7,reviews:134,goal:'health',special:'gestante',specialNote:'Rico em folato e ferro essenciais para o bebê.'},
+{id:2057,emoji:'🩸',name:'Smoothie Menstrual Anti-infla',cat:'snack',time:'5min',diff:'fácil',cal:195,prot:5,carb:38,fat:4,fiber:6,gi:45,score:9,tags:['tpm','detox','sem gluten','vegano'],ingredients:['1 xíc - Frutas vermelhas congeladas','1 - Banana pequena','200ml - Leite de amêndoa','1 col - Cacau em pó 70%','1 col - Mel'],steps:['Coloque tudo no liquidificador.','Bata até homogenizar.','Sirva sem coar para manter as fibras.'],nutrition:{calories:195,protein:'5g',carbs:'38g',fat:'4g',fiber:'6g'},rating:4.8,reviews:201,goal:'health',special:'menstrual',specialNote:'Magnésio e antioxidantes reduzem cólicas e TPM.'},
+{id:2058,emoji:'🥜',name:'Pasta de Amendoim Fit',cat:'snack',time:'5min',diff:'fácil',cal:180,prot:7,carb:12,fat:13,fiber:2,gi:30,score:8,tags:['lanche rapido','doce fit','sem gluten','emagrecer'],ingredients:['2 col - Pasta de amendoim s/ açúcar','1 - Maçã fatiada','1 col - Canela em pó'],steps:['Fatie a maçã em rodelas.','Espalhe a pasta de amendoim sobre as fatias.','Polvilhe canela e sirva.'],nutrition:{calories:180,protein:'7g',carbs:'12g',fat:'13g',fiber:'2g'},rating:4.6,reviews:176,goal:'lose',special:'',specialNote:''},
+{id:2059,emoji:'🍲',name:'Sopa Proteica de Grão-de-Bico',cat:'dinner',time:'25min',diff:'fácil',cal:290,prot:15,carb:38,fat:7,fiber:10,gi:38,score:9,tags:['vegano','sem gluten','alta fibra','emagrecer'],ingredients:['1 xíc - Grão-de-bico cozido','1 - Tomate picado','1/2 - Cebola picada','2 xíc - Caldo de legumes','1 col - Cominho','Sal a gosto'],steps:['Refogue a cebola e o tomate em 5 min.','Adicione o grão-de-bico e o caldo.','Tempere com cominho e sal.','Cozinhe por 15 min e sirva quente.'],nutrition:{calories:290,protein:'15g',carbs:'38g',fat:'7g',fiber:'10g'},rating:4.7,reviews:223,goal:'lose',special:'',specialNote:''},
+{id:2060,emoji:'🥞',name:'Panqueca Proteica de Aveia',cat:'breakfast',time:'12min',diff:'fácil',cal:310,prot:20,carb:35,fat:8,fiber:4,gi:48,score:9,tags:['massa muscular','pos-treino','alta proteina','doce fit'],ingredients:['1 xíc - Aveia em flocos','2 - Ovos','1 - Banana madura','1 col - Mel','1 pitada - Canela'],steps:['Amasse a banana e misture com os ovos.','Adicione a aveia e a canela e misture bem.','Cozinhe colheradas em frigideira antiaderente.','Sirva com mel por cima.'],nutrition:{calories:310,protein:'20g',carbs:'35g',fat:'8g',fiber:'4g'},rating:4.8,reviews:445,goal:'gain',special:'pos-treino',specialNote:''},
+{id:2061,emoji:'🥬',name:'Salada Detox com Chia',cat:'lunch',time:'8min',diff:'fácil',cal:175,prot:6,carb:18,fat:9,fiber:8,gi:22,score:9,tags:['detox','vegano','emagrecer','alta fibra'],ingredients:['2 xíc - Mix de folhas verdes','1 col - Sementes de chia','1/2 - Abacate fatiado','1 col - Azeite','Suco de limão e sal'],steps:['Lave e seque bem as folhas verdes.','Disponha o abacate fatiado sobre as folhas.','Polvilhe a chia e tempere com azeite e limão.'],nutrition:{calories:175,protein:'6g',carbs:'18g',fat:'9g',fiber:'8g'},rating:4.6,reviews:189,goal:'lose',special:'',specialNote:''},
+{id:2062,emoji:'🐟',name:'Salmão no Vapor com Limão',cat:'dinner',time:'18min',diff:'fácil',cal:290,prot:34,carb:0,fat:16,fiber:0,gi:5,score:10,tags:['alta proteina','sem gluten','emagrecer','omega-3'],ingredients:['200g - Filé de salmão','Suco de 1 limão','Sal e endro a gosto','1 col - Azeite'],steps:['Tempere o salmão com limão, sal e endro.','Cozinhe no vapor por 12 min.','Regue com azeite e sirva.'],nutrition:{calories:290,protein:'34g',carbs:'0g',fat:'16g',fiber:'0g'},rating:4.9,reviews:334,goal:'lose',special:'',specialNote:''},
+{id:2063,emoji:'🌮',name:'Wrap de Frango Integral',cat:'lunch',time:'15min',diff:'fácil',cal:380,prot:32,carb:36,fat:9,fiber:4,gi:45,score:8,tags:['frango','alta proteina','lanche rapido','massa muscular'],ingredients:['1 - Tortilha integral','150g - Frango grelhado fatiado','1/4 - Abacate amassado','2 xíc - Alface','1 - Tomate fatiado','Sal e limão'],steps:['Espalhe o abacate na tortilha.','Coloque o frango, alface e tomate.','Tempere com sal e limão.','Enrole firmemente e sirva.'],nutrition:{calories:380,protein:'32g',carbs:'36g',fat:'9g',fiber:'4g'},rating:4.7,reviews:298,goal:'gain',special:'',specialNote:''},
+{id:2064,emoji:'🫐',name:'Iogurte com Blueberry Antioxidante',cat:'snack',time:'3min',diff:'fácil',cal:165,prot:12,carb:20,fat:4,fiber:3,gi:30,score:9,tags:['sem gluten','lanche rapido','detox','emagrecer'],ingredients:['200g - Iogurte grego natural','100g - Blueberry fresco','1 col - Mel','1 col - Granola s/ açúcar'],steps:['Coloque o iogurte no bowl.','Adicione os blueberries.','Regue com mel e finalize com granola.'],nutrition:{calories:165,protein:'12g',carbs:'20g',fat:'4g',fiber:'3g'},rating:4.8,reviews:412,goal:'lose',special:'',specialNote:''},
+{id:2065,emoji:'🍠',name:'Batata-Doce Recheada Pós-Treino',cat:'dinner',time:'35min',diff:'fácil',cal:420,prot:28,carb:50,fat:9,fiber:6,gi:60,score:9,tags:['pos-treino','massa muscular','sem gluten','alta proteina'],ingredients:['1 grande - Batata-doce','150g - Carne moída magra','1/4 - Cebola picada','Sal, pimenta e orégano'],steps:['Asse a batata-doce a 200°C por 30 min.','Refogue a carne moída com cebola e temperos.','Abra a batata e recheie com a carne.','Sirva quente.'],nutrition:{calories:420,protein:'28g',carbs:'50g',fat:'9g',fiber:'6g'},rating:4.7,reviews:187,goal:'gain',special:'pos-treino',specialNote:'Carboidratos e proteínas na janela anabólica.'},
+{id:2066,emoji:'🥚',name:'Ovos Mexidos com Espinafre',cat:'breakfast',time:'7min',diff:'fácil',cal:245,prot:18,carb:4,fat:17,fiber:2,gi:12,score:9,tags:['ovo','sem gluten','emagrecer','alta proteina'],ingredients:['3 - Ovos grandes','1 xíc - Espinafre fresco','1 col - Azeite','Sal e alho a gosto'],steps:['Refogue o espinafre no azeite com alho por 2 min.','Adicione os ovos batidos.','Mexa em fogo baixo até ficar cremoso.','Tempere e sirva.'],nutrition:{calories:245,protein:'18g',carbs:'4g',fat:'17g',fiber:'2g'},rating:4.8,reviews:356,goal:'lose',special:'',specialNote:''},
+{id:2067,emoji:'🫘',name:'Feijão Preto Vegano Fit',cat:'lunch',time:'25min',diff:'fácil',cal:285,prot:14,carb:42,fat:5,fiber:13,gi:35,score:9,tags:['vegano','alta fibra','sem lactose','emagrecer'],ingredients:['1 xíc - Feijão preto cozido','1/2 - Cebola picada','2 dentes - Alho','1 col - Azeite','Coentro e sal'],steps:['Refogue alho e cebola no azeite.','Adicione o feijão e amasse metade com garfo.','Cozinhe por 10 min em fogo baixo.','Finalize com coentro fresco.'],nutrition:{calories:285,protein:'14g',carbs:'42g',fat:'5g',fiber:'13g'},rating:4.7,reviews:234,goal:'maintain',special:'',specialNote:''},
+{id:2068,emoji:'🥛',name:'Vitamina Proteica de Morango',cat:'snack',time:'5min',diff:'fácil',cal:260,prot:20,carb:28,fat:6,fiber:3,gi:48,score:8,tags:['lanche rapido','massa muscular','alta proteina','doce fit'],ingredients:['1 dose - Whey protein morango','150g - Morango fresco','200ml - Leite desnatado','1 col - Mel'],steps:['Lave e pique os morangos.','Coloque tudo no liquidificador.','Bata por 20 segundos e sirva gelado.'],nutrition:{calories:260,protein:'20g',carbs:'28g',fat:'6g',fiber:'3g'},rating:4.6,reviews:278,goal:'gain',special:'',specialNote:''},
+{id:2069,emoji:'🤰',name:'Bowl Folato Gestante Completo',cat:'lunch',time:'15min',diff:'fácil',cal:360,prot:16,carb:46,fat:13,fiber:10,gi:38,score:9,tags:['gestante','vegano','alta fibra','ferro'],ingredients:['1 xíc - Quinoa cozida','1/2 xíc - Lentilha cozida','1 xíc - Espinafre refogado','1/4 - Abacate','Azeite e limão'],steps:['Cozinhe a quinoa conforme embalagem.','Refogue o espinafre levemente no azeite.','Monte o bowl com quinoa, lentilha e espinafre.','Finalize com abacate e limão.'],nutrition:{calories:360,protein:'16g',carbs:'46g',fat:'13g',fiber:'10g'},rating:4.8,reviews:156,goal:'health',special:'gestante',specialNote:'Folato, ferro e DHA essenciais para o bebê.'},
+{id:2070,emoji:'🍫',name:'Mousse de Cacau Zero Açúcar',cat:'dessert',time:'10min',diff:'fácil',cal:190,prot:8,carb:15,fat:12,fiber:4,gi:25,score:9,tags:['doce fit','sem gluten','emagrecer','tpm'],ingredients:['200g - Iogurte grego integral','2 col - Cacau 100% em pó','2 col - Mel','1 col - Baunilha'],steps:['Misture o iogurte com o cacau.','Adicione mel e baunilha.','Bata com fouet até ficar cremoso.','Leve ao freezer por 10 min e sirva.'],nutrition:{calories:190,protein:'8g',carbs:'15g',fat:'12g',fiber:'4g'},rating:4.7,reviews:389,goal:'lose',special:'menstrual',specialNote:'Magnésio do cacau reduz sintomas da TPM.'},
+{id:2071,emoji:'🫑',name:'Frango Recheado com Legumes',cat:'dinner',time:'35min',diff:'médio',cal:310,prot:40,carb:8,fat:12,fiber:3,gi:18,score:10,tags:['frango','alta proteina','sem gluten','emagrecer'],ingredients:['200g - Peito de frango inteiro','1/2 - Pimentão picado','1/2 - Abobrinha picada','1 col - Azeite','Sal, alecrim e alho'],steps:['Abra o frango ao meio como livro.','Recheie com os legumes e temperos.','Feche com palitos e asse a 200°C por 30 min.','Sirva com salada verde.'],nutrition:{calories:310,protein:'40g',carbs:'8g',fat:'12g',fiber:'3g'},rating:4.8,reviews:223,goal:'lose',special:'',specialNote:''},
+{id:2072,emoji:'🌿',name:'Chá Detox Verde Termogênico',cat:'juice',time:'5min',diff:'fácil',cal:15,prot:0,carb:3,fat:0,fiber:0,gi:5,score:8,tags:['detox','emagrecer','sem gluten','vegano'],ingredients:['300ml - Água quente','1 sachê - Chá verde','1 col - Gengibre ralado','Suco de 1/2 limão','1 col - Mel (opcional)'],steps:['Ferva a água e espere esfriar levemente.','Faça o chá por 3 minutos.','Adicione gengibre e limão.','Adoce com mel se desejar e sirva.'],nutrition:{calories:15,protein:'0g',carbs:'3g',fat:'0g',fiber:'0g'},rating:4.5,reviews:567,goal:'lose',special:'',specialNote:''},
+{id:2073,emoji:'🥙',name:'Pita Proteica de Atum',cat:'snack',time:'8min',diff:'fácil',cal:320,prot:30,carb:28,fat:8,fiber:4,gi:40,score:8,tags:['alta proteina','lanche rapido','emagrecer','sem lactose'],ingredients:['1 - Pão pita integral','1 lata - Atum ao natural','1/4 - Pepino fatiado','1 - Tomate fatiado','Mostarda e limão'],steps:['Abra a pita e espalhe a mostarda.','Coloque o atum escorrido.','Adicione pepino e tomate.','Tempere com limão e sirva.'],nutrition:{calories:320,protein:'30g',carbs:'28g',fat:'8g',fiber:'4g'},rating:4.7,reviews:198,goal:'lose',special:'',specialNote:''},
+{id:2074,emoji:'🍛',name:'Curry de Grão-de-Bico Vegano',cat:'dinner',time:'30min',diff:'médio',cal:340,prot:15,carb:48,fat:10,fiber:12,gi:38,score:9,tags:['vegano','sem gluten','alta fibra','sem lactose'],ingredients:['1 xíc - Grão-de-bico cozido','200ml - Leite de coco light','1 - Tomate picado','1 col - Curry em pó','1/2 - Cebola picada','Sal a gosto'],steps:['Refogue a cebola por 3 min.','Adicione curry, tomate e cozinhe 2 min.','Coloque o grão-de-bico e o leite de coco.','Cozinhe por 20 min e sirva com arroz.'],nutrition:{calories:340,protein:'15g',carbs:'48g',fat:'10g',fiber:'12g'},rating:4.8,reviews:267,goal:'maintain',special:'',specialNote:''},
+{id:2075,emoji:'🧁',name:'Muffin Proteico de Baunilha',cat:'snack',time:'20min',diff:'fácil',cal:195,prot:14,carb:18,fat:7,fiber:2,gi:38,score:8,tags:['doce fit','massa muscular','lanche rapido','alta proteina'],ingredients:['1 dose - Whey protein baunilha','2 - Ovos','3 col - Aveia em flocos','1 col - Mel','1 col - Óleo de coco'],steps:['Misture todos os ingredientes até ficar homogêneo.','Distribua em formas de cupcake.','Asse a 180°C por 15 min.','Deixe esfriar antes de servir.'],nutrition:{calories:195,protein:'14g',carbs:'18g',fat:'7g',fiber:'2g'},rating:4.6,reviews:312,goal:'gain',special:'',specialNote:''},
+{id:2076,emoji:'🥑',name:'Torrada Abacate e Ovo',cat:'breakfast',time:'8min',diff:'fácil',cal:290,prot:14,carb:22,fat:16,fiber:5,gi:35,score:9,tags:['ovo','emagrecer','lanche rapido','sem lactose'],ingredients:['2 fatias - Pão integral','1/2 - Abacate maduro','2 - Ovos mexidos','Sal, limão e pimenta'],steps:['Torre o pão no forno ou torradeira.','Amasse o abacate com limão e sal.','Prepare os ovos mexidos.','Espalhe o abacate e coloque os ovos.'],nutrition:{calories:290,protein:'14g',carbs:'22g',fat:'16g',fiber:'5g'},rating:4.8,reviews:534,goal:'lose',special:'',specialNote:''},
+{id:2077,emoji:'🫚',name:'Salmão com Quinoa e Brócolis',cat:'dinner',time:'25min',diff:'médio',cal:420,prot:38,carb:30,fat:14,fiber:6,gi:35,score:10,tags:['alta proteina','sem gluten','omega-3','massa muscular'],ingredients:['180g - Filé de salmão','1 xíc - Quinoa cozida','1 xíc - Brócolis cozido no vapor','1 col - Azeite','Sal e limão'],steps:['Grelhe o salmão por 4 min de cada lado.','Cozinhe a quinoa conforme embalagem.','Cozinhe o brócolis no vapor por 5 min.','Monte o prato e tempere com azeite e limão.'],nutrition:{calories:420,protein:'38g',carbs:'30g',fat:'14g',fiber:'6g'},rating:4.9,reviews:389,goal:'gain',special:'',specialNote:''},
+{id:2078,emoji:'🍵',name:'Overnight Aveia Canela',cat:'breakfast',time:'5min',diff:'fácil',cal:295,prot:12,carb:48,fat:6,fiber:6,gi:45,score:9,tags:['lanche rapido','emagrecer','sem gluten','doce fit'],ingredients:['1/2 xíc - Aveia em flocos','150ml - Leite de amêndoa','1 - Banana fatiada','1 col - Canela em pó','1 col - Mel'],steps:['Na noite anterior, misture aveia e leite.','Cubra e leve à geladeira.','De manhã, adicione banana e canela.','Regue com mel e sirva frio.'],nutrition:{calories:295,protein:'12g',carbs:'48g',fat:'6g',fiber:'6g'},rating:4.7,reviews:467,goal:'lose',special:'',specialNote:''},
+{id:2079,emoji:'🩸',name:'Caldo de Feijão com Espinafre TPM',cat:'dinner',time:'20min',diff:'fácil',cal:265,prot:13,carb:38,fat:6,fiber:11,gi:35,score:9,tags:['tpm','vegano','alta fibra','ferro'],ingredients:['1 xíc - Feijão caldo (pronto)','2 xíc - Espinafre picado','1/2 - Cebola picada','1 col - Azeite','Sal e alho'],steps:['Refogue a cebola e o alho no azeite.','Adicione o caldo de feijão quente.','Coloque o espinafre e cozinhe 3 min.','Tempere e sirva quente.'],nutrition:{calories:265,protein:'13g',carbs:'38g',fat:'6g',fiber:'11g'},rating:4.7,reviews:134,goal:'health',special:'menstrual',specialNote:'Ferro e magnésio aliviam cólicas e fraqueza.'},
+{id:2080,emoji:'🥗',name:'Salada Grega Proteica',cat:'lunch',time:'10min',diff:'fácil',cal:280,prot:14,carb:16,fat:17,fiber:4,gi:25,score:8,tags:['sem gluten','emagrecer','lanche rapido','vegano'],ingredients:['1 xíc - Grão-de-bico cozido','1/2 - Pepino picado','100g - Tomate cereja','50g - Azeitonas','1 col - Azeite','Orégano e sal'],steps:['Misture todos os ingredientes em tigela.','Tempere com azeite, orégano e sal.','Sirva frio ou em temperatura ambiente.'],nutrition:{calories:280,protein:'14g',carbs:'16g',fat:'17g',fiber:'4g'},rating:4.6,reviews:223,goal:'lose',special:'',specialNote:''},
+{id:2081,emoji:'🏋️',name:'Bowl Massa Muscular Completo',cat:'lunch',time:'20min',diff:'fácil',cal:520,prot:45,carb:45,fat:14,fiber:5,gi:48,score:9,tags:['massa muscular','alta proteina','pos-treino','frango'],ingredients:['200g - Frango grelhado fatiado','1 xíc - Arroz integral cozido','1/2 xíc - Brócolis','1 col - Azeite','Sal e ervas a gosto'],steps:['Grelhe o frango com azeite e ervas.','Cozinhe o arroz conforme embalagem.','Cozinhe o brócolis no vapor por 5 min.','Monte o bowl e sirva quente.'],nutrition:{calories:520,protein:'45g',carbs:'45g',fat:'14g',fiber:'5g'},rating:4.9,reviews:489,goal:'gain',special:'pos-treino',specialNote:''},
+{id:2082,emoji:'🫒',name:'Pasta de Grão-de-Bico Caseira',cat:'snack',time:'10min',diff:'fácil',cal:220,prot:9,carb:22,fat:11,fiber:6,gi:32,score:9,tags:['vegano','sem gluten','lanche rapido','alta fibra'],ingredients:['1 xíc - Grão-de-bico cozido','2 col - Tahine','Suco de 1 limão','1 dente - Alho','Sal e azeite','Páprica para servir'],steps:['Bata no liquidificador o grão-de-bico, tahine e alho.','Adicione limão, sal e bata mais.','Ajuste a textura com água fria.','Sirva com azeite e páprica.'],nutrition:{calories:220,protein:'9g',carbs:'22g',fat:'11g',fiber:'6g'},rating:4.8,reviews:367,goal:'maintain',special:'',specialNote:''},
+{id:2083,emoji:'🥞',name:'Crepioca Proteica',cat:'breakfast',time:'8min',diff:'fácil',cal:195,prot:16,carb:14,fat:8,fiber:1,gi:38,score:9,tags:['emagrecer','sem gluten','alta proteina','ovo'],ingredients:['1 - Ovo inteiro','2 col - Tapioca','1 col - Queijo cottage','Sal e orégano'],steps:['Misture o ovo batido com a tapioca.','Despeje em frigideira antiaderente quente.','Recheie com cottage, sal e orégano.','Dobre e sirva.'],nutrition:{calories:195,protein:'16g',carbs:'14g',fat:'8g',fiber:'1g'},rating:4.8,reviews:445,goal:'lose',special:'',specialNote:''},
+{id:2084,emoji:'🌊',name:'Atum com Brócolis no Vapor',cat:'lunch',time:'15min',diff:'fácil',cal:245,prot:32,carb:8,fat:8,fiber:4,gi:18,score:9,tags:['alta proteina','emagrecer','sem gluten','sem lactose'],ingredients:['1 lata - Atum ao natural','200g - Brócolis','1 col - Azeite','Suco de limão','Sal e pimenta'],steps:['Cozinhe o brócolis no vapor por 8 min.','Escorra o atum e tempere com limão.','Misture o brócolis com o atum.','Regue com azeite e sirva.'],nutrition:{calories:245,protein:'32g',carbs:'8g',fat:'8g',fiber:'4g'},rating:4.7,reviews:289,goal:'lose',special:'',specialNote:''},
+{id:2085,emoji:'🫐',name:'Açaí Bowl Fitness',cat:'snack',time:'5min',diff:'fácil',cal:310,prot:6,carb:48,fat:10,fiber:7,gi:52,score:8,tags:['doce fit','detox','vegano','lanche rapido'],ingredients:['200g - Polpa de açaí s/ açúcar','1 - Banana fatiada','2 col - Granola s/ açúcar','100g - Morango fatiado','1 col - Mel'],steps:['Bata a polpa de açaí congelada.','Coloque na tigela.','Decore com banana, morango e granola.','Finalize com mel e sirva gelado.'],nutrition:{calories:310,protein:'6g',carbs:'48g',fat:'10g',fiber:'7g'},rating:4.8,reviews:534,goal:'maintain',special:'',specialNote:''},
+{id:2086,emoji:'🧄',name:'Frango ao Alho Poró Low Carb',cat:'dinner',time:'22min',diff:'fácil',cal:255,prot:36,carb:6,fat:10,fiber:2,gi:15,score:9,tags:['frango','low carb','emagrecer','sem gluten'],ingredients:['200g - Frango em tiras','1 talo - Alho-poró fatiado','1 col - Azeite','2 dentes - Alho','Sal e pimenta do reino'],steps:['Refogue o alho no azeite por 1 min.','Adicione o frango e doure por 5 min.','Acrescente o alho-poró e cozinhe 3 min.','Tempere com sal e pimenta.'],nutrition:{calories:255,protein:'36g',carbs:'6g',fat:'10g',fiber:'2g'},rating:4.7,reviews:267,goal:'lose',special:'',specialNote:''},
+{id:2087,emoji:'🤰',name:'Smoothie DHA Gestante',cat:'snack',time:'5min',diff:'fácil',cal:245,prot:8,carb:35,fat:9,fiber:4,gi:42,score:9,tags:['gestante','sem gluten','lanche rapido','doce fit'],ingredients:['200ml - Leite de amêndoa','1 - Banana congelada','1 col - Semente de linhaça','1/2 xíc - Manga picada','1 col - Mel'],steps:['Coloque todos os ingredientes no liquidificador.','Bata por 30 segundos até cremoso.','Sirva imediatamente.'],nutrition:{calories:245,protein:'8g',carbs:'35g',fat:'9g',fiber:'4g'},rating:4.7,reviews:178,goal:'health',special:'gestante',specialNote:'Ômega-3 da linhaça apoia desenvolvimento neural do bebê.'},
+{id:2088,emoji:'🥓',name:'Omelete Turco com Tomate',cat:'breakfast',time:'12min',diff:'fácil',cal:275,prot:20,carb:8,fat:18,fiber:2,gi:18,score:8,tags:['ovo','sem gluten','low carb','emagrecer'],ingredients:['3 - Ovos','2 - Tomates picados','1/4 - Pimentão vermelho','1 col - Azeite','Sal e páprica'],steps:['Refogue pimentão e tomate no azeite por 3 min.','Bata os ovos com páprica e sal.','Despeje sobre os legumes.','Cozinhe tampado por 5 min em fogo baixo.'],nutrition:{calories:275,protein:'20g',carbs:'8g',fat:'18g',fiber:'2g'},rating:4.6,reviews:234,goal:'lose',special:'',specialNote:''},
+{id:2089,emoji:'🌾',name:'Arroz Integral Salteado Vegano',cat:'dinner',time:'20min',diff:'fácil',cal:320,prot:9,carb:56,fat:8,fiber:4,gi:50,score:8,tags:['vegano','sem lactose','alta fibra','sem gluten'],ingredients:['1 xíc - Arroz integral cozido','1/2 xíc - Ervilha congelada','1 - Cenoura ralada','2 dentes - Alho','1 col - Shoyu light','1 col - Azeite'],steps:['Refogue o alho no azeite até dourar.','Adicione a cenoura e a ervilha por 3 min.','Acrescente o arroz e o shoyu.','Misture bem por 2 min e sirva.'],nutrition:{calories:320,protein:'9g',carbs:'56g',fat:'8g',fiber:'4g'},rating:4.6,reviews:189,goal:'maintain',special:'',specialNote:''},
+{id:2090,emoji:'🫁',name:'Caldo de Canja Fit',cat:'dinner',time:'30min',diff:'fácil',cal:235,prot:24,carb:22,fat:5,fiber:2,gi:40,score:9,tags:['frango','emagrecer','sem gluten','sem lactose'],ingredients:['150g - Frango sem pele','1/2 xíc - Arroz integral','2 xíc - Caldo de frango caseiro','1 - Cenoura picada','Sal, alho e coentro'],steps:['Cozinhe o frango no caldo por 20 min.','Retire, desfie e volte ao caldo.','Adicione o arroz e a cenoura.','Cozinhe mais 10 min e sirva.'],nutrition:{calories:235,protein:'24g',carbs:'22g',fat:'5g',fiber:'2g'},rating:4.8,reviews:312,goal:'lose',special:'',specialNote:''},
+{id:2091,emoji:'🫚',name:'Pasta Integral com Sardinha',cat:'lunch',time:'18min',diff:'fácil',cal:390,prot:26,carb:48,fat:10,fiber:4,gi:45,score:8,tags:['alta proteina','omega-3','sem lactose','lanche rapido'],ingredients:['100g - Macarrão integral','1 lata - Sardinha ao molho de tomate','1 col - Azeite','Orégano e alho a gosto'],steps:['Cozinhe o macarrão al dente.','Aqueça a sardinha com o alho e orégano.','Misture com a pasta escorrida.','Regue com azeite e sirva.'],nutrition:{calories:390,protein:'26g',carbs:'48g',fat:'10g',fiber:'4g'},rating:4.5,reviews:167,goal:'maintain',special:'',specialNote:''},
+{id:2092,emoji:'🥜',name:'Bolinho de Aveia com Amendoim',cat:'snack',time:'15min',diff:'fácil',cal:165,prot:6,carb:20,fat:8,fiber:3,gi:38,score:8,tags:['doce fit','sem gluten','lanche rapido','vegano'],ingredients:['1 xíc - Aveia em flocos','2 col - Pasta de amendoim','1 col - Mel','1 col - Cacau em pó','1 col - Coco ralado'],steps:['Misture todos os ingredientes em tigela.','Modele bolinhos pequenos com a mão.','Leve ao freezer por 15 min.','Sirva gelado.'],nutrition:{calories:165,protein:'6g',carbs:'20g',fat:'8g',fiber:'3g'},rating:4.7,reviews:423,goal:'lose',special:'',specialNote:''},
+{id:2093,emoji:'🫙',name:'Sopa Rápida de Legumes Detox',cat:'dinner',time:'20min',diff:'fácil',cal:185,prot:6,carb:28,fat:5,fiber:7,gi:30,score:9,tags:['detox','vegano','emagrecer','sem gluten'],ingredients:['1 - Abobrinha picada','1 - Cenoura picada','1/2 - Cebola picada','2 xíc - Caldo de legumes','1 col - Azeite','Sal e ervas'],steps:['Refogue a cebola no azeite por 2 min.','Adicione os legumes e o caldo.','Cozinhe por 15 min.','Bata metade para cremosidade e sirva.'],nutrition:{calories:185,protein:'6g',carbs:'28g',fat:'5g',fiber:'7g'},rating:4.6,reviews:289,goal:'lose',special:'',specialNote:''},
+{id:2094,emoji:'🥗',name:'Salada de Quinoa com Cranberry',cat:'lunch',time:'15min',diff:'fácil',cal:295,prot:10,carb:42,fat:9,fiber:5,gi:35,score:9,tags:['vegano','sem gluten','alta fibra','detox'],ingredients:['1 xíc - Quinoa cozida','2 col - Cranberry seco s/ açúcar','1/4 - Pepino picado','1 col - Azeite','Suco de limão e sal','Menta fresca'],steps:['Cozinhe a quinoa e deixe esfriar.','Misture com pepino e cranberry.','Tempere com azeite, limão e sal.','Finalize com folhas de menta.'],nutrition:{calories:295,protein:'10g',carbs:'42g',fat:'9g',fiber:'5g'},rating:4.7,reviews:198,goal:'maintain',special:'',specialNote:''},
+{id:2095,emoji:'🏃',name:'Barrinha Pré-Treino Caseira',cat:'snack',time:'15min',diff:'fácil',cal:220,prot:10,carb:28,fat:8,fiber:3,gi:45,score:8,tags:['pre-treino','massa muscular','doce fit','lanche rapido'],ingredients:['1 xíc - Aveia','2 col - Pasta de amendoim','1 col - Mel','1 col - Whey protein','1 col - Cacau nibs'],steps:['Misture aveia, whey e pasta de amendoim.','Adicione mel e amasse bem.','Espalhe em forma forrada com papel manteiga.','Leve ao freezer por 20 min e corte.'],nutrition:{calories:220,protein:'10g',carbs:'28g',fat:'8g',fiber:'3g'},rating:4.7,reviews:312,goal:'gain',special:'pre-treino',specialNote:''},
+{id:2096,emoji:'🫑',name:'Ovo Poché com Aspargos',cat:'breakfast',time:'12min',diff:'médio',cal:195,prot:14,carb:8,fat:12,fiber:3,gi:18,score:9,tags:['ovo','sem gluten','emagrecer','low carb'],ingredients:['2 - Ovos','6 - Aspargos frescos','1 col - Vinagre branco','1 col - Azeite','Sal e pimenta'],steps:['Ferva água com vinagre e forme redemoinho.','Quebre o ovo e mergulhe delicadamente.','Cozinhe por 3 min e retire com escumadeira.','Grelhe os aspargos e sirva junto.'],nutrition:{calories:195,protein:'14g',carbs:'8g',fat:'12g',fiber:'3g'},rating:4.6,reviews:178,goal:'lose',special:'',specialNote:''},
+{id:2097,emoji:'🫘',name:'Lentilha com Açafrão Anti-infla',cat:'dinner',time:'25min',diff:'fácil',cal:280,prot:16,carb:38,fat:6,fiber:11,gi:35,score:9,tags:['vegano','tpm','alta fibra','sem gluten'],ingredients:['1 xíc - Lentilha vermelha','2 xíc - Caldo de legumes','1 col - Açafrão (cúrcuma)','1/2 - Cebola','1 col - Azeite','Pimenta do reino'],steps:['Refogue a cebola no azeite.','Adicione a lentilha, caldo e cúrcuma.','Cozinhe em fogo médio por 20 min.','Ajuste sal e sirva com pão integral.'],nutrition:{calories:280,protein:'16g',carbs:'38g',fat:'6g',fiber:'11g'},rating:4.8,reviews:234,goal:'health',special:'menstrual',specialNote:'Cúrcuma é anti-inflamatório natural para TPM.'},
+{id:2098,emoji:'🥩',name:'Picanha Magra Grelhada',cat:'dinner',time:'20min',diff:'fácil',cal:310,prot:36,carb:0,fat:17,fiber:0,gi:5,score:9,tags:['alta proteina','sem gluten','massa muscular','pos-treino'],ingredients:['200g - Picanha magra','Sal grosso e alho','1 ramo - Alecrim','1 col - Manteiga clarificada'],steps:['Tempere a carne com sal grosso e alho.','Grelhe em fogo alto por 4 min de cada lado.','Adicione alecrim durante o preparo.','Deixe descansar 3 min antes de cortar.'],nutrition:{calories:310,protein:'36g',carbs:'0g',fat:'17g',fiber:'0g'},rating:4.8,reviews:412,goal:'gain',special:'pos-treino',specialNote:'Proteína completa com creatina natural para hipertrofia.'},
+{id:2099,emoji:'🫙',name:'Iogurte Parfait Sem Lactose',cat:'breakfast',time:'5min',diff:'fácil',cal:235,prot:9,carb:34,fat:7,fiber:4,gi:38,score:8,tags:['sem lactose','doce fit','lanche rapido','emagrecer'],ingredients:['200g - Iogurte de coco natural','100g - Frutas vermelhas','2 col - Granola s/ açúcar','1 col - Mel','1 col - Chia'],steps:['Coloque o iogurte de coco no copo.','Adicione as frutas vermelhas.','Polvilhe granola e chia.','Finalize com mel e sirva.'],nutrition:{calories:235,protein:'9g',carbs:'34g',fat:'7g',fiber:'4g'},rating:4.7,reviews:356,goal:'lose',special:'',specialNote:''},
+{id:2100,emoji:'🧆',name:'Falafel Assado Vegano',cat:'snack',time:'30min',diff:'médio',cal:265,prot:12,carb:32,fat:9,fiber:8,gi:38,score:8,tags:['vegano','sem gluten','sem lactose','alta fibra'],ingredients:['1 xíc - Grão-de-bico cru (demolhado)','1/4 - Cebola','2 dentes - Alho','Coentro e salsa','1 col - Cominho','Sal a gosto'],steps:['Processe o grão-de-bico cru com ervas e alho.','Tempere com cominho e sal.','Modele bolinhas e disponha em assadeira.','Asse a 200°C por 20 min virando na metade.'],nutrition:{calories:265,protein:'12g',carbs:'32g',fat:'9g',fiber:'8g'},rating:4.7,reviews:245,goal:'maintain',special:'',specialNote:''}
 ];
 
 const PRODUCTS = [
@@ -3090,6 +3248,15 @@ function renderNav() {
 }
 
 function navigate(tab) {
+  // Track navigation history for back button
+  if (APP.tab && APP.tab !== tab) {
+    if (!APP.navHistory) APP.navHistory = [];
+    // Don't push same tab twice
+    if (APP.navHistory[APP.navHistory.length-1] !== APP.tab) {
+      APP.navHistory.push(APP.tab);
+      if (APP.navHistory.length > 10) APP.navHistory.shift();
+    }
+  }
   APP.tab = tab;
   if (tab !== 'fasting' && typeof FAST !== 'undefined' && FAST.interval) { clearInterval(FAST.interval); FAST.interval = null; }
   if (tab !== 'scanner' && typeof stopLiveScanner === 'function') stopLiveScanner();
@@ -3115,8 +3282,47 @@ function navigate(tab) {
     if (tab === 'coach') attachCoach(screen);
     if (tab === 'nutrition') attachNutrition(screen);
     if (tab === 'scanner' && SCAN.mode === 'live') setTimeout(startLiveScanner, 400);
+    // Inject back button on secondary screens (not main nav tabs)
+    var primaryTabs = ['home','nutrition','recipes','hydration','more'];
+    if (primaryTabs.indexOf(tab) === -1 && tab !== 'coach') {
+      injectBackBtn(screen);
+    }
   }
 }
+function goBack() {
+  if (!APP.navHistory || !APP.navHistory.length) { navigate('home'); return; }
+  var prev = APP.navHistory.pop();
+  // Don't go back to coach from coach header (already has its own back btn)
+  navigate(prev || 'home');
+}
+function injectBackBtn(screen) {
+  var header = screen.querySelector('.screen-header') || screen.querySelector('.screen-title')?.parentElement;
+  if (!header) return;
+  // Don't add if already exists
+  if (header.querySelector('.back-btn-inline')) return;
+  var btn = document.createElement('button');
+  btn.className = 'back-btn-inline';
+  btn.innerHTML = '←';
+  btn.onclick = function() { goBack(); };
+  btn.style.cssText = [
+    'background:transparent',
+    'border:none',
+    'font-size:22px',
+    'color:var(--text)',
+    'cursor:pointer',
+    'padding:0 10px 0 0',
+    'line-height:1',
+    'flex-shrink:0',
+    '-webkit-tap-highlight-color:transparent',
+    'touch-action:manipulation'
+  ].join(';');
+  // Insert at start of header
+  header.style.display = header.style.display || 'flex';
+  header.style.alignItems = 'center';
+  header.insertBefore(btn, header.firstChild);
+}
+
+
 
 /* ═══════════════════════════════════════
    HOME SCREEN
@@ -3401,7 +3607,7 @@ function renderRecipes() {
   return `
   <div class="screen-header"><div class="screen-title">🍴 ${t('recipes')}</div></div>
   <div style="padding:0 16px;margin-bottom:12px">
-    <input class="input" placeholder="🔍 Buscar receitas..." value="${REC.search}" oninput="REC.search=this.value;document.getElementById('rec-list').innerHTML=getRecipeList()" id="rec-search">
+    <input class="input" placeholder="🔍 Buscar receitas..." value="${REC.search}" oninput="REC.search=this.value;REC.showAllResults=false;document.getElementById('rec-list').innerHTML=renderRecipeList()" id="rec-search">
   </div>
   <!-- Filter chips -->
   <div style="padding:0 16px;margin-bottom:6px">
@@ -3430,12 +3636,59 @@ function renderRecipeList(list) {
     let l = RECIPES;
     if(REC.mealType&&REC.mealType!=='all') l=l.filter(r=>r.cat===REC.mealType||(REC.mealType==='special'&&r.special));
     if(REC.filter.length) l=l.filter(r=>REC.filter.every(f=>r.tags.includes(f)||r.goal===f||r.special===f.toLowerCase().replace('🤰 ','').replace('🩸 ','').replace('⚡ ','').replace('💪 ','')));
-    if(REC.search) l=l.filter(r=>r.name.toLowerCase().includes(REC.search.toLowerCase()));
+    if(REC.search) {
+      const q = REC.search.toLowerCase().trim();
+      l = l.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        (r.tags && r.tags.some(t => t.toLowerCase().includes(q))) ||
+        (r.ingredients && r.ingredients.some(ing => ing.toLowerCase().includes(q)))
+      );
+    }
     list=l;
   }
-  if(!list.length) return `<div style="text-align:center;padding:40px;color:var(--text3)">Nenhuma receita encontrada com esses filtros 🤔</div>`;
+  if(!list.length) {
+    if(REC.search) return `<div style="text-align:center;padding:40px">
+      <div style="font-size:40px;margin-bottom:12px">🔍</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px">Nenhuma receita encontrada</div>
+      <div style="font-size:13px;color:var(--text3)">Tente: frango, aveia, detox, gestante, ovo...</div>
+    </div>`;
+    return `<div style="text-align:center;padding:40px;color:var(--text3)">Nenhuma receita com esses filtros 🤔</div>`;
+  }
+  // When searching: show only FIRST match and offer to see more
+  if(REC.search && list.length > 0 && !REC.showAllResults) {
+    const first = list[0];
+    const scoreCol = first.score>=7?'var(--green)':'var(--orange)';
+    return `<div style="padding:16px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;text-align:center">
+        💡 ${list.length} receita(s) encontrada(s) para "<b>${REC.search}</b>"
+      </div>
+      <div class="recipe-card" onclick="REC.openRecipe=${first.id};navigate('recipes')" style="${first.special==='gestante'?'border-color:rgba(249,168,212,.5);':first.special==='menstrual'?'border-color:rgba(244,114,182,.5);':''}">
+        <div class="recipe-hero" style="${first.special==='gestante'?'background:rgba(249,168,212,.08);':first.special==='menstrual'?'background:rgba(244,114,182,.08);':''}">
+          <span style="font-size:64px">${first.emoji}</span>
+          <div class="recipe-hero-overlay"><div class="recipe-tags">
+            ${first.tags.slice(0,2).map(tag=>`<span class="pill pill-green" style="font-size:9px">${tag}</span>`).join('')}
+          </div></div>
+        </div>
+        <div class="recipe-body">
+          <div class="recipe-name">${first.name}</div>
+          <div class="recipe-meta">
+            <span>⏱ ${first.time}</span><span>🎯 ${first.diff}</span>
+            <span>🔥 ${first.cal} kcal</span>
+            <span class="stars">${Array.from({length:5},(_,i)=>`<span class="star ${i<Math.round(first.rating)?'filled':''}">★</span>`).join('')} ${first.rating}</span>
+          </div>
+        </div>
+      </div>
+      ${list.length > 1 ? `
+      <button onclick="REC.showAllResults=true;document.getElementById('rec-list').innerHTML=renderRecipeList()" 
+        style="width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px">
+        📋 Ver todas as ${list.length} receitas com "${REC.search}"
+      </button>` : ''}
+    </div>`;
+  }
+  // Limit display to 30 for performance (always)
+  const showList = list.slice(0, 30);
   return `<div style="padding:0 16px">
-    ${list.map(r=>`<div class="recipe-card" onclick="REC.openRecipe=${r.id};navigate('recipes')" style="${r.special==='gestante'?'border-color:rgba(249,168,212,.5);':r.special==='menstrual'?'border-color:rgba(244,114,182,.5);':''}">
+    ${showList.map(r=>`<div class="recipe-card" onclick="REC.openRecipe=${r.id};navigate('recipes')" style="${r.special==='gestante'?'border-color:rgba(249,168,212,.5);':r.special==='menstrual'?'border-color:rgba(244,114,182,.5);':''}">
       <div class="recipe-hero" style="${r.special==='gestante'?'background:rgba(249,168,212,.08);':r.special==='menstrual'?'background:rgba(244,114,182,.08);':''}"><span style="font-size:64px">${r.emoji}</span>
       <div class="recipe-hero-overlay"><div class="recipe-tags">${r.tags.slice(0,2).map(tag=>`<span class="pill pill-green" style="font-size:9px">${tag}</span>`).join('')}${r.special?`<span class="pill" style="font-size:9px;background:${r.special==='gestante'?'rgba(249,168,212,.25)':'rgba(244,114,182,.25)'};color:${r.special==='gestante'?'#fda4af':'#f9a8d4'};border:none;margin-left:3px">${r.special==='gestante'?'🤰 Gestante':'🌸 Menstrual'}</span>`:''}
       </div></div></div>
@@ -3861,7 +4114,7 @@ window.startLiveScanner = async function() {
       // Vibrate on success
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       stopLiveScanner();
-      doScan(code);
+      if (!window._scanLock) doScan(code);
     });
 
     // Draw overlay on detected frames
@@ -3997,6 +4250,9 @@ window.handleScanPhoto = window.scanFromPhoto;
 
 function doScan(code) {
   if (!code?.trim()) { toast('Digite ou selecione um código', 'error'); return; }
+  if (window._scanLock) return; // prevent re-entry from scanner re-render
+  window._scanLock = true;
+  setTimeout(function() { window._scanLock = false; }, 3000);
   const clean = code.trim().replace(/\s/g, '');
 
   // Auto-detect country from barcode prefix
@@ -6051,6 +6307,7 @@ function stopCoachRecording() {
 
 // ── sendAudioToBackend — Groq Whisper + resposta em áudio ───────
 async function sendAudioToBackend(blob) {
+  // Show audio player in chat
   var localUrl = URL.createObjectURL(blob);
   var time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   var msgs = document.getElementById('coach-msgs');
@@ -6064,39 +6321,61 @@ async function sendAudioToBackend(blob) {
 
   appendBotMsg('🔄 Transcrevendo áudio...');
   var transcribedText = null;
+  var lastError = '';
 
-  for (var ki = 0; ki < _GROQ_KEYS.length; ki++) {
+  // Try Whisper with each Groq key, trying both webm and mp4 MIME
+  for (var ki = 0; ki < _GROQ_KEYS.length && !transcribedText; ki++) {
     var key = _GROQ_KEYS[(_coachKeyIdx + ki) % _GROQ_KEYS.length];
-    try {
-      var formData = new FormData();
-      var ext = blob.type.includes('ogg') ? 'ogg' : 'webm';
-      formData.append('file', blob, 'audio.'+ext);
-      formData.append('model', 'whisper-large-v3');
-      formData.append('language', 'pt');
-      formData.append('response_format', 'json');
-      var resp = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer '+key },
-        body: formData
-      });
-      if (resp.status === 429) continue;
-      if (!resp.ok) { console.warn('Whisper error:', resp.status); continue; }
-      var data = await resp.json();
-      transcribedText = (data.text||'').trim();
-      if (transcribedText) break;
-    } catch(e) { console.warn('Whisper attempt '+ki+' failed:', e.message); }
+    
+    // Try original blob first, then re-package
+    var blobsToTry = [blob];
+    // If original is webm, also try with mp4 extension (some Whisper versions prefer)
+    if (blob.type.includes('webm') || blob.type.includes('ogg')) {
+      blobsToTry.push(new Blob([blob], {type: 'audio/mp4'}));
+    }
+    
+    for (var bi = 0; bi < blobsToTry.length && !transcribedText; bi++) {
+      var b = blobsToTry[bi];
+      var ext = b.type.includes('mp4') ? 'mp4' : b.type.includes('ogg') ? 'ogg' : 'webm';
+      try {
+        var formData = new FormData();
+        formData.append('file', b, 'audio.' + ext);
+        formData.append('model', 'whisper-large-v3-turbo');
+        formData.append('language', 'pt');
+        formData.append('response_format', 'json');
+        var resp = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + key },
+          body: formData
+        });
+        if (resp.status === 429) { lastError = 'rate_limit'; continue; }
+        if (!resp.ok) {
+          var errBody = await resp.text().catch(function(){return '';});
+          lastError = 'status_' + resp.status + ': ' + errBody.substring(0,80);
+          console.warn('Whisper error:', lastError);
+          continue;
+        }
+        var data = await resp.json();
+        var t = (data.text || '').trim();
+        if (t && t.length > 1) { transcribedText = t; break; }
+      } catch(e) {
+        lastError = e.message;
+        console.warn('Whisper attempt failed:', e.message);
+      }
+    }
   }
 
-  // Remove "Transcrevendo..."
+  // Remove "Transcrevendo..." bubble
   var aiMsgs = document.querySelectorAll('.msg-wrap.ai');
   var last = aiMsgs[aiMsgs.length-1];
   if (last && last.textContent.includes('Transcrevendo')) { last.remove(); APP.coachMsgs.pop(); }
 
   if (transcribedText && transcribedText.length > 1) {
-    // Envia o texto transcrito como pergunta → resposta virá em áudio automaticamente
     sendCoachMsg(transcribedText);
   } else {
-    appendBotMsg('❌ Não consegui transcrever o áudio. Verifique o microfone ou tente digitar.');
+    console.warn('Whisper all attempts failed. Last error:', lastError);
+    // Fallback: ask user to type, but show what went wrong in console
+    appendBotMsg('🎤 Áudio recebido! Não foi possível transcrever automaticamente ('+( lastError.includes('rate_limit') ? 'limite da API' : 'formato de áudio')+'). Por favor, **digita sua pergunta** abaixo — responderei imediatamente! 💬');
   }
 }
 
