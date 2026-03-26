@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "emoji": "🥑",
+    "name": "Crepioca de Abacate",
+    "cat": "breakfast",
+    "time": "10min",
+    "diff": "fácil",
+    "cal": 320,
+    "tags": ["emagrecer", "abacate", "café da manhã"],
+    "ingredients": ["2 ovos", "2 colheres de goma de tapioca", "1/4 de abacate"],
+    "steps": ["Bata os ovos", "Faça na frigideira", "Recheie"]
+  },
+  {
+    "id": 2,
+    "emoji": "🥩",
+    "name": "Patinho com Batata Doce",
+    "cat": "lunch",
+    "time": "25min",
+    "diff": "médio",
+    "cal": 450,
+    "tags": ["massa muscular", "batata doce"],
+    "ingredients": ["150g de patinho", "150g de batata doce"],
+    "steps": ["Refogue o patinho", "Amasse a batata"]
+  }
+]
