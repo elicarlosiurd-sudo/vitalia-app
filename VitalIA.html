@@ -4561,37 +4561,17 @@ function renderSettings() {
   </div>
 
 
-  <!-- Coach IA — Gemini API -->
+  <!-- Coach IA — Cofre Cloudflare -->
   <div class="section-title">🤖 Coach IA</div>
   <div class="settings-group">
-    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px">
-      <div style="display:flex;align-items:center;gap:10px;width:100%">
-        <div class="settings-icon">🔑</div>
-        <div class="settings-text" style="flex:1">
-          <div class="settings-label">Google Gemini API Key</div>
-          <div class="settings-sub">Grátis em aistudio.google.com • 1500 msgs/dia</div>
-        </div>
-        <div id="gemini-status" style="font-size:11px;font-weight:600"></div>
-      </div>
-      <div style="width:100%;display:flex;gap:8px">
-        <input type="password" id="gemini-key-input"
-          placeholder="AIza..."
-          value="${localStorage.getItem('v_gemini_key')||'(chave padrão ativa ✅)'}"
-          style="flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);font-family:var(--font-body);outline:none"
-          oninput="document.getElementById('gemini-status').textContent=''"
-        />
-        <button onclick="saveGeminiKey()"
-          style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
-          Salvar
-        </button>
-      </div>
-      <div style="font-size:11px;color:var(--text3);line-height:1.5">
-        1. Acesse <strong style="color:var(--green)">aistudio.google.com</strong><br>
-        2. Clique em <strong>Get API key → Create API key</strong><br>
-        3. Copie e cole acima — é 100% gratuito
+    <div class="settings-row" style="padding:14px 16px">
+      <div class="settings-icon">🔒</div>
+      <div class="settings-text">
+        <div class="settings-label">Cofre Cloudflare</div>
+        <div class="settings-sub" style="color:var(--green)">✅ Servidor seguro ativo — chave protegida</div>
       </div>
     </div>
-    <div class="settings-row" onclick="testGeminiKey()">
+    <div class="settings-row" onclick="testCofreConnection()">
       <div class="settings-icon">🧪</div>
       <div class="settings-text"><div class="settings-label">Testar conexão</div><div class="settings-sub">Verifica se a IA está respondendo</div></div>
       <div class="settings-arrow">›</div>
@@ -6218,9 +6198,8 @@ function stopCoachRecording() {
   if (recInd) recInd.classList.remove('active');
 }
 
-// ── sendAudioToBackend — Groq Whisper + resposta em áudio ───────
+// ── sendAudioToBackend — transcrição via Web Speech API ─────────
 async function sendAudioToBackend(blob) {
-  // Show audio player in chat
   var localUrl = URL.createObjectURL(blob);
   var time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   var msgs = document.getElementById('coach-msgs');
@@ -6231,76 +6210,10 @@ async function sendAudioToBackend(blob) {
     msgs.appendChild(div);
     scrollCoachToBottom();
   }
-
-  appendBotMsg('🔄 Transcrevendo áudio...');
-  var transcribedText = null;
-  var lastError = '';
-
-  // Try Whisper with each Groq key, trying both webm and mp4 MIME
-  for (var ki = 0; ki < _GROQ_KEYS.length && !transcribedText; ki++) {
-    var key = _GROQ_KEYS[(_coachKeyIdx + ki) % _GROQ_KEYS.length];
-    
-    // Try original blob first, then re-package
-    var blobsToTry = [blob];
-    // If original is webm, also try with mp4 extension (some Whisper versions prefer)
-    if (blob.type.includes('webm') || blob.type.includes('ogg')) {
-      blobsToTry.push(new Blob([blob], {type: 'audio/mp4'}));
-    }
-    
-    for (var bi = 0; bi < blobsToTry.length && !transcribedText; bi++) {
-      var b = blobsToTry[bi];
-      var ext = b.type.includes('mp4') ? 'mp4' : b.type.includes('ogg') ? 'ogg' : 'webm';
-      try {
-        var formData = new FormData();
-        formData.append('file', b, 'audio.' + ext);
-        formData.append('model', 'whisper-large-v3-turbo');
-        formData.append('language', 'pt');
-        formData.append('response_format', 'json');
-        var resp = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + key },
-          body: formData
-        });
-        if (resp.status === 429) { lastError = 'rate_limit'; continue; }
-        if (!resp.ok) {
-          var errBody = await resp.text().catch(function(){return '';});
-          lastError = 'status_' + resp.status + ': ' + errBody.substring(0,80);
-          console.warn('Whisper error:', lastError);
-          continue;
-        }
-        var data = await resp.json();
-        var t = (data.text || '').trim();
-        if (t && t.length > 1) { transcribedText = t; break; }
-      } catch(e) {
-        lastError = e.message;
-        console.warn('Whisper attempt failed:', e.message);
-      }
-    }
-  }
-
-  // Remove "Transcrevendo..." bubble
-  var aiMsgs = document.querySelectorAll('.msg-wrap.ai');
-  var last = aiMsgs[aiMsgs.length-1];
-  if (last && last.textContent.includes('Transcrevendo')) { last.remove(); APP.coachMsgs.pop(); }
-
-  if (transcribedText && transcribedText.length > 1) {
-    sendCoachMsg(transcribedText);
-  } else {
-    console.warn('Whisper all attempts failed. Last error:', lastError);
-    // Fallback: ask user to type, but show what went wrong in console
-    appendBotMsg('🎤 Áudio recebido! Não foi possível transcrever automaticamente ('+( lastError.includes('rate_limit') ? 'limite da API' : 'formato de áudio')+'). Por favor, **digita sua pergunta** abaixo — responderei imediatamente! 💬');
-  }
+  appendBotMsg('💡 Use o botão 🎙️ do microfone para falar diretamente — a transcrição é instantânea!');
 }
 
-// ── API Keys ────────────────────────────────────────────────────
-var _coachKeyIdx = 0;
-var _GROQ_KEYS = [
-  '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',
-  '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',
-  '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',
-  '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'
-];
-var _GEMINI_KEY = 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
+// ── Coach IA — Cloudflare Worker ────────────────────────────────
 
 // ── buildSystemPrompt — personalizado por perfil ─────────────────
 function buildSystemPrompt() {
@@ -6355,65 +6268,26 @@ function buildSystemPrompt() {
   ].join('\n');
 }
 
-// ── coachGetAIResp ───────────────────────────────────────────────
+// ── COFRE CLOUDFLARE WORKER ─────────────────────────────────────
+var COACH_URL = 'https://vitalia-cofre.elicarlosiurd.workers.dev';
+
+// ── coachGetAIResp — via Cloudflare Worker (chave segura) ───────
 async function coachGetAIResp(msg) {
-  var GROQ_MODELS = [
-    'llama-3.3-70b-versatile',
-    'llama3-70b-8192',
-    'llama-3.1-70b-versatile',
-    'llama3-8b-8192',
-    'mixtral-8x7b-32768',
-    'gemma2-9b-it'
-  ];
-
   var systemPrompt = buildSystemPrompt();
-
-  // Tenta cada key × modelo
-  for (var attempt = 0; attempt < _GROQ_KEYS.length * 2; attempt++) {
-    var key   = _GROQ_KEYS[_coachKeyIdx % _GROQ_KEYS.length];
-    var model = GROQ_MODELS[attempt % GROQ_MODELS.length];
-    _coachKeyIdx++;
-    try {
-      var resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+key },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role:'system', content: systemPrompt },
-            { role:'user',   content: msg }
-          ],
-          max_tokens: 700,
-          temperature: 0.65
-        })
-      });
-      if (resp.status===429 || resp.status===404) continue;
-      if (!resp.ok) { console.warn('Groq '+resp.status); continue; }
-      var data = await resp.json();
-      var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      if (text && text.trim()) return text.trim();
-    } catch(e) { /* continua */ }
-  }
-
-  // Fallback Gemini
   try {
-    var gr = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+_GEMINI_KEY, {
+    var resp = await fetch(COACH_URL, {
       method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts:[{ text: systemPrompt }] },
-        contents: [{ parts:[{ text: msg }] }],
-        generationConfig: { maxOutputTokens:600, temperature:0.65 }
-      })
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({prompt: systemPrompt, mensagem: msg})
     });
-    if (gr.ok) {
-      var gd = await gr.json();
-      var gt = gd.candidates&&gd.candidates[0]&&gd.candidates[0].content&&gd.candidates[0].content.parts&&gd.candidates[0].content.parts[0]&&gd.candidates[0].content.parts[0].text;
-      if (gt&&gt.trim()) return gt.trim();
-    }
-  } catch(e) {}
-
-  return coachLocalFallback(msg);
+    if (!resp.ok) throw new Error('Cloudflare error');
+    var data = await resp.json();
+    if (data.resposta) return data.resposta;
+    throw new Error('empty');
+  } catch(e) {
+    console.log('[VitalIA] Cloudflare indisponivel, usando fallback local');
+    return coachLocalFallback(msg);
+  }
 }
 
 // ── coachLocalFallback — base de conhecimento rica ───────────────
@@ -6475,6 +6349,25 @@ function coachLocalFallback(msg) {
 // aliases
 window.sendCoach = sendCoachMsg;
 window.getNutriCoachResponse = coachGetAIResp;
+
+// ── testCofreConnection — testa o cofre Cloudflare ──────────────
+async function testCofreConnection() {
+  toast('🔄 Testando conexão...', 'info');
+  try {
+    var r = await fetch(COACH_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({prompt: 'Responda apenas: OK', mensagem: 'teste'})
+    });
+    if (!r.ok) throw new Error('status ' + r.status);
+    var d = await r.json();
+    if (d.resposta) toast('✅ Cofre conectado! IA respondendo.', 'success');
+    else throw new Error('empty');
+  } catch(e) {
+    toast('❌ Cofre indisponível: ' + e.message, 'error');
+  }
+}
+window.testCofreConnection = testCofreConnection;
 
 
 // ── updateLoginLang ─────────────────────────────────────────────
