@@ -541,8 +541,8 @@ a{text-decoration:none;color:inherit}
 .tg-login-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;border-radius:var(--radius-sm);border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.06));cursor:pointer;font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-body);margin-bottom:10px;transition:all .25s;animation:greenPulse 3s ease-in-out infinite;-webkit-tap-highlight-color:transparent;}
 .nav-item:last-child .nav-icon{color:#22c55e!important;font-size:22px!important;letter-spacing:4px!important;font-weight:900!important;}
 .filter-chip.active{background:var(--green)!important;color:#000!important;border-color:var(--green)!important;font-weight:700!important;}
-#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
-#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
+#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
+#quagga-viewport video,#quagga-viewport canvas{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;object-fit:cover!important;}
 
 
 
@@ -3197,7 +3197,7 @@ function navigate(tab) {
     if (tab === 'scanner' && SCAN.mode === 'live') setTimeout(startLiveScanner, 400);
     // Inject back button on secondary screens (not main nav tabs)
     var primaryTabs = ['home','nutrition','recipes','hydration','more'];
-    if (primaryTabs.indexOf(tab) === -1 && tab !== 'coach') {
+    if (primaryTabs.indexOf(tab) === -1) {
       injectBackBtn(screen);
     }
   }
@@ -3944,8 +3944,9 @@ window.setScanMode = function(mode) {
 
 // ── MODO 1: Câmera ao vivo com QuaggaJS ──
 window.startLiveScanner = async function() {
-  // No mobile browser (não app nativo), câmera ao vivo tem restrições HTTPS
-  // Verifica se é HTTPS ou localhost
+  // Stop any previous instance first
+  if (typeof window.stopLiveScanner === 'function') window.stopLiveScanner();
+  
   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
     const statusEl = document.getElementById('scan-live-status');
     if (statusEl) statusEl.innerHTML = '⚠️ Câmera ao vivo requer HTTPS. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use o modo Foto</a>';
@@ -3954,6 +3955,12 @@ window.startLiveScanner = async function() {
   const statusEl = document.getElementById('scan-live-status');
   const viewport = document.getElementById('quagga-viewport');
   if (!viewport) return;
+  
+  // Wait for viewport to have real dimensions
+  if (viewport.offsetWidth < 10 || viewport.offsetHeight < 10) {
+    await new Promise(function(r) { setTimeout(r, 500); });
+    if (viewport.offsetWidth < 10) return;
+  }
 
   // Check camera permission
   try {
@@ -4054,13 +4061,15 @@ window.startLiveScanner = async function() {
 window.stopLiveScanner = function() {
   if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
     try { Quagga.stop(); } catch(e) {}
+    try { Quagga.offDetected(); } catch(e) {}
     SCAN.quaggaRunning = false;
   }
-  // Also stop any media streams
-  const viewport = document.getElementById('quagga-viewport');
+  // Stop all media streams and clear viewport completely
+  var viewport = document.getElementById('quagga-viewport');
   if (viewport) {
-    const videos = viewport.querySelectorAll('video');
-    videos.forEach(v => { try { v.srcObject?.getTracks().forEach(t => t.stop()); } catch(e) {} });
+    var videos = viewport.querySelectorAll('video');
+    videos.forEach(function(v) { try { if(v.srcObject) v.srcObject.getTracks().forEach(function(t){t.stop()}); v.srcObject=null; } catch(e) {} });
+    viewport.innerHTML = '';
   }
 };
 
@@ -4497,7 +4506,7 @@ function renderSettings() {
   <!-- Language -->
   <div class="section-title">Idioma</div>
   <div class="lang-options" style="padding:0 16px;margin-bottom:12px;gap:8px;display:grid;grid-template-columns:1fr 1fr">
-    ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';localStorage.setItem('v_lang','${l.code}');navigate('settings')"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
+    ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';localStorage.setItem('v_lang','${l.code}');renderNav();navigate('settings')"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
   </div>
 
   <!-- Appearance -->
@@ -4561,17 +4570,37 @@ function renderSettings() {
   </div>
 
 
-  <!-- Coach IA — Cofre Cloudflare -->
+  <!-- Coach IA — Gemini API -->
   <div class="section-title">🤖 Coach IA</div>
   <div class="settings-group">
-    <div class="settings-row" style="padding:14px 16px">
-      <div class="settings-icon">🔒</div>
-      <div class="settings-text">
-        <div class="settings-label">Cofre Cloudflare</div>
-        <div class="settings-sub" style="color:var(--green)">✅ Servidor seguro ativo — chave protegida</div>
+    <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px;width:100%">
+        <div class="settings-icon">🔑</div>
+        <div class="settings-text" style="flex:1">
+          <div class="settings-label">Google Gemini API Key</div>
+          <div class="settings-sub">Grátis em aistudio.google.com • 1500 msgs/dia</div>
+        </div>
+        <div id="gemini-status" style="font-size:11px;font-weight:600"></div>
+      </div>
+      <div style="width:100%;display:flex;gap:8px">
+        <input type="password" id="gemini-key-input"
+          placeholder="AIza..."
+          value="${localStorage.getItem('v_gemini_key')||'(chave padrão ativa ✅)'}"
+          style="flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--text);font-family:var(--font-body);outline:none"
+          oninput="document.getElementById('gemini-status').textContent=''"
+        />
+        <button onclick="saveGeminiKey()"
+          style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap">
+          Salvar
+        </button>
+      </div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.5">
+        1. Acesse <strong style="color:var(--green)">aistudio.google.com</strong><br>
+        2. Clique em <strong>Get API key → Create API key</strong><br>
+        3. Copie e cole acima — é 100% gratuito
       </div>
     </div>
-    <div class="settings-row" onclick="testCofreConnection()">
+    <div class="settings-row" onclick="testGeminiKey()">
       <div class="settings-icon">🧪</div>
       <div class="settings-text"><div class="settings-label">Testar conexão</div><div class="settings-sub">Verifica se a IA está respondendo</div></div>
       <div class="settings-arrow">›</div>
@@ -5916,9 +5945,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   st.id = 'coach-css-final';
   st.textContent = [
     /* Esconde bottom nav quando coach aberto */
-    '.coach-open #bottom-nav { display: none !important; }',
+    '.coach-open #bottom-nav { display: flex !important; }',
     /* Screen do coach ocupa toda a viewport disponível */
-    '.screen.active.coach-open-screen { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); position:fixed; top:0; left:0; right:0; bottom:0; z-index:50; }',
+    '.screen.active.coach-open-screen { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); position:absolute; top:0; left:0; right:0; bottom:0; z-index:10; }',
     '#coach-wrap { display:flex; flex-direction:column; flex:1; min-height:0; height:100%; }',
     /* Header */
     '.coach-header { flex-shrink:0; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); background:var(--surface); }',
@@ -6156,64 +6185,76 @@ function coachTTS(t) { coachSpeakResponse(typeof t==='string'?t:''); }
 function playAudioMsg(url) { if(url) new Audio(url).play().catch(function(){}); }
 
 // ── Gravação real com MediaRecorder ────────────────────────────
-function toggleCoachRec() { if(_coachRec.recording) stopCoachRecording(); else startCoachRecording(); }
+// ── Coach Voice — Web Speech API (transcrição em tempo real) ────
+var _speechRec = null;
+var _speechActive = false;
 
-async function startCoachRecording() {
-  if (_coachRec.recording) return;
+function toggleCoachRec() {
+  if (_speechActive) stopCoachRecording();
+  else startCoachRecording();
+}
+
+function startCoachRecording() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    toast('❌ Microfone não suportado neste navegador.', 'error', 3000);
+    return;
+  }
+  _speechRec = new SR();
+  var langMap = {pt:'pt-BR', en:'en-US', es:'es-ES', ru:'ru-RU'};
+  _speechRec.lang = langMap[APP.lang] || 'pt-BR';
+  _speechRec.interimResults = false;
+  _speechRec.maxAlternatives = 1;
+  _speechRec.continuous = false;
+  
+  _speechRec.onstart = function() {
+    _speechActive = true;
+    var btn = document.getElementById('coach-mic-btn');
+    if (btn) { btn.classList.add('recording'); btn.textContent = '⏹'; }
+    var ind = document.getElementById('rec-indicator');
+    if (ind) ind.classList.add('active');
+  };
+  _speechRec.onresult = function(event) {
+    var text = event.results[0][0].transcript;
+    if (text && text.trim().length > 0) {
+      var input = document.getElementById('coach-input');
+      if (input) input.value = text;
+      sendCoachMsg(text.trim());
+    }
+  };
+  _speechRec.onerror = function(event) {
+    console.warn('Speech error:', event.error);
+    if (event.error === 'not-allowed') {
+      toast('❌ Permissão do microfone negada. Ative nas configurações.', 'error', 4000);
+    } else if (event.error !== 'aborted') {
+      toast('🎤 Erro: ' + event.error + '. Tente novamente.', 'error', 3000);
+    }
+    stopCoachRecording();
+  };
+  _speechRec.onend = function() {
+    stopCoachRecording();
+  };
+  
   try {
-    var stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-    _coachRec.stream = stream;
-    _coachRec.chunks = [];
-    var mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
-      : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-    var recorder = new MediaRecorder(stream, { mimeType:mimeType });
-    _coachRec.recorder = recorder;
-    recorder.ondataavailable = function(e){ if(e.data&&e.data.size>0) _coachRec.chunks.push(e.data); };
-    recorder.onstop = function(){
-      var blob = new Blob(_coachRec.chunks, { type:mimeType });
-      _coachRec.chunks = [];
-      if (_coachRec.stream){ _coachRec.stream.getTracks().forEach(function(t){t.stop();}); _coachRec.stream=null; }
-      sendAudioToBackend(blob);
-    };
-    recorder.start(200);
-    _coachRec.recording = true;
-    var micBtn = document.getElementById('coach-mic-btn');
-    if (micBtn){ micBtn.classList.add('recording'); micBtn.textContent='⏹'; }
-    var recInd = document.getElementById('rec-indicator');
-    if (recInd) recInd.classList.add('active');
-    _coachRec.timer = setTimeout(function(){ if(_coachRec.recording) stopCoachRecording(); }, 60000);
+    _speechRec.start();
   } catch(e) {
-    if (typeof toast==='function') toast('❌ Microfone: '+(e.message||'sem permissão'),'error',3000);
+    toast('❌ Erro ao iniciar microfone: ' + e.message, 'error', 3000);
   }
 }
 
 function stopCoachRecording() {
-  if (!_coachRec.recording) return;
-  _coachRec.recording = false;
-  if (_coachRec.timer){ clearTimeout(_coachRec.timer); _coachRec.timer=null; }
-  if (_coachRec.recorder && _coachRec.recorder.state!=='inactive') _coachRec.recorder.stop();
-  var micBtn = document.getElementById('coach-mic-btn');
-  if (micBtn){ micBtn.classList.remove('recording'); micBtn.textContent='🎤'; }
-  var recInd = document.getElementById('rec-indicator');
-  if (recInd) recInd.classList.remove('active');
+  _speechActive = false;
+  if (_speechRec) { try { _speechRec.abort(); } catch(e) {} _speechRec = null; }
+  var btn = document.getElementById('coach-mic-btn');
+  if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤'; }
+  var ind = document.getElementById('rec-indicator');
+  if (ind) ind.classList.remove('active');
 }
 
-// ── sendAudioToBackend — transcrição via Web Speech API ─────────
 async function sendAudioToBackend(blob) {
-  var localUrl = URL.createObjectURL(blob);
-  var time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  var msgs = document.getElementById('coach-msgs');
-  if (msgs) {
-    var div = document.createElement('div');
-    div.className = 'msg-wrap user';
-    div.innerHTML = '<div class="msg-bubble"><div style="font-size:11px;opacity:.7;margin-bottom:4px">🎤 Áudio gravado</div><audio controls src="'+localUrl+'" style="max-width:200px;height:36px;border-radius:8px"></audio></div><div class="msg-time">'+time+'</div>';
-    msgs.appendChild(div);
-    scrollCoachToBottom();
-  }
-  appendBotMsg('💡 Use o botão 🎙️ do microfone para falar diretamente — a transcrição é instantânea!');
+  appendBotMsg('💡 Use o botão 🎤 para falar — a transcrição é instantânea!');
 }
-
-// ── Coach IA — Cloudflare Worker ────────────────────────────────
+}
 
 // ── buildSystemPrompt — personalizado por perfil ─────────────────
 function buildSystemPrompt() {
@@ -6268,10 +6309,10 @@ function buildSystemPrompt() {
   ].join('\n');
 }
 
+// ── coachGetAIResp ───────────────────────────────────────────────
 // ── COFRE CLOUDFLARE WORKER ─────────────────────────────────────
 var COACH_URL = 'https://vitalia-cofre.elicarlosiurd.workers.dev';
 
-// ── coachGetAIResp — via Cloudflare Worker (chave segura) ───────
 async function coachGetAIResp(msg) {
   var systemPrompt = buildSystemPrompt();
   try {
@@ -6280,17 +6321,15 @@ async function coachGetAIResp(msg) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({prompt: systemPrompt, mensagem: msg})
     });
-    if (!resp.ok) throw new Error('Cloudflare error');
+    if (!resp.ok) throw new Error('status ' + resp.status);
     var data = await resp.json();
     if (data.resposta) return data.resposta;
     throw new Error('empty');
   } catch(e) {
-    console.log('[VitalIA] Cloudflare indisponivel, usando fallback local');
+    console.log('[VitalIA] Cofre indisponivel, fallback local');
     return coachLocalFallback(msg);
   }
 }
-
-// ── coachLocalFallback — base de conhecimento rica ───────────────
 function coachLocalFallback(msg) {
   var m = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
@@ -6350,29 +6389,10 @@ function coachLocalFallback(msg) {
 window.sendCoach = sendCoachMsg;
 window.getNutriCoachResponse = coachGetAIResp;
 
-// ── testCofreConnection — testa o cofre Cloudflare ──────────────
-async function testCofreConnection() {
-  toast('🔄 Testando conexão...', 'info');
-  try {
-    var r = await fetch(COACH_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({prompt: 'Responda apenas: OK', mensagem: 'teste'})
-    });
-    if (!r.ok) throw new Error('status ' + r.status);
-    var d = await r.json();
-    if (d.resposta) toast('✅ Cofre conectado! IA respondendo.', 'success');
-    else throw new Error('empty');
-  } catch(e) {
-    toast('❌ Cofre indisponível: ' + e.message, 'error');
-  }
-}
-window.testCofreConnection = testCofreConnection;
-
 
 // ── updateLoginLang ─────────────────────────────────────────────
 function updateLoginLang() {
-  // lang-pill (login) + lang-option (settings)
+  // Update lang-pill and lang-option visual state
   document.querySelectorAll('.lang-pill').forEach(function(el) {
     el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
@@ -6382,6 +6402,11 @@ function updateLoginLang() {
   document.querySelectorAll('#login-lang-grid .lang-option').forEach(function(el) {
     el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
+  // Re-render current screen + nav in new language
+  if (APP.tab && APP.loggedIn) {
+    renderNav();
+    navigate(APP.tab);
+  }
 }
 
 // ── initFireflies — Vagalumes verdes animados ───────────────────
