@@ -218,18 +218,18 @@ a{text-decoration:none;color:inherit}
 ═══════════════════════════════════════ */
 #auth-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:none;flex-direction:column;overflow-y:auto}
 #auth-screen.active{display:flex}
-.auth-bg{background:radial-gradient(ellipse at top,rgba(34,197,94,.15) 0%,transparent 60%),var(--bg);min-height:100dvh;padding:10px 16px 12px;display:flex;flex-direction:column;box-sizing:border-box}
-.auth-logo-wrap{text-align:center;margin-bottom:6px}
-.auth-logo{font-size:28px;margin-bottom:2px}
-.auth-logo-name{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--green);font-style:italic}
-.auth-card{background:rgba(22,27,34,.9);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;backdrop-filter:blur(20px)}
-.auth-title{font-family:var(--font-serif);font-size:18px;font-weight:700;margin-bottom:2px}
-.auth-sub{font-size:12px;color:var(--text2);margin-bottom:10px}
-.social-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:13px;font-weight:500;width:100%;margin-bottom:8px;transition:all var(--transition)}
+.auth-bg{background:radial-gradient(ellipse at top,rgba(34,197,94,.15) 0%,transparent 60%),var(--bg);min-height:100dvh;padding:16px 16px 20px;display:flex;flex-direction:column;box-sizing:border-box}
+.auth-logo-wrap{text-align:center;margin-bottom:12px}
+.auth-logo{font-size:36px;margin-bottom:4px}
+.auth-logo-name{font-family:var(--font-serif);font-size:28px;font-weight:700;color:var(--green);font-style:italic}
+.auth-card{background:rgba(22,27,34,.9);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;backdrop-filter:blur(20px)}
+.auth-title{font-family:var(--font-serif);font-size:22px;font-weight:700;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:14px}
+.social-btn{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--radius-sm);border:1.5px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:14px;font-weight:500;width:100%;margin-bottom:10px;transition:all var(--transition)}
 .social-btn:active{border-color:var(--green)}
-.divider{display:flex;align-items:center;gap:12px;margin:10px 0}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0}
 .divider-line{flex:1;height:1px;background:var(--border)}
-.divider-text{font-size:11px;color:var(--text3)}
+.divider-text{font-size:12px;color:var(--text3)}
 .auth-link{color:var(--green);font-weight:600;cursor:pointer}
 .auth-link:hover{text-decoration:underline}
 .step-indicator{display:flex;gap:6px;justify-content:center;margin-bottom:24px}
@@ -541,8 +541,8 @@ a{text-decoration:none;color:inherit}
 .tg-login-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;border-radius:var(--radius-sm);border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.06));cursor:pointer;font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-body);margin-bottom:10px;transition:all .25s;animation:greenPulse 3s ease-in-out infinite;-webkit-tap-highlight-color:transparent;}
 .nav-item:last-child .nav-icon{color:#22c55e!important;font-size:22px!important;letter-spacing:4px!important;font-weight:900!important;}
 .filter-chip.active{background:var(--green)!important;color:#000!important;border-color:var(--green)!important;font-weight:700!important;}
-#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
-#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
+#quagga-viewport{height:260px;max-height:260px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
+#quagga-viewport video,#quagga-viewport canvas{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;object-fit:cover!important;}
 
 
 
@@ -575,23 +575,22 @@ a{text-decoration:none;color:inherit}
   width:100%; min-height:100dvh;
   overflow-y:auto; overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
-  padding:12px 16px 10px;
+  padding:20px 20px 24px;
   box-sizing:border-box;
-  display:flex; flex-direction:column; justify-content:center;
 }
 /* Logo premium */
 .auth-logo-premium {
-  text-align:center; margin-bottom:8px;
+  text-align:center; margin-bottom:14px;
 }
-.auth-logo-premium .leaf { font-size:34px; display:block; line-height:1; margin-bottom:2px; filter:drop-shadow(0 0 12px rgba(34,197,94,.5)); }
-.auth-logo-premium .brand { font-family:var(--font-serif); font-size:24px; font-weight:700; color:var(--green); font-style:italic; text-shadow:0 0 20px rgba(34,197,94,.4); }
-.auth-logo-premium .tagline { font-size:11px; color:rgba(34,197,94,.7); letter-spacing:.5px; }
+.auth-logo-premium .leaf { font-size:32px; display:block; line-height:1; margin-bottom:2px; filter:drop-shadow(0 0 12px rgba(34,197,94,.5)); }
+.auth-logo-premium .brand { font-family:var(--font-serif); font-size:22px; font-weight:700; color:var(--green); font-style:italic; text-shadow:0 0 20px rgba(34,197,94,.4); }
+.auth-logo-premium .tagline { font-size:12px; color:rgba(34,197,94,.7); letter-spacing:.5px; }
 /* Card premium */
 .auth-card-premium {
   background:rgba(13,17,23,.92);
   border:1px solid rgba(34,197,94,.25);
   border-radius:20px;
-  padding:14px 16px;
+  padding:18px 18px;
   max-width:440px;
   width:100%;
   margin:0 auto;
@@ -601,13 +600,13 @@ a{text-decoration:none;color:inherit}
 }
 /* Social premium btn — full width, icon + text + arrow */
 .social-premium-btn {
-  display:flex; align-items:center; gap:10px;
-  padding:11px 14px;
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px;
   border-radius:12px;
   border:1.5px solid rgba(34,197,94,.35);
   background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
-  cursor:pointer; width:100%; margin-bottom:8px;
-  color:var(--text); font-size:13px; font-weight:600;
+  cursor:pointer; width:100%; margin-bottom:10px;
+  color:var(--text); font-size:14px; font-weight:600;
   font-family:var(--font-body);
   transition:all .2s;
   -webkit-tap-highlight-color:transparent;
@@ -627,9 +626,9 @@ a{text-decoration:none;color:inherit}
   box-shadow:0 0 16px rgba(34,197,94,.25);
   transform:scale(.98);
 }
-.social-premium-btn .sp-icon { flex-shrink:0; width:20px; height:20px; }
+.social-premium-btn .sp-icon { flex-shrink:0; width:22px; height:22px; }
 .social-premium-btn .sp-label { flex:1; text-align:center; }
-.social-premium-btn .sp-arrow { flex-shrink:0; font-size:13px; color:rgba(34,197,94,.8); font-weight:700; }
+.social-premium-btn .sp-arrow { flex-shrink:0; font-size:14px; color:rgba(34,197,94,.8); font-weight:700; }
 /* Language pills premium */
 .lang-pill-wrap {
   display:grid;
@@ -681,7 +680,7 @@ a{text-decoration:none;color:inherit}
 
 /* Back button on secondary screens */
 .screen-header { display:flex; align-items:center; }
-.back-btn-inline { background:transparent; border:none; font-size:22px; color:var(--text); cursor:pointer; padding:0 8px 0 0; line-height:1; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
+.back-btn-inline { background:transparent; border:none; font-size:16px; color:var(--green); cursor:pointer; padding:8px 14px 8px 4px; line-height:1; flex-shrink:0; -webkit-tap-highlight-color:transparent; display:flex; align-items:center; gap:4px; font-family:var(--font-body); font-weight:600; }
 .back-btn-inline:active { opacity:.6; }
 </style>
 </head>
@@ -2633,7 +2632,7 @@ window.renderLogin=function(){
     <div class="auth-scroll">
 
       <!-- Logo Premium -->
-      <div class="auth-logo-premium" style="margin-bottom:8px">
+      <div class="auth-logo-premium" style="margin-bottom:14px">
         <span class="leaf">🌿</span>
         <div class="brand">VitalIA</div>
         <div class="tagline">Saúde com Inteligência</div>
@@ -2641,12 +2640,12 @@ window.renderLogin=function(){
 
       <!-- Card Premium -->
       <div class="auth-card-premium">
-        <h2 style="font-family:var(--font-serif);font-size:18px;font-weight:700;text-align:center;margin:0 0 2px;color:var(--text)">Acessar sua conta</h2>
-        <p style="text-align:center;font-size:12px;color:var(--green);margin:0 0 12px">Que bom ter você de volta 👋</p>
+        <h2 style="font-family:var(--font-serif);font-size:17px;font-weight:700;text-align:center;margin:0 0 2px;color:var(--text)">Acessar sua conta</h2>
+        <p style="text-align:center;font-size:11px;color:var(--green);margin:0 0 10px">Que bom ter você de volta 👋</p>
 
         <!-- E-mail -->
-        <div class="input-wrap" style="margin-bottom:8px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:12px">Seu e-mail</label>
+        <div class="input-wrap" style="margin-bottom:12px">
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:13px">Seu e-mail</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">📧</span>
             <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite seu e-mail" autocomplete="email">
@@ -2654,36 +2653,36 @@ window.renderLogin=function(){
         </div>
 
         <!-- Senha -->
-        <div class="input-wrap" style="margin-bottom:6px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:12px">Sua senha</label>
+        <div class="input-wrap" style="margin-bottom:8px">
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:13px">Sua senha</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">🔒</span>
             <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite sua senha" onkeydown="if(event.key===\'Enter\')doLogin()">
           </div>
-          <div style="font-size:11px;color:rgba(34,197,94,.5);margin-top:3px">Mínimo de 8 caracteres</div>
+          <div style="font-size:10px;color:rgba(34,197,94,.5);margin-top:1px">Mínimo de 8 caracteres</div>
         </div>
 
         <!-- Lembrar + Esqueci -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
             <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:15px;height:15px"> <span style="color:var(--green)">Manter conectado</span>
           </label>
-          <span class="auth-link" onclick="forgotPassword()" style="font-size:13px">🔗 Esqueceu a senha?</span>
+          <span class="auth-link" onclick="forgotPassword()" style="font-size:11px">🔗 Esqueceu a senha?</span>
         </div>
 
         <!-- Botão principal -->
-        <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:12px;font-size:15px;font-weight:700;margin-bottom:6px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
+        <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:11px;font-size:14px;font-weight:700;margin-bottom:4px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
           🟢 Acessar minha conta
         </button>
-        <div style="text-align:center;font-size:11px;color:var(--text3);margin-bottom:12px">🔒 Acesso rápido, simples e seguro</div>
+        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:6px">🔒 Acesso rápido, simples e seguro</div>
 
         <!-- Biometria -->
-        <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:8px;padding:10px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
+        <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:6px;padding:9px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
           🔒 Entrar com Biometria ou PIN
         </button>
 
         <!-- Divisor -->
-        <div class="divider" style="margin-bottom:8px">
+        <div class="divider" style="margin-bottom:6px">
           <div class="divider-line"></div>
           <div class="divider-text" style="font-size:11px;color:rgba(34,197,94,.7);text-shadow:0 0 8px rgba(34,197,94,.3);font-weight:600">ou acesse com</div>
           <div class="divider-line"></div>
@@ -2705,20 +2704,20 @@ window.renderLogin=function(){
           <span class="sp-label">Acessar com Apple ID</span>
           <span class="sp-arrow">→</span>
         </button>
-        <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:8px">
+        <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:6px">
           <svg class="sp-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           <span class="sp-label">Acessar com Facebook</span>
           <span class="sp-arrow">→</span>
         </button>
 
         <!-- Criar conta -->
-        <p style="text-align:center;font-size:12px;color:var(--text2);margin:0 0 10px">
+        <p style="text-align:center;font-size:13px;color:var(--text2);margin:0 0 16px">
           <span style="color:var(--green)">Não tem conta?</span> <span class="auth-link" style="font-weight:700" onclick="APP.authStep=\'register\';renderAuth()">Criar conta grátis →</span>
         </p>
 
         <!-- Idioma — 4 pills em linha com vagalume -->
-        <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:8px">
-          <div style="text-align:center;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">✦ IDIOMA ✦</div>
+        <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:12px">
+          <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">✦ IDIOMA ✦</div>
           <div class="lang-pill-wrap">
             <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';save(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
             <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';save(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
@@ -2729,7 +2728,7 @@ window.renderLogin=function(){
       </div>
 
       <!-- Rodapé segurança -->
-      <div style="text-align:center;padding:8px 0 4px;display:flex;align-items:center;justify-content:center;gap:16px">
+      <div style="text-align:center;padding:6px 0 2px;display:flex;align-items:center;justify-content:center;gap:16px">
         <span style="font-size:10px;color:var(--text3)">🔒 SSL 256-bit</span>
         <span style="font-size:10px;color:var(--text3)">🌿 LGPD</span>
         <span style="font-size:10px;color:var(--text3)">✅ Dados protegidos</span>
@@ -3216,7 +3215,7 @@ function injectBackBtn(screen) {
   if (header.querySelector('.back-btn-inline')) return;
   var btn = document.createElement('button');
   btn.className = 'back-btn-inline';
-  btn.innerHTML = '←';
+  var _bl={pt:'Voltar',en:'Back',es:'Volver',ru:'Назад'}; btn.innerHTML = '← ' + (_bl[APP.lang]||'Voltar');
   btn.onclick = function() { goBack(); };
   btn.style.cssText = [
     'background:transparent',
@@ -3812,7 +3811,7 @@ function renderScanner() {
     <!-- MODO: CÂMERA AO VIVO (QuaggaJS) -->
     ${SCAN.mode==='live'?`
     <div id="scanner-live-wrap" style="border-radius:var(--radius-lg);overflow:hidden;background:#000;position:relative;margin-bottom:10px">
-      <div id="quagga-viewport" style="width:100%;min-height:220px;position:relative"></div>
+      <div id="quagga-viewport" style="width:100%;height:260px;max-height:260px;position:relative"></div>
       <div id="scan-laser" style="position:absolute;left:10%;right:10%;top:50%;height:2px;background:rgba(34,197,94,.9);box-shadow:0 0 8px #22c55e;animation:scanLine 2s ease-in-out infinite;pointer-events:none"></div>
       <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:4px 12px;border-radius:99px">Aponte para o código de barras</div>
     </div>
@@ -3945,9 +3944,6 @@ window.setScanMode = function(mode) {
 
 // ── MODO 1: Câmera ao vivo com QuaggaJS ──
 window.startLiveScanner = async function() {
-  // Stop any previous instance first
-  if (typeof window.stopLiveScanner === 'function') window.stopLiveScanner();
-  
   // No mobile browser (não app nativo), câmera ao vivo tem restrições HTTPS
   // Verifica se é HTTPS ou localhost
   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
@@ -4056,16 +4052,24 @@ window.startLiveScanner = async function() {
 };
 
 window.stopLiveScanner = function() {
-  if (SCAN.quaggaRunning && typeof Quagga !== 'undefined') {
+  if (typeof Quagga !== 'undefined') {
     try { Quagga.stop(); } catch(e) {}
-    SCAN.quaggaRunning = false;
+    try { Quagga.offDetected(); } catch(e) {}
   }
-  // Also stop any media streams
-  const viewport = document.getElementById('quagga-viewport');
+  SCAN.quaggaRunning = false;
+  var viewport = document.getElementById('quagga-viewport');
   if (viewport) {
-    const videos = viewport.querySelectorAll('video');
-    videos.forEach(v => { try { v.srcObject?.getTracks().forEach(t => t.stop()); } catch(e) {} });
+    viewport.querySelectorAll('video').forEach(function(v) {
+      try { if(v.srcObject) { v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject=null; } v.remove(); } catch(e){}
+    });
+    viewport.querySelectorAll('canvas').forEach(function(cv) { cv.remove(); });
+    viewport.innerHTML = '';
   }
+  document.querySelectorAll('video').forEach(function(v) {
+    try { if(v.srcObject) { v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject=null; } } catch(e){}
+  });
+  var s = document.getElementById('scan-live-status');
+  if (s) s.textContent = '📷 Câmera desligada';
 };
 
 // ── MODO 2: Leitura de foto com ZXing ─────
@@ -4501,7 +4505,7 @@ function renderSettings() {
   <!-- Language -->
   <div class="section-title">Idioma</div>
   <div class="lang-options" style="padding:0 16px;margin-bottom:12px;gap:8px;display:grid;grid-template-columns:1fr 1fr">
-    ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';localStorage.setItem('v_lang','${l.code}');navigate('settings')"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
+    ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';localStorage.setItem('v_lang','${l.code}');renderNav();navigate('settings')"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
   </div>
 
   <!-- Appearance -->
@@ -4572,8 +4576,8 @@ function renderSettings() {
       <div style="display:flex;align-items:center;gap:10px;width:100%">
         <div class="settings-icon">🔑</div>
         <div class="settings-text" style="flex:1">
-          <div class="settings-label">Cofre Cloudflare</div>
-          <div class="settings-sub" style="color:var(--green)">✅ Servidor seguro ativo</div>
+          <div class="settings-label">Google Gemini API Key</div>
+          <div class="settings-sub">Grátis em aistudio.google.com • 1500 msgs/dia</div>
         </div>
         <div id="gemini-status" style="font-size:11px;font-weight:600"></div>
       </div>
@@ -6180,60 +6184,51 @@ function coachTTS(t) { coachSpeakResponse(typeof t==='string'?t:''); }
 function playAudioMsg(url) { if(url) new Audio(url).play().catch(function(){}); }
 
 // ── Gravação real com MediaRecorder ────────────────────────────
-// ── Coach Voice — Web Speech API (transcrição em tempo real) ────
-var _speechRec = null;
-var _speechActive = false;
+function toggleCoachRec() { if(_coachRec.recording) stopCoachRecording(); else startCoachRecording(); }
 
-function toggleCoachRec() {
-  if (_speechActive) stopCoachRecording();
-  else startCoachRecording();
-}
-
-function startCoachRecording() {
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('❌ Microfone não suportado neste navegador.', 'error', 3000); return; }
-  _speechRec = new SR();
-  var langMap = {pt:'pt-BR', en:'en-US', es:'es-ES', ru:'ru-RU'};
-  _speechRec.lang = langMap[APP.lang] || 'pt-BR';
-  _speechRec.interimResults = false;
-  _speechRec.maxAlternatives = 1;
-  _speechRec.continuous = false;
-  _speechRec.onstart = function() {
-    _speechActive = true;
-    var btn = document.getElementById('coach-mic-btn');
-    if (btn) { btn.classList.add('recording'); btn.textContent = '⏹'; }
-    var ind = document.getElementById('rec-indicator');
-    if (ind) ind.classList.add('active');
-  };
-  _speechRec.onresult = function(event) {
-    var text = event.results[0][0].transcript;
-    if (text && text.trim().length > 0) {
-      var input = document.getElementById('coach-input');
-      if (input) input.value = text;
-      sendCoachMsg(text.trim());
-    }
-  };
-  _speechRec.onerror = function(event) {
-    if (event.error === 'not-allowed') toast('❌ Permissão do microfone negada.', 'error', 4000);
-    else if (event.error !== 'aborted') toast('🎤 Erro: ' + event.error, 'error', 3000);
-    stopCoachRecording();
-  };
-  _speechRec.onend = function() { stopCoachRecording(); };
-  try { _speechRec.start(); } catch(e) { toast('❌ Erro microfone: ' + e.message, 'error', 3000); }
+async function startCoachRecording() {
+  if (_coachRec.recording) return;
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+    _coachRec.stream = stream;
+    _coachRec.chunks = [];
+    var mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+      : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
+    var recorder = new MediaRecorder(stream, { mimeType:mimeType });
+    _coachRec.recorder = recorder;
+    recorder.ondataavailable = function(e){ if(e.data&&e.data.size>0) _coachRec.chunks.push(e.data); };
+    recorder.onstop = function(){
+      var blob = new Blob(_coachRec.chunks, { type:mimeType });
+      _coachRec.chunks = [];
+      if (_coachRec.stream){ _coachRec.stream.getTracks().forEach(function(t){t.stop();}); _coachRec.stream=null; }
+      sendAudioToBackend(blob);
+    };
+    recorder.start(200);
+    _coachRec.recording = true;
+    var micBtn = document.getElementById('coach-mic-btn');
+    if (micBtn){ micBtn.classList.add('recording'); micBtn.textContent='⏹'; }
+    var recInd = document.getElementById('rec-indicator');
+    if (recInd) recInd.classList.add('active');
+    _coachRec.timer = setTimeout(function(){ if(_coachRec.recording) stopCoachRecording(); }, 60000);
+  } catch(e) {
+    if (typeof toast==='function') toast('❌ Microfone: '+(e.message||'sem permissão'),'error',3000);
+  }
 }
 
 function stopCoachRecording() {
-  _speechActive = false;
-  if (_speechRec) { try { _speechRec.abort(); } catch(e) {} _speechRec = null; }
-  var btn = document.getElementById('coach-mic-btn');
-  if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤'; }
-  var ind = document.getElementById('rec-indicator');
-  if (ind) ind.classList.remove('active');
+  if (!_coachRec.recording) return;
+  _coachRec.recording = false;
+  if (_coachRec.timer){ clearTimeout(_coachRec.timer); _coachRec.timer=null; }
+  if (_coachRec.recorder && _coachRec.recorder.state!=='inactive') _coachRec.recorder.stop();
+  var micBtn = document.getElementById('coach-mic-btn');
+  if (micBtn){ micBtn.classList.remove('recording'); micBtn.textContent='🎤'; }
+  var recInd = document.getElementById('rec-indicator');
+  if (recInd) recInd.classList.remove('active');
 }
 
-// ── sendAudioToBackend — compatibilidade ────────────────────────
+// ── sendAudioToBackend — Groq Whisper + resposta em áudio ───────
 async function sendAudioToBackend(blob) {
-  appendBotMsg('💡 Use o botão 🎤 do microfone para falar — transcrição instantânea!');
+  appendBotMsg('💡 Use o botão 🎤 para falar — transcrição instantânea via Web Speech API!');
 }
 
 // ── buildSystemPrompt — personalizado por perfil ─────────────────
@@ -6306,7 +6301,6 @@ async function coachGetAIResp(msg) {
     if (data.resposta) return data.resposta;
     throw new Error('empty');
   } catch(e) {
-    console.log('[VitalIA] Cofre indisponivel, fallback local');
     return coachLocalFallback(msg);
   }
 }
@@ -6382,15 +6376,8 @@ function updateLoginLang() {
   document.querySelectorAll('#login-lang-grid .lang-option').forEach(function(el) {
     el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
-  // Re-render login screen in new language
-  if (APP.authStep && !APP.session) {
-    renderAuth();
-  }
-  // Re-render app in new language if logged in
-  if (APP.session && APP.tab) {
-    renderNav();
-    navigate(APP.tab);
-  }
+  if (APP.authStep && !APP.session) renderAuth();
+  if (APP.session && APP.tab) { renderNav(); navigate(APP.tab); }
 }
 
 // ── initFireflies — Vagalumes verdes animados ───────────────────
@@ -6457,6 +6444,37 @@ function initFireflies() {
   cancelAnimationFrame(raf);
   draw();
 }
+
+
+
+// ── Hide bottom nav when virtual keyboard opens ─────────────────
+(function() {
+  var nav = document.getElementById('bottom-nav');
+  if (!nav) return;
+  var baseH = window.innerHeight;
+  
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', function() {
+      var diff = baseH - window.visualViewport.height;
+      nav.style.display = (diff > 120) ? 'none' : '';
+    });
+  } else {
+    window.addEventListener('resize', function() {
+      var diff = baseH - window.innerHeight;
+      if (diff > 120) nav.style.display = 'none';
+      else nav.style.display = '';
+    });
+  }
+  
+  document.addEventListener('focusin', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      setTimeout(function() { nav.style.display = 'none'; }, 300);
+    }
+  });
+  document.addEventListener('focusout', function() {
+    setTimeout(function() { nav.style.display = ''; }, 300);
+  });
+})();
 
 console.log('[VitalIA] Coach IA v10.0 — Elite Nutri + TTS + Voltar + Prompt Avançado ✅');
 
