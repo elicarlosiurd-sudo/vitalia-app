@@ -965,6 +965,7 @@ const LANG = {
     achievements:'Conquistas',shopping:'Compras',settings:'Configurações',
     save:'Salvar',cancel:'Cancelar',back:'← Voltar',
     login:'Entrar',register:'Criar conta',email:'Email',password:'Senha',
+    login_title:'Acessar sua conta',login_welcome:'Que bom ter você de volta 👋',login_email_label:'Seu e-mail',login_pass_label:'Sua senha',login_min_chars:'Mínimo de 8 caracteres',login_btn:'🟢 Acessar minha conta',login_secure:'🔒 Acesso rápido, simples e seguro',login_biometric:'🔒 Entrar com Biometria ou PIN',login_or:'ou acesse com',login_telegram:'Acessar com Telegram',login_google:'Acessar com Google',login_apple:'Acessar com Apple ID',login_facebook:'Acessar com Facebook',login_no_account:'Não tem conta?',login_create:'Criar conta grátis →',login_lang:'✦ IDIOMA ✦',
     name:'Nome completo',remember:'Lembrar de mim',forgot:'Esqueci minha senha',
     or_continue:'ou continue com',
     step:'Passo',of:'de',
@@ -1006,6 +1007,7 @@ const LANG = {
     achievements:'Achievements',shopping:'Shopping',settings:'Settings',
     save:'Save',cancel:'Cancel',back:'← Back',
     login:'Sign In',register:'Create account',email:'Email',password:'Password',
+    login_title:'Sign in to your account',login_welcome:'Welcome back 👋',login_email_label:'Your email',login_pass_label:'Your password',login_min_chars:'Minimum 8 characters',login_btn:'🟢 Access my account',login_secure:'🔒 Fast, simple and secure',login_biometric:'🔒 Sign in with Biometrics or PIN',login_or:'or sign in with',login_telegram:'Sign in with Telegram',login_google:'Sign in with Google',login_apple:'Sign in with Apple ID',login_facebook:'Sign in with Facebook',login_no_account:'No account?',login_create:'Create free account →',login_lang:'✦ LANGUAGE ✦',
     name:'Full name',remember:'Remember me',forgot:'Forgot password',
     or_continue:'or continue with',
     step:'Step',of:'of',
@@ -1048,6 +1050,7 @@ const LANG = {
     achievements:'Logros',shopping:'Compras',settings:'Configuración',
     save:'Guardar',cancel:'Cancelar',back:'← Volver',
     login:'Iniciar sesión',register:'Crear cuenta',email:'Email',password:'Contraseña',
+    login_title:'Acceder a tu cuenta',login_welcome:'Qué bueno verte de vuelta 👋',login_email_label:'Tu email',login_pass_label:'Tu contraseña',login_min_chars:'Mínimo 8 caracteres',login_btn:'🟢 Acceder a mi cuenta',login_secure:'🔒 Acceso rápido, simple y seguro',login_biometric:'🔒 Entrar con Biometría o PIN',login_or:'o accede con',login_telegram:'Acceder con Telegram',login_google:'Acceder con Google',login_apple:'Acceder con Apple ID',login_facebook:'Acceder con Facebook',login_no_account:'¿No tienes cuenta?',login_create:'Crear cuenta gratis →',login_lang:'✦ IDIOMA ✦',
     name:'Nombre completo',remember:'Recordarme',forgot:'Olvidé mi contraseña',
     or_continue:'o continúa con',
     step:'Paso',of:'de',
@@ -1089,6 +1092,7 @@ const LANG = {
     achievements:'Достижения',shopping:'Покупки',settings:'Настройки',
     save:'Сохранить',cancel:'Отмена',back:'← Назад',
     login:'Войти',register:'Создать аккаунт',email:'Email',password:'Пароль',
+    login_title:'Войти в аккаунт',login_welcome:'Рады видеть вас снова 👋',login_email_label:'Ваш email',login_pass_label:'Ваш пароль',login_min_chars:'Минимум 8 символов',login_btn:'🟢 Войти в аккаунт',login_secure:'🔒 Быстро, просто и безопасно',login_biometric:'🔒 Войти по биометрии или PIN',login_or:'или войдите через',login_telegram:'Войти через Telegram',login_google:'Войти через Google',login_apple:'Войти через Apple ID',login_facebook:'Войти через Facebook',login_no_account:'Нет аккаунта?',login_create:'Создать бесплатно →',login_lang:'✦ ЯЗЫК ✦',
     name:'Полное имя',remember:'Запомнить меня',forgot:'Забыли пароль',
     or_continue:'или войдите через',
     step:'Шаг',of:'из',
@@ -2643,12 +2647,12 @@ window.renderLogin=function(){
 
       <!-- Card Premium -->
       <div class="auth-card-premium">
-        <h2 style="font-family:var(--font-serif);font-size:17px;font-weight:700;text-align:center;margin:0 0 1px;color:var(--text)">Acessar sua conta</h2>
-        <p style="text-align:center;font-size:11px;color:var(--green);margin:0 0 8px">Que bom ter você de volta 👋</p>
+        <h2 style="font-family:var(--font-serif);font-size:17px;font-weight:700;text-align:center;margin:0 0 1px;color:var(--text)">${t('login_title')}</h2>
+        <p style="text-align:center;font-size:11px;color:var(--green);margin:0 0 8px">${t('login_welcome')}</p>
 
         <!-- E-mail -->
         <div class="input-wrap" style="margin-bottom:5px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">Seu e-mail</label>
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_email_label')}</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">📧</span>
             <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite seu e-mail" autocomplete="email">
@@ -2657,70 +2661,70 @@ window.renderLogin=function(){
 
         <!-- Senha -->
         <div class="input-wrap" style="margin-bottom:4px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">Sua senha</label>
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_pass_label')}</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">🔒</span>
             <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite sua senha" onkeydown="if(event.key===\'Enter\')doLogin()">
           </div>
-          <div style="font-size:9px;color:rgba(34,197,94,.5);margin-top:1px">Mínimo de 8 caracteres</div>
+          <div style="font-size:9px;color:rgba(34,197,94,.5);margin-top:1px">${t('login_min_chars')}</div>
         </div>
 
         <!-- Lembrar + Esqueci -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:15px;height:15px"> <span style="color:var(--green)">Manter conectado</span>
+            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:15px;height:15px"> <span style="color:var(--green)">${t('remember')}</span>
           </label>
-          <span class="auth-link" onclick="forgotPassword()" style="font-size:13px">🔗 Esqueceu a senha?</span>
+          <span class="auth-link" onclick="forgotPassword()" style="font-size:13px">${'🔗 '+t('forgot')+'?'}</span>
         </div>
 
         <!-- Botão principal -->
         <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:10px;font-size:14px;font-weight:700;margin-bottom:4px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
-          🟢 Acessar minha conta
+          ${t('login_btn')}
         </button>
-        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:4px">🔒 Acesso rápido, simples e seguro</div>
+        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:4px">${t('login_secure')}</div>
 
         <!-- Biometria -->
         <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:4px;padding:8px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
-          🔒 Entrar com Biometria ou PIN
+          ${t('login_biometric')}
         </button>
 
         <!-- Divisor -->
         <div class="divider" style="margin-bottom:4px">
           <div class="divider-line"></div>
-          <div class="divider-text" style="font-size:11px;color:rgba(34,197,94,.7);text-shadow:0 0 8px rgba(34,197,94,.3);font-weight:600">ou acesse com</div>
+          <div class="divider-text" style="font-size:11px;color:rgba(34,197,94,.7);text-shadow:0 0 8px rgba(34,197,94,.3);font-weight:600">${t('login_or')}</div>
           <div class="divider-line"></div>
         </div>
 
         <!-- Botões Sociais — Full width premium -->
         <button onclick="telegramLogin()" class="social-premium-btn">
           <svg class="sp-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.267l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.983.292z" fill="#229ED9"/></svg>
-          <span class="sp-label">Acessar com Telegram</span>
+          <span class="sp-label">${t('login_telegram')}</span>
           <span class="sp-arrow">→</span>
         </button>
         <button onclick="socialLogin(\'Google\')" class="social-premium-btn">
           <svg class="sp-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          <span class="sp-label">Acessar com Google</span>
+          <span class="sp-label">${t('login_google')}</span>
           <span class="sp-arrow">→</span>
         </button>
         <button onclick="socialLogin(\'Apple\')" class="social-premium-btn">
           <svg class="sp-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          <span class="sp-label">Acessar com Apple ID</span>
+          <span class="sp-label">${t('login_apple')}</span>
           <span class="sp-arrow">→</span>
         </button>
         <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:5px">
           <svg class="sp-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          <span class="sp-label">Acessar com Facebook</span>
+          <span class="sp-label">${t('login_facebook')}</span>
           <span class="sp-arrow">→</span>
         </button>
 
         <!-- Criar conta -->
         <p style="text-align:center;font-size:11px;color:var(--text2);margin:0 0 6px">
-          <span style="color:var(--green)">Não tem conta?</span> <span class="auth-link" style="font-weight:700" onclick="APP.authStep=\'register\';renderAuth()">Criar conta grátis →</span>
+          <span style="color:var(--green)">${t('login_no_account')}</span> <span class="auth-link" style="font-weight:700" onclick="APP.authStep=\'register\';renderAuth()">${t('login_create')}</span>
         </p>
 
         <!-- Idioma — 4 pills em linha com vagalume -->
         <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:4px">
-          <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">✦ IDIOMA ✦</div>
+          <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">${t('login_lang')}</div>
           <div class="lang-pill-wrap">
             <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';save(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
             <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';save(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
@@ -6179,7 +6183,7 @@ function escapeHtml(s) {
 function coachTTS(t) { coachSpeakResponse(typeof t==='string'?t:''); }
 function playAudioMsg(url) { if(url) new Audio(url).play().catch(function(){}); }
 
-// ── Gravação real com MediaRecorder ────────────────────────────
+// ── Coach Voice — SpeechRecognition ────────────────────────────
 function toggleCoachRec() {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { toast('Microfone nao suportado.', 'error', 3000); return; }
