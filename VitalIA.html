@@ -541,8 +541,8 @@ a{text-decoration:none;color:inherit}
 .tg-login-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;border-radius:var(--radius-sm);border:1.5px solid rgba(34,197,94,.5);background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(22,163,74,.06));cursor:pointer;font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-body);margin-bottom:10px;transition:all .25s;animation:greenPulse 3s ease-in-out infinite;-webkit-tap-highlight-color:transparent;}
 .nav-item:last-child .nav-icon{color:#22c55e!important;font-size:22px!important;letter-spacing:4px!important;font-weight:900!important;}
 .filter-chip.active{background:var(--green)!important;color:#000!important;border-color:var(--green)!important;font-weight:700!important;}
-#quagga-viewport{min-height:240px;background:#000;border-radius:12px;overflow:hidden;}
-#quagga-viewport video{width:100%!important;height:100%!important;object-fit:cover!important;}
+#quagga-viewport{height:250px;max-height:250px;background:#000;border-radius:12px;overflow:hidden;position:relative;}
+#quagga-viewport video,#quagga-viewport canvas{position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;object-fit:cover!important;}
 
 
 
@@ -572,25 +572,25 @@ a{text-decoration:none;color:inherit}
 /* Login scroll container */
 .auth-scroll {
   position:relative; z-index:1;
-  width:100%; height:100dvh;
+  width:100%; height:100dvh; max-height:100dvh;
   overflow:hidden;
-  padding:6px 16px 4px;
+  padding:4px 16px 2px;
   box-sizing:border-box;
   display:flex; flex-direction:column; justify-content:center;
 }
 /* Logo premium */
 .auth-logo-premium {
-  text-align:center; margin-bottom:14px;
+  text-align:center; margin-bottom:2px;
 }
-.auth-logo-premium .leaf { font-size:28px; display:block; line-height:1; margin-bottom:1px; filter:drop-shadow(0 0 12px rgba(34,197,94,.5)); }
-.auth-logo-premium .brand { font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--green); font-style:italic; text-shadow:0 0 20px rgba(34,197,94,.4); }
-.auth-logo-premium .tagline { font-size:10px; color:rgba(34,197,94,.7); letter-spacing:.5px; }
+.auth-logo-premium .leaf { font-size:26px; display:block; line-height:1; margin-bottom:0px; filter:drop-shadow(0 0 12px rgba(34,197,94,.5)); }
+.auth-logo-premium .brand { font-family:var(--font-serif); font-size:18px; font-weight:700; color:var(--green); font-style:italic; text-shadow:0 0 20px rgba(34,197,94,.4); }
+.auth-logo-premium .tagline { font-size:9px; color:rgba(34,197,94,.7); letter-spacing:.5px; }
 /* Card premium */
 .auth-card-premium {
   background:rgba(13,17,23,.92);
   border:1px solid rgba(34,197,94,.25);
   border-radius:20px;
-  padding:18px 18px;
+  padding:8px 12px;
   max-width:440px;
   width:100%;
   margin:0 auto;
@@ -601,12 +601,12 @@ a{text-decoration:none;color:inherit}
 /* Social premium btn — full width, icon + text + arrow */
 .social-premium-btn {
   display:flex; align-items:center; gap:12px;
-  padding:14px 16px;
-  border-radius:12px;
+  padding:8px 12px;
+  border-radius:10px;
   border:1.5px solid rgba(34,197,94,.35);
   background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(22,163,74,.05));
-  cursor:pointer; width:100%; margin-bottom:10px;
-  color:var(--text); font-size:14px; font-weight:600;
+  cursor:pointer; width:100%; margin-bottom:4px;
+  color:var(--text); font-size:12px; font-weight:600;
   font-family:var(--font-body);
   transition:all .2s;
   -webkit-tap-highlight-color:transparent;
@@ -2632,7 +2632,7 @@ window.renderLogin=function(){
     <div class="auth-scroll">
 
       <!-- Logo Premium -->
-      <div class="auth-logo-premium" style="margin-bottom:14px">
+      <div class="auth-logo-premium" style="margin-bottom:2px">
         <span class="leaf">🌿</span>
         <div class="brand">VitalIA</div>
         <div class="tagline">Saúde com Inteligência</div>
@@ -2640,12 +2640,12 @@ window.renderLogin=function(){
 
       <!-- Card Premium -->
       <div class="auth-card-premium">
-        <h2 style="font-family:var(--font-serif);font-size:16px;font-weight:700;text-align:center;margin:0 0 1px;color:var(--text)">Acessar sua conta</h2>
-        <p style="text-align:center;font-size:11px;color:var(--green);margin:0 0 8px">Que bom ter você de volta 👋</p>
+        <h2 style="font-family:var(--font-serif);font-size:15px;font-weight:700;text-align:center;margin:0 0 1px;color:var(--text)">Acessar sua conta</h2>
+        <p style="text-align:center;font-size:10px;color:var(--green);margin:0 0 6px">Que bom ter você de volta 👋</p>
 
         <!-- E-mail -->
-        <div class="input-wrap" style="margin-bottom:12px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:13px">Seu e-mail</label>
+        <div class="input-wrap" style="margin-bottom:4px">
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:10px">Seu e-mail</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">📧</span>
             <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite seu e-mail" autocomplete="email">
@@ -2653,36 +2653,36 @@ window.renderLogin=function(){
         </div>
 
         <!-- Senha -->
-        <div class="input-wrap" style="margin-bottom:8px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:13px">Sua senha</label>
+        <div class="input-wrap" style="margin-bottom:3px">
+          <label class="input-label" style="color:var(--green);font-weight:600;font-size:10px">Sua senha</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">🔒</span>
             <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite sua senha" onkeydown="if(event.key===\'Enter\')doLogin()">
           </div>
-          <div style="font-size:9px;color:rgba(34,197,94,.5);margin-top:1px">Mínimo de 8 caracteres</div>
+          <div style="font-size:8px;color:rgba(34,197,94,.5);margin-top:0px">Mínimo de 8 caracteres</div>
         </div>
 
         <!-- Lembrar + Esqueci -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:15px;height:15px"> <span style="color:var(--green)">Manter conectado</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:10px;color:var(--text2)">
+            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:12px;height:12px"> <span style="color:var(--green)">Manter conectado</span>
           </label>
-          <span class="auth-link" onclick="forgotPassword()" style="font-size:11px">🔗 Esqueceu a senha?</span>
+          <span class="auth-link" onclick="forgotPassword()" style="font-size:10px">🔗 Esqueceu a senha?</span>
         </div>
 
         <!-- Botão principal -->
-        <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:10px;font-size:14px;font-weight:700;margin-bottom:3px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
+        <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:9px;font-size:13px;font-weight:700;margin-bottom:2px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
           🟢 Acessar minha conta
         </button>
-        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:3px">🔒 Acesso rápido, simples e seguro</div>
+        <div style="text-align:center;font-size:8px;color:var(--text3);margin-bottom:2px">🔒 Acesso rápido, simples e seguro</div>
 
         <!-- Biometria -->
-        <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:4px;padding:8px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
+        <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:3px;padding:7px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
           🔒 Entrar com Biometria ou PIN
         </button>
 
         <!-- Divisor -->
-        <div class="divider" style="margin-bottom:4px">
+        <div class="divider" style="margin-bottom:3px">
           <div class="divider-line"></div>
           <div class="divider-text" style="font-size:11px;color:rgba(34,197,94,.7);text-shadow:0 0 8px rgba(34,197,94,.3);font-weight:600">ou acesse com</div>
           <div class="divider-line"></div>
@@ -2704,20 +2704,20 @@ window.renderLogin=function(){
           <span class="sp-label">Acessar com Apple ID</span>
           <span class="sp-arrow">→</span>
         </button>
-        <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:5px">
+        <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:4px">
           <svg class="sp-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           <span class="sp-label">Acessar com Facebook</span>
           <span class="sp-arrow">→</span>
         </button>
 
         <!-- Criar conta -->
-        <p style="text-align:center;font-size:13px;color:var(--text2);margin:0 0 16px">
+        <p style="text-align:center;font-size:10px;color:var(--text2);margin:0 0 4px">
           <span style="color:var(--green)">Não tem conta?</span> <span class="auth-link" style="font-weight:700" onclick="APP.authStep=\'register\';renderAuth()">Criar conta grátis →</span>
         </p>
 
         <!-- Idioma — 4 pills em linha com vagalume -->
-        <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:12px">
-          <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">✦ IDIOMA ✦</div>
+        <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:3px">
+          <div style="text-align:center;font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">✦ IDIOMA ✦</div>
           <div class="lang-pill-wrap">
             <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';save(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
             <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';save(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
@@ -2728,7 +2728,7 @@ window.renderLogin=function(){
       </div>
 
       <!-- Rodapé segurança -->
-      <div style="text-align:center;padding:4px 0 2px;display:flex;align-items:center;justify-content:center;gap:16px">
+      <div style="text-align:center;padding:2px 0 1px;display:flex;align-items:center;justify-content:center;gap:16px">
         <span style="font-size:10px;color:var(--text3)">🔒 SSL 256-bit</span>
         <span style="font-size:10px;color:var(--text3)">🌿 LGPD</span>
         <span style="font-size:10px;color:var(--text3)">✅ Dados protegidos</span>
@@ -3944,6 +3944,7 @@ window.setScanMode = function(mode) {
 
 // ── MODO 1: Câmera ao vivo com QuaggaJS ──
 window.startLiveScanner = async function() {
+  if(typeof window.stopLiveScanner==='function')window.stopLiveScanner();
   // No mobile browser (não app nativo), câmera ao vivo tem restrições HTTPS
   // Verifica se é HTTPS ou localhost
   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
@@ -4052,31 +4053,17 @@ window.startLiveScanner = async function() {
 };
 
 window.stopLiveScanner = function() {
-  // 1. Stop Quagga engine
-  if (typeof Quagga !== 'undefined') {
-    try { Quagga.stop(); } catch(e) {}
-    try { Quagga.offDetected(); } catch(e) {}
-    try { Quagga.offProcessed(); } catch(e) {}
+  if(typeof Quagga!=='undefined'){try{Quagga.stop()}catch(e){}try{Quagga.offDetected()}catch(e){}try{Quagga.offProcessed()}catch(e){}}
+  SCAN.quaggaRunning=false;
+  var vp=document.getElementById('quagga-viewport');
+  if(vp){
+    var vids=vp.querySelectorAll('video');
+    for(var i=0;i<vids.length;i++){try{var tr=vids[i].srcObject?vids[i].srcObject.getTracks():[];for(var j=0;j<tr.length;j++)tr[j].stop();vids[i].srcObject=null;vids[i].remove()}catch(e){}}
+    vp.querySelectorAll('canvas').forEach(function(cv){cv.remove()});
+    vp.innerHTML='';
   }
-  SCAN.quaggaRunning = false;
-  // 2. Kill all video tracks (turns off camera light)
-  var viewport = document.getElementById('quagga-viewport');
-  if (viewport) {
-    viewport.querySelectorAll('video').forEach(function(v) {
-      try {
-        if (v.srcObject) { v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject = null; }
-        v.remove();
-      } catch(e) {}
-    });
-    viewport.querySelectorAll('canvas').forEach(function(cv) { cv.remove(); });
-    viewport.innerHTML = '';
-  }
-  // 3. Global cleanup — any orphan video streams
-  document.querySelectorAll('video').forEach(function(v) {
-    try { if (v.srcObject) { v.srcObject.getTracks().forEach(function(t){t.stop();}); v.srcObject = null; } } catch(e) {}
-  });
-  var s = document.getElementById('scan-live-status');
-  if (s) s.textContent = '📷 Câmera desligada';
+  document.querySelectorAll('video').forEach(function(v){try{if(v.srcObject){v.srcObject.getTracks().forEach(function(t){t.stop()});v.srcObject=null}}catch(e){}});
+  var s=document.getElementById('scan-live-status');if(s)s.textContent='Camera desligada';
 };
 
 // ── MODO 2: Leitura de foto com ZXing ─────
@@ -5951,9 +5938,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   st.id = 'coach-css-final';
   st.textContent = [
     /* Esconde bottom nav quando coach aberto */
-    '.coach-open #bottom-nav { display: none !important; }',
+    '.coach-open #bottom-nav { display: flex !important; }',
     /* Screen do coach ocupa toda a viewport disponível */
-    '.screen.active.coach-open-screen { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); position:fixed; top:0; left:0; right:0; bottom:0; z-index:50; }',
+    '.screen.active.coach-open-screen { display:flex; flex-direction:column; overflow:hidden; background:var(--bg); position:absolute; top:0; left:0; right:0; bottom:0; z-index:10; }',
     '#coach-wrap { display:flex; flex-direction:column; flex:1; min-height:0; height:100%; }',
     /* Header */
     '.coach-header { flex-shrink:0; display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); background:var(--surface); }',
@@ -6235,89 +6222,9 @@ function stopCoachRecording() {
 
 // ── sendAudioToBackend — Groq Whisper + resposta em áudio ───────
 async function sendAudioToBackend(blob) {
-  // Show audio player in chat
-  var localUrl = URL.createObjectURL(blob);
-  var time = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  var msgs = document.getElementById('coach-msgs');
-  if (msgs) {
-    var div = document.createElement('div');
-    div.className = 'msg-wrap user';
-    div.innerHTML = '<div class="msg-bubble"><div style="font-size:11px;opacity:.7;margin-bottom:4px">🎤 Áudio gravado</div><audio controls src="'+localUrl+'" style="max-width:200px;height:36px;border-radius:8px"></audio></div><div class="msg-time">'+time+'</div>';
-    msgs.appendChild(div);
-    scrollCoachToBottom();
-  }
-
-  appendBotMsg('🔄 Transcrevendo áudio...');
-  var transcribedText = null;
-  var lastError = '';
-
-  // Try Whisper with each Groq key, trying both webm and mp4 MIME
-  for (var ki = 0; ki < _GROQ_KEYS.length && !transcribedText; ki++) {
-    var key = _GROQ_KEYS[(_coachKeyIdx + ki) % _GROQ_KEYS.length];
-    
-    // Try original blob first, then re-package
-    var blobsToTry = [blob];
-    // If original is webm, also try with mp4 extension (some Whisper versions prefer)
-    if (blob.type.includes('webm') || blob.type.includes('ogg')) {
-      blobsToTry.push(new Blob([blob], {type: 'audio/mp4'}));
-    }
-    
-    for (var bi = 0; bi < blobsToTry.length && !transcribedText; bi++) {
-      var b = blobsToTry[bi];
-      var ext = b.type.includes('mp4') ? 'mp4' : b.type.includes('ogg') ? 'ogg' : 'webm';
-      try {
-        var formData = new FormData();
-        formData.append('file', b, 'audio.' + ext);
-        formData.append('model', 'whisper-large-v3-turbo');
-        formData.append('language', 'pt');
-        formData.append('response_format', 'json');
-        var resp = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + key },
-          body: formData
-        });
-        if (resp.status === 429) { lastError = 'rate_limit'; continue; }
-        if (!resp.ok) {
-          var errBody = await resp.text().catch(function(){return '';});
-          lastError = 'status_' + resp.status + ': ' + errBody.substring(0,80);
-          console.warn('Whisper error:', lastError);
-          continue;
-        }
-        var data = await resp.json();
-        var t = (data.text || '').trim();
-        if (t && t.length > 1) { transcribedText = t; break; }
-      } catch(e) {
-        lastError = e.message;
-        console.warn('Whisper attempt failed:', e.message);
-      }
-    }
-  }
-
-  // Remove "Transcrevendo..." bubble
-  var aiMsgs = document.querySelectorAll('.msg-wrap.ai');
-  var last = aiMsgs[aiMsgs.length-1];
-  if (last && last.textContent.includes('Transcrevendo')) { last.remove(); APP.coachMsgs.pop(); }
-
-  if (transcribedText && transcribedText.length > 1) {
-    sendCoachMsg(transcribedText);
-  } else {
-    console.warn('Whisper all attempts failed. Last error:', lastError);
-    // Fallback: ask user to type, but show what went wrong in console
-    appendBotMsg('🎤 Áudio recebido! Não foi possível transcrever automaticamente ('+( lastError.includes('rate_limit') ? 'limite da API' : 'formato de áudio')+'). Por favor, **digita sua pergunta** abaixo — responderei imediatamente! 💬');
-  }
+  appendBotMsg('Use o microfone para falar!');
 }
 
-// ── API Keys ────────────────────────────────────────────────────
-var _coachKeyIdx = 0;
-var _GROQ_KEYS = [
-  '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',
-  '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',
-  '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',
-  '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'
-];
-var _GEMINI_KEY = 'AIzaSyDRuxKoyZRHfsAZg5R4OQNYl0z4CqcBmXY';
-
-// ── buildSystemPrompt — personalizado por perfil ─────────────────
 function buildSystemPrompt() {
   var p = APP.profile || {};
   var nome    = p.name  || 'Usuário';
@@ -6371,67 +6278,18 @@ function buildSystemPrompt() {
 }
 
 // ── coachGetAIResp ───────────────────────────────────────────────
+var COACH_URL = 'https://vitalia-cofre.elicarlosiurd.workers.dev';
 async function coachGetAIResp(msg) {
-  var GROQ_MODELS = [
-    'llama-3.3-70b-versatile',
-    'llama3-70b-8192',
-    'llama-3.1-70b-versatile',
-    'llama3-8b-8192',
-    'mixtral-8x7b-32768',
-    'gemma2-9b-it'
-  ];
-
-  var systemPrompt = buildSystemPrompt();
-
-  // Tenta cada key × modelo
-  for (var attempt = 0; attempt < _GROQ_KEYS.length * 2; attempt++) {
-    var key   = _GROQ_KEYS[_coachKeyIdx % _GROQ_KEYS.length];
-    var model = GROQ_MODELS[attempt % GROQ_MODELS.length];
-    _coachKeyIdx++;
-    try {
-      var resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+key },
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role:'system', content: systemPrompt },
-            { role:'user',   content: msg }
-          ],
-          max_tokens: 700,
-          temperature: 0.65
-        })
-      });
-      if (resp.status===429 || resp.status===404) continue;
-      if (!resp.ok) { console.warn('Groq '+resp.status); continue; }
-      var data = await resp.json();
-      var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      if (text && text.trim()) return text.trim();
-    } catch(e) { /* continua */ }
-  }
-
-  // Fallback Gemini
+  var sp = buildSystemPrompt();
   try {
-    var gr = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+_GEMINI_KEY, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts:[{ text: systemPrompt }] },
-        contents: [{ parts:[{ text: msg }] }],
-        generationConfig: { maxOutputTokens:600, temperature:0.65 }
-      })
-    });
-    if (gr.ok) {
-      var gd = await gr.json();
-      var gt = gd.candidates&&gd.candidates[0]&&gd.candidates[0].content&&gd.candidates[0].content.parts&&gd.candidates[0].content.parts[0]&&gd.candidates[0].content.parts[0].text;
-      if (gt&&gt.trim()) return gt.trim();
-    }
-  } catch(e) {}
-
-  return coachLocalFallback(msg);
+    var r = await fetch(COACH_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:sp,mensagem:msg})});
+    if(!r.ok) throw new Error('err');
+    var d = await r.json();
+    if(d.resposta) return d.resposta;
+    throw new Error('empty');
+  } catch(e) { return coachLocalFallback(msg); }
 }
 
-// ── coachLocalFallback — base de conhecimento rica ───────────────
 function coachLocalFallback(msg) {
   var m = msg.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
@@ -6494,16 +6352,16 @@ window.getNutriCoachResponse = coachGetAIResp;
 
 // ── updateLoginLang ─────────────────────────────────────────────
 function updateLoginLang() {
-  document.querySelectorAll(".lang-pill").forEach(function(el) {
-    el.classList.toggle("active", el.dataset.lang === APP.lang);
+  document.querySelectorAll('.lang-pill').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
-  document.querySelectorAll(".lang-option").forEach(function(el) {
-    el.classList.toggle("active", el.dataset.lang === APP.lang);
+  document.querySelectorAll('.lang-option').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
-  document.querySelectorAll("#login-lang-grid .lang-option").forEach(function(el) {
-    el.classList.toggle("active", el.dataset.lang === APP.lang);
+  document.querySelectorAll('#login-lang-grid .lang-option').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
-  if (APP.authStep && !APP.session) renderAuth();
+  if (APP.authStep && !APP.session) { renderAuth(); return; }
   if (APP.session && APP.tab) { renderNav(); navigate(APP.tab); }
 }
 
@@ -6572,6 +6430,8 @@ function initFireflies() {
   draw();
 }
 
+
+(function(){var nav=document.getElementById('bottom-nav');if(!nav)return;document.addEventListener('focusin',function(e){if(e.target&&(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'))setTimeout(function(){nav.style.display='none'},200)});document.addEventListener('focusout',function(){setTimeout(function(){nav.style.display=''},200)});if(window.visualViewport){var h0=window.visualViewport.height;window.visualViewport.addEventListener('resize',function(){nav.style.display=(window.visualViewport.height<h0-100)?'none':''})}})();
 console.log('[VitalIA] Coach IA v10.0 — Elite Nutri + TTS + Voltar + Prompt Avançado ✅');
 
 </script>
