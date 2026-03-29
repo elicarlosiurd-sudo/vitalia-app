@@ -2160,6 +2160,81 @@ const LANG = {
     tg_digits_err:'Enter the 6-digit code',
     tg_meal_reminder:'Meal Reminder',
     tg_motivational:'Motivational',
+    edit_profile_title:'Edit Profile',
+    edit_weight_label:'Weight (kg)',
+    edit_height_label:'Height (cm)',
+    edit_age_label:'Age',
+    edit_goal_label:'Goal',
+    edit_save:'Save changes',
+    edit_weight_invalid:'Invalid weight',
+    edit_height_invalid:'Invalid height',
+    edit_saved:'Profile updated!',
+    edit_gender:'Gender',
+    edit_male:'Male',
+    edit_female:'Female',
+    edit_activity_label:'Activity',
+    reg_step:'Step',
+    reg_personal:'Personal data',
+    reg_personal_sub:'Tell us about yourself',
+    reg_body:'Body measurements',
+    reg_body_sub:'To calculate your goals',
+    reg_goals:'Goals',
+    reg_goals_sub:'Personalize your experience',
+    reg_next:'Next',
+    reg_finish:'Finish registration',
+    reg_welcome:'Account created successfully!',
+    reg_already:'Already have an account?',
+    reg_login_link:'Sign in →',
+    reg_create_title:'Create your account',
+    reg_create_sub:'Start your health journey',
+    badge_conquered_toast:'earned!',
+    badge_continue_toast:'Keep going to unlock:',
+    set_connected_tg:'Connected as',
+    set_about_text:'AI nutrition app',
+    set_version:'Version',
+    reg_customize:'Customize your diet',
+    share_my_score:'Score today',
+    auth_or_access:'or sign in with',
+    auth_login_error:'Wrong email or password',
+    auth_register_error:'Error creating account',
+    auth_forgot_sent:'Recovery email sent!',
+    auth_login_success:'Login successful!',
+    auth_email_ph:'Enter your email',
+    auth_pass_ph:'Enter your password',
+    auth_fill_fields:'Fill in email and password',
+    auth_invalid_email:'Invalid email',
+    auth_wrong_creds:'Wrong email or password',
+    auth_confirm_email:'Confirm your email before signing in',
+    auth_loading:'Loading your data...',
+    auth_bio_checking:'Verifying biometrics...',
+    auth_access_granted:'Access granted!',
+    auth_pin_correct:'PIN correct!',
+    reg_name_ph:'John Doe',
+    reg_email_ph:'your@email.com',
+    reg_pass_ph:'Minimum 8 characters',
+    reg_confirm_pass:'Confirm password',
+    reg_repeat_pass:'Repeat password',
+    reg_fill_all:'Fill in all fields',
+    reg_pass_min8:'Password must be at least 8 characters',
+    reg_pass_mismatch:'Passwords don\'t match',
+    reg_accept_terms:'Accept the terms of use',
+    reg_fill_measures:'Fill in weight and height',
+    reg_main_goal:'Main goal',
+    reg_select_goal:'Select your goal',
+    reg_select_activity:'Select activity level',
+    reg_final_step:'Final adjustments',
+    reg_pref_lang:'Preferred language',
+    reg_email_exists:'This email is already registered',
+    reg_verify_email:'Check your email to confirm registration!',
+    scan_tip_barcode:'Tip: keep barcode centered and well-lit for best reading.',
+    scan_enter_select:'Enter or select a code',
+    scan_product_found:'Product identified!',
+    scan_use_photo:'Use photo',
+    shop_placeholder_ing:'E.g.: chicken, rice, broccoli, eggs...',
+    shop_suggest_btn:'Suggest recipes',
+    misc_search_recipes:'Search recipes...',
+    misc_soon:'Coming soon!',
+    misc_forgot_sent:'Recovery email sent!',
     util_share_open:'Opening to share!',
     util_text_copied:'Text copied!',
     util_clipboard:'Text copied to clipboard!',
@@ -2846,6 +2921,156 @@ const LANG = {
     tg_digits_err:'Ingresa los 6 dígitos del código',
     tg_meal_reminder:'Recordatorio de Comida',
     tg_motivational:'Motivacional',
+    edit_profile_title:'Editar Perfil',
+    edit_weight_label:'Peso (kg)',
+    edit_height_label:'Altura (cm)',
+    edit_age_label:'Edad',
+    edit_goal_label:'Objetivo',
+    edit_save:'Guardar cambios',
+    edit_weight_invalid:'Peso inválido',
+    edit_height_invalid:'Altura inválida',
+    edit_saved:'¡Perfil actualizado!',
+    edit_gender:'Género',
+    edit_male:'Masculino',
+    edit_female:'Femenino',
+    edit_activity_label:'Actividad',
+    reg_step:'Paso',
+    reg_personal:'Datos personales',
+    reg_personal_sub:'Cuéntanos sobre ti',
+    reg_body:'Medidas corporales',
+    reg_body_sub:'Para calcular tus metas',
+    reg_goals:'Objetivos',
+    reg_goals_sub:'Personaliza tu experiencia',
+    reg_next:'Siguiente',
+    reg_finish:'Finalizar registro',
+    reg_welcome:'¡Cuenta creada con éxito!',
+    reg_already:'¿Ya tienes cuenta?',
+    reg_login_link:'Iniciar sesión →',
+    reg_create_title:'Crear tu cuenta',
+    reg_create_sub:'Comienza tu viaje de salud',
+    badge_conquered_toast:'¡conquistado!',
+    badge_continue_toast:'Continúa para desbloquear:',
+    set_connected_tg:'Conectado como',
+    set_about_text:'App de nutrición con IA',
+    set_version:'Versión',
+    reg_customize:'Personaliza tu dieta',
+    share_my_score:'Score hoy',
+    auth_or_access:'o accede con',
+    auth_login_error:'Email o contraseña incorrectos',
+    auth_register_error:'Error al crear cuenta',
+    auth_forgot_sent:'¡Email de recuperación enviado!',
+    auth_login_success:'¡Inicio de sesión exitoso!',
+    auth_email_ph:'Ingresa tu email',
+    auth_pass_ph:'Ingresa tu contraseña',
+    auth_fill_fields:'Completa email y contraseña',
+    auth_invalid_email:'Email inválido',
+    auth_wrong_creds:'Email o contraseña incorrectos',
+    auth_confirm_email:'Confirma tu email antes de entrar',
+    auth_loading:'Cargando tus datos...',
+    auth_bio_checking:'Verificando biometría...',
+    auth_access_granted:'Acceso liberado!',
+    auth_pin_correct:'PIN correcto!',
+    reg_name_ph:'Juan García',
+    reg_email_ph:'tu@email.com',
+    reg_pass_ph:'Mínimo 8 caracteres',
+    reg_confirm_pass:'Confirmar contraseña',
+    reg_repeat_pass:'Repite la contraseña',
+    reg_fill_all:'Completa todos los campos',
+    reg_pass_min8:'Contraseña mínimo 8 caracteres',
+    reg_pass_mismatch:'Las contraseñas no coinciden',
+    reg_accept_terms:'Acepta los términos',
+    reg_fill_measures:'Completa peso y altura',
+    reg_main_goal:'Objetivo principal',
+    reg_select_goal:'Selecciona tu objetivo',
+    reg_select_activity:'Selecciona nivel de actividad',
+    reg_final_step:'Últimos ajustes',
+    reg_pref_lang:'Idioma preferido',
+    reg_email_exists:'Email ya registrado',
+    reg_verify_email:'Verifica tu email!',
+    scan_tip_barcode:'Mantén el código centrado',
+    scan_enter_select:'Escribe o selecciona un código',
+    scan_product_found:'Producto identificado!',
+    scan_use_photo:'Usar foto',
+    shop_placeholder_ing:'Ej: pollo, arroz, brócoli...',
+    shop_suggest_btn:'Sugerir recetas',
+    misc_search_recipes:'Buscar recetas...',
+    misc_soon:'Próximamente!',
+    misc_forgot_sent:'Email de recuperación enviado!',
+    edit_profile_title:'Editar Perfil',
+    edit_weight_label:'Peso (kg)',
+    edit_height_label:'Altura (cm)',
+    edit_age_label:'Idade',
+    edit_goal_label:'Objetivo',
+    edit_save:'Salvar alterações',
+    edit_weight_invalid:'Peso inválido',
+    edit_height_invalid:'Altura inválida',
+    edit_saved:'Perfil atualizado!',
+    edit_gender:'Gênero',
+    edit_male:'Masculino',
+    edit_female:'Feminino',
+    edit_activity_label:'Atividade',
+    reg_step:'Passo',
+    reg_personal:'Dados pessoais',
+    reg_personal_sub:'Conte um pouco sobre você',
+    reg_body:'Medidas corporais',
+    reg_body_sub:'Para calcular suas metas',
+    reg_goals:'Objetivos',
+    reg_goals_sub:'Personalize sua experiência',
+    reg_next:'Próximo',
+    reg_finish:'Finalizar cadastro',
+    reg_welcome:'Conta criada com sucesso!',
+    reg_already:'Já tem conta?',
+    reg_login_link:'Fazer login →',
+    reg_create_title:'Criar sua conta',
+    reg_create_sub:'Comece sua jornada de saúde',
+    badge_conquered_toast:'conquistado!',
+    badge_continue_toast:'Continue para desbloquear:',
+    set_connected_tg:'Conectado como',
+    set_about_text:'App de nutrição com IA',
+    set_version:'Versão',
+    reg_customize:'Personalize sua dieta',
+    share_my_score:'Score hoje',
+    auth_or_access:'ou acesse com',
+    auth_login_error:'Email ou senha incorretos',
+    auth_register_error:'Erro ao criar conta',
+    auth_forgot_sent:'Email de recuperação enviado!',
+    auth_login_success:'Login realizado!',
+    auth_email_ph:'Digite seu e-mail',
+    auth_pass_ph:'Digite sua senha',
+    auth_fill_fields:'Preencha email e senha',
+    auth_invalid_email:'Email inválido',
+    auth_wrong_creds:'Email ou senha incorretos',
+    auth_confirm_email:'Confirme seu email antes de entrar',
+    auth_loading:'Carregando seus dados...',
+    auth_bio_checking:'Verificando biometria...',
+    auth_access_granted:'Acesso liberado!',
+    auth_pin_correct:'PIN correto!',
+    reg_name_ph:'João Silva',
+    reg_email_ph:'seu@email.com',
+    reg_pass_ph:'Mínimo 8 caracteres',
+    reg_confirm_pass:'Confirmar senha',
+    reg_repeat_pass:'Repita a senha',
+    reg_fill_all:'Preencha todos os campos',
+    reg_pass_min8:'Senha deve ter no mínimo 8 caracteres',
+    reg_pass_mismatch:'Senhas não coincidem',
+    reg_accept_terms:'Aceite os termos de uso',
+    reg_fill_measures:'Preencha peso e altura',
+    reg_main_goal:'Objetivo principal',
+    reg_select_goal:'Selecione seu objetivo',
+    reg_select_activity:'Selecione nível de atividade',
+    reg_final_step:'Últimos ajustes',
+    reg_pref_lang:'Idioma preferido',
+    reg_email_exists:'Este email já está cadastrado',
+    reg_verify_email:'Verifique seu email para confirmar o cadastro!',
+    scan_tip_barcode:'Dica: mantenha o código de barras centralizado e bem iluminado para melhor leitura.',
+    scan_enter_select:'Digite ou selecione um código',
+    scan_product_found:'Produto identificado!',
+    scan_use_photo:'Use foto',
+    shop_placeholder_ing:'Ex: frango, arroz, brócolis, ovos...',
+    shop_suggest_btn:'Sugerir receitas',
+    misc_search_recipes:'Buscar receitas...',
+    misc_soon:'Em breve!',
+    misc_forgot_sent:'Email de recuperação enviado!',
     util_share_open:'¡Abriendo para compartir!',
     util_text_copied:'¡Texto copiado!',
     util_clipboard:'¡Texto copiado al portapapeles!',
@@ -3531,6 +3756,81 @@ const LANG = {
     tg_digits_err:'Введите 6-значный код',
     tg_meal_reminder:'Напоминание о приёме пищи',
     tg_motivational:'Мотивация',
+    edit_profile_title:'Редактировать профиль',
+    edit_weight_label:'Вес (кг)',
+    edit_height_label:'Рост (см)',
+    edit_age_label:'Возраст',
+    edit_goal_label:'Цель',
+    edit_save:'Сохранить изменения',
+    edit_weight_invalid:'Неверный вес',
+    edit_height_invalid:'Неверный рост',
+    edit_saved:'Профиль обновлён!',
+    edit_gender:'Пол',
+    edit_male:'Мужской',
+    edit_female:'Женский',
+    edit_activity_label:'Активность',
+    reg_step:'Шаг',
+    reg_personal:'Личные данные',
+    reg_personal_sub:'Расскажите о себе',
+    reg_body:'Параметры тела',
+    reg_body_sub:'Для расчёта ваших целей',
+    reg_goals:'Цели',
+    reg_goals_sub:'Настройте свой опыт',
+    reg_next:'Далее',
+    reg_finish:'Завершить регистрацию',
+    reg_welcome:'Аккаунт создан успешно!',
+    reg_already:'Уже есть аккаунт?',
+    reg_login_link:'Войти →',
+    reg_create_title:'Создать аккаунт',
+    reg_create_sub:'Начните путь к здоровью',
+    badge_conquered_toast:'получен!',
+    badge_continue_toast:'Продолжайте для разблокировки:',
+    set_connected_tg:'Подключён как',
+    set_about_text:'Приложение питания с ИИ',
+    set_version:'Версия',
+    reg_customize:'Настройте свою диету',
+    share_my_score:'Балл сегодня',
+    auth_or_access:'или войдите через',
+    auth_login_error:'Неверный email или пароль',
+    auth_register_error:'Ошибка создания аккаунта',
+    auth_forgot_sent:'Письмо для восстановления отправлено!',
+    auth_login_success:'Вход выполнен!',
+    auth_email_ph:'Введите ваш email',
+    auth_pass_ph:'Введите пароль',
+    auth_fill_fields:'Заполните email и пароль',
+    auth_invalid_email:'Неверный email',
+    auth_wrong_creds:'Неверный email или пароль',
+    auth_confirm_email:'Подтвердите email перед входом',
+    auth_loading:'Загрузка данных...',
+    auth_bio_checking:'Проверка биометрии...',
+    auth_access_granted:'Доступ открыт!',
+    auth_pin_correct:'PIN верный!',
+    reg_name_ph:'Иван Иванов',
+    reg_email_ph:'ваш@email.com',
+    reg_pass_ph:'Минимум 8 символов',
+    reg_confirm_pass:'Подтвердить пароль',
+    reg_repeat_pass:'Повторите пароль',
+    reg_fill_all:'Заполните все поля',
+    reg_pass_min8:'Пароль минимум 8 символов',
+    reg_pass_mismatch:'Пароли не совпадают',
+    reg_accept_terms:'Примите условия использования',
+    reg_fill_measures:'Заполните вес и рост',
+    reg_main_goal:'Основная цель',
+    reg_select_goal:'Выберите цель',
+    reg_select_activity:'Выберите уровень активности',
+    reg_final_step:'Последние настройки',
+    reg_pref_lang:'Предпочитаемый язык',
+    reg_email_exists:'Этот email уже зарегистрирован',
+    reg_verify_email:'Проверьте email для подтверждения регистрации!',
+    scan_tip_barcode:'Совет: держите штрих-код по центру и хорошо освещённым.',
+    scan_enter_select:'Введите или выберите код',
+    scan_product_found:'Продукт определён!',
+    scan_use_photo:'Используйте фото',
+    shop_placeholder_ing:'Напр.: курица, рис, брокколи, яйца...',
+    shop_suggest_btn:'Предложить рецепты',
+    misc_search_recipes:'Поиск рецептов...',
+    misc_soon:'Скоро!',
+    misc_forgot_sent:'Письмо восстановления отправлено!',
     util_share_open:'Открываем для отправки!',
     util_text_copied:'Текст скопирован!',
     util_clipboard:'Текст скопирован в буфер обмена!',
@@ -5165,7 +5465,7 @@ window.renderLogin=function(){
           <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_email_label')}</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">📧</span>
-            <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite seu e-mail" autocomplete="email">
+            <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="${t('auth_email_ph')}" autocomplete="email">
           </div>
         </div>
 
@@ -5174,7 +5474,7 @@ window.renderLogin=function(){
           <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_pass_label')}</label>
           <div class="input-icon" style="border-radius:12px;overflow:hidden">
             <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">🔒</span>
-            <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite sua senha" onkeydown="if(event.key===\'Enter\')doLogin()">
+            <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="${t('auth_pass_ph')}" onkeydown="if(event.key===\'Enter\')doLogin()">
           </div>
           <div style="font-size:9px;color:rgba(34,197,94,.5);margin-top:1px">${t('login_min_chars')}</div>
         </div>
@@ -5262,8 +5562,8 @@ window.renderLogin=function(){
 async function doLogin() {
   const email = document.getElementById('a-email').value.trim();
   const pass = document.getElementById('a-pass').value;
-  if (!email || !pass) { toast('Preencha email e senha','error'); return; }
-  if (!/\S+@\S+\.\S+/.test(email)) { toast('Email inválido','error'); return; }
+  if (!email || !pass) { toast(t('auth_fill_fields'),'error'); return; }
+  if (!/\S+@\S+\.\S+/.test(email)) { toast(t('auth_invalid_email'),'error'); return; }
   const btn = document.getElementById('login-btn');
   btn.classList.add('btn-loading'); btn.disabled = true;
 
@@ -5271,8 +5571,8 @@ async function doLogin() {
 
   if (error) {
     btn.classList.remove('btn-loading'); btn.disabled = false;
-    if (error.message.includes('Invalid login')) toast('❌ Email ou senha incorretos','error');
-    else if (error.message.includes('Email not confirmed')) toast('⚠️ Confirme seu email antes de entrar','info', 5000);
+    if (error.message.includes('Invalid login')) toast('❌ '+t('auth_wrong_creds'),'error');
+    else if (error.message.includes('Email not confirmed')) toast('⚠️ '+t('auth_confirm_email'),'info', 5000);
     else toast('❌ ' + error.message, 'error');
     return;
   }
@@ -5287,7 +5587,7 @@ async function doLogin() {
   if (remEl2 && remEl2.checked) { localStorage.setItem('v_remember','1'); } else { localStorage.removeItem('v_remember'); }
 
   // Load data from Supabase
-  toast('🔄 Carregando seus dados...', 'info', 2000);
+  toast('🔄 '+t('auth_loading'), 'info', 2000);
   await syncFromSupabase(user.id);
 
   APP.authStep = localStorage.getItem('v_biometric') ? 'app' : 'biometric';
@@ -5350,7 +5650,7 @@ async function tryBiometric() {
   if (localStorage.getItem('v_biometric')) {
     // Show device biometric prompt simulation
     if (window.PublicKeyCredential) {
-      toast('🔐 Verificando biometria...','info',1500);
+      toast('🔐 '+t('auth_bio_checking'),'info',1500);
       setTimeout(async () => {
         APP.user = JSON.parse(localStorage.getItem('v_user')||'null') || {name:'Usuário',email:'user@demo.com'};
         APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Usuário',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
@@ -5359,11 +5659,11 @@ async function tryBiometric() {
         APP.session = 'bio_' + Date.now();
         save('v_session', APP.session);
         if (APP.user?.id) await syncFromSupabase(APP.user.id);
-        toast('✅ Biometria verificada!','success');
+        toast('✅ '+t('auth_bio_verified'),'success');
         finishAuth();
       }, 1500);
     } else {
-      toast('✅ Acesso liberado!','success');
+      toast('✅ '+t('auth_access_granted'),'success');
       setTimeout(finishAuth, 600);
     }
   } else {
@@ -5454,7 +5754,7 @@ function pinKey(k) {
   if (APP.pinInput.length === 4) {
     // Any 4-digit pin works in demo
     setTimeout(() => {
-      toast('✅ PIN correto!','success');
+      toast('✅ '+t('auth_pin_correct'),'success');
       APP.user = JSON.parse(localStorage.getItem('v_user')||'{"name":"Demo","email":"demo@app.com"}');
       APP.profile = JSON.parse(localStorage.getItem('v_profile')||'null') || {name:'Demo',weight:78,height:175,age:30,gender:'m',goal:'lose',activity:'mod'};
       APP.calc = calcProfile(APP.profile); APP.water=0; APP.meals=[];
@@ -5476,10 +5776,10 @@ function renderRegister1() {
     <div class="auth-card">
       <h2 class="auth-title">${t('step')} 1 ${t('of')} 4 — Sua conta</h2>
       <p class="auth-sub">Crie suas credenciais de acesso</p>
-      <div class="input-wrap"><label class="input-label">${t('name')}</label><input id="r-name" class="input" placeholder="João Silva" value="${APP.registerData.name||''}"></div>
-      <div class="input-wrap"><label class="input-label">${t('email')}</label><input id="r-email" class="input" type="email" placeholder="seu@email.com" value="${APP.registerData.email||''}"></div>
-      <div class="input-wrap"><label class="input-label">${t('password')}</label><input id="r-pass" class="input" type="password" placeholder="Mínimo 8 caracteres"></div>
-      <div class="input-wrap"><label class="input-label">Confirmar senha</label><input id="r-pass2" class="input" type="password" placeholder="Repita a senha"></div>
+      <div class="input-wrap"><label class="input-label">${t('name')}</label><input id="r-name" class="input" placeholder="${t('reg_name_ph')}" value="${APP.registerData.name||''}"></div>
+      <div class="input-wrap"><label class="input-label">${t('email')}</label><input id="r-email" class="input" type="email" placeholder="${t('reg_email_ph')}" value="${APP.registerData.email||''}"></div>
+      <div class="input-wrap"><label class="input-label">${t('password')}</label><input id="r-pass" class="input" type="password" placeholder="${t('reg_pass_ph')}"></div>
+      <div class="input-wrap"><label class="input-label">${t('reg_confirm_pass')}</label><input id="r-pass2" class="input" type="password" placeholder="${t('reg_repeat_pass')}"></div>
       <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:16px"><input type="checkbox" id="r-terms" style="accent-color:var(--green);margin-top:2px"> Concordo com os <span class="auth-link" style="font-size:12px">Termos de Uso</span> e <span class="auth-link" style="font-size:12px">Política de Privacidade</span></label>
       <button class="btn btn-primary btn-full" onclick="nextRegister1()" style="padding:14px">Continuar →</button>
     </div>
@@ -5488,11 +5788,11 @@ function renderRegister1() {
 
 function nextRegister1() {
   const name=document.getElementById('r-name').value.trim(), email=document.getElementById('r-email').value.trim(), pass=document.getElementById('r-pass').value, pass2=document.getElementById('r-pass2').value;
-  if(!name||!email||!pass){toast('Preencha todos os campos','error');return;}
-  if(!/\S+@\S+\.\S+/.test(email)){toast('Email inválido','error');return;}
-  if(pass.length<8){toast('Senha deve ter no mínimo 8 caracteres','error');return;}
-  if(pass!==pass2){toast('Senhas não coincidem','error');return;}
-  if(!document.getElementById('r-terms').checked){toast('Aceite os termos de uso','error');return;}
+  if(!name||!email||!pass){toast(t('reg_fill_all'),'error');return;}
+  if(!/\S+@\S+\.\S+/.test(email)){toast(t('auth_invalid_email'),'error');return;}
+  if(pass.length<8){toast(t('reg_pass_min8'),'error');return;}
+  if(pass!==pass2){toast(t('reg_pass_mismatch'),'error');return;}
+  if(!document.getElementById('r-terms').checked){toast(t('reg_accept_terms'),'error');return;}
   APP.registerData={...APP.registerData,name,email,pass,password:pass};
   APP.authStep='register2';renderAuth();
 }
@@ -5512,8 +5812,8 @@ function renderRegister2() {
         <div class="input-wrap"><label class="input-label">Sexo</label><select id="r-gender" class="input"><option value="m">Masculino</option><option value="f">Feminino</option><option value="other">Prefiro não dizer</option></select></div>
       </div>
       <div class="input-row">
-        <div class="input-wrap"><label class="input-label">Peso (kg)</label><input id="r-weight" class="input" type="number" placeholder="70" value="${APP.registerData.weight||''}"></div>
-        <div class="input-wrap"><label class="input-label">Altura (cm)</label><input id="r-height" class="input" type="number" placeholder="170" value="${APP.registerData.height||''}"></div>
+        <div class="input-wrap"><label class="input-label">${t('edit_weight_label')}</label><input id="r-weight" class="input" type="number" placeholder="70" value="${APP.registerData.weight||''}"></div>
+        <div class="input-wrap"><label class="input-label">${t('edit_height_label')}</label><input id="r-height" class="input" type="number" placeholder="170" value="${APP.registerData.height||''}"></div>
       </div>
       <button class="btn btn-primary btn-full" onclick="nextRegister2()" style="padding:14px">Continuar →</button>
     </div>
@@ -5522,7 +5822,7 @@ function renderRegister2() {
 
 function nextRegister2() {
   const dob=document.getElementById('r-dob').value, gender=document.getElementById('r-gender').value, weight=document.getElementById('r-weight').value, height=document.getElementById('r-height').value;
-  if(!weight||!height){toast('Preencha peso e altura','error');return;}
+  if(!weight||!height){toast(t('reg_fill_measures'),'error');return;}
   const age=new Date().getFullYear()-new Date(dob).getFullYear();
   APP.registerData={...APP.registerData,dob,gender,weight,height,age};
   APP.authStep='register3';renderAuth();
@@ -5540,7 +5840,7 @@ function renderRegister3() {
     <div class="auth-card" style="margin-bottom:12px">
       <h2 class="auth-title">${t('step')} 3 ${t('of')} 4 — Objetivos</h2>
       <p class="auth-sub">Personalizamos tudo para você</p>
-      <div class="input-label" style="margin-bottom:8px">Objetivo principal</div>
+      <div class="input-label" style="margin-bottom:8px">${t('reg_main_goal')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
         ${goals.map(([v,e,n])=>`<div class="opt-card${APP.registerData.goal===v?' selected':''}" onclick="APP.registerData.goal='${v}';renderAuth()" style="padding:12px;border-radius:12px;border:2px solid ${APP.registerData.goal===v?'var(--green)':'var(--border2)'};cursor:pointer;text-align:center;background:${APP.registerData.goal===v?'rgba(34,197,94,.08)':'var(--surface2)'};transition:all .2s"><div style="font-size:24px">${e}</div><div style="font-size:13px;font-weight:600;margin-top:4px">${n}</div></div>`).join('')}
       </div>
@@ -5552,8 +5852,8 @@ function renderRegister3() {
 }
 
 function nextRegister3() {
-  if(!APP.registerData.goal){toast('Selecione seu objetivo','error');return;}
-  if(!APP.registerData.activity){toast('Selecione nível de atividade','error');return;}
+  if(!APP.registerData.goal){toast(t('reg_select_goal'),'error');return;}
+  if(!APP.registerData.activity){toast(t('reg_select_activity'),'error');return;}
   APP.authStep='register4';renderAuth();
 }
 
@@ -5566,8 +5866,8 @@ function renderRegister4() {
     </div>
     <div class="auth-card">
       <h2 class="auth-title">${t('step')} 4 ${t('of')} 4 — Preferências</h2>
-      <p class="auth-sub">Últimos ajustes</p>
-      <div class="input-label" style="margin-bottom:8px">Idioma preferido</div>
+      <p class="auth-sub">${t('reg_final_step')}</p>
+      <div class="input-label" style="margin-bottom:8px">${t('reg_pref_lang')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
         ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';save('v_lang','${l.code}');renderAuth()"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
       </div>
@@ -5590,7 +5890,7 @@ async function completeRegister() {
 
   if (error) {
     if(btn){ btn.disabled=false; btn.textContent='Criar conta'; }
-    if (error.message.includes('already registered')) toast('❌ Este email já está cadastrado','error');
+    if (error.message.includes('already registered')) toast('❌ '+t('reg_email_exists'),'error');
     else toast('❌ ' + error.message, 'error');
     return;
   }
@@ -5623,7 +5923,7 @@ async function completeRegister() {
   confetti();
   // Check if email confirmation needed
   if (!data.session) {
-    toast('📧 Verifique seu email para confirmar o cadastro!', 'info', 6000);
+    toast('📧 '+t('reg_verify_email'), 'info', 6000);
     setTimeout(() => { APP.authStep = 'login'; renderAuth(); }, 3000);
   } else {
     APP.authStep = 'biometric'; renderAuth();
@@ -6037,7 +6337,7 @@ function renderRecipes() {
   return `
   <div class="screen-header"><div class="screen-title">🍴 ${t('recipes')}</div></div>
   <div style="padding:0 16px;margin-bottom:12px">
-    <input class="input" placeholder="🔍 Buscar receitas..." value="${REC.search}" oninput="REC.search=this.value;REC.showAllResults=false;document.getElementById('rec-list').innerHTML=renderRecipeList()" id="rec-search">
+    <input class="input" placeholder="🔍 ${t('misc_search_recipes')}" value="${REC.search}" oninput="REC.search=this.value;REC.showAllResults=false;document.getElementById('rec-list').innerHTML=renderRecipeList()" id="rec-search">
   </div>
   <!-- Filter chips -->
   <div style="padding:0 16px;margin-bottom:6px">
@@ -6492,7 +6792,7 @@ window.startLiveScanner = async function() {
       s.src = 'https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js';
       s.onload = resolve;
       s.onerror = () => {
-        if (statusEl) statusEl.innerHTML = '❌ Erro ao carregar leitor. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">Use foto</a>';
+        if (statusEl) statusEl.innerHTML = '❌ Erro ao carregar leitor. <a href="#" onclick="setScanMode(\'photo\')" style="color:var(--green)">${t('scan_use_photo')}</a>';
         reject();
       };
       document.head.appendChild(s);
@@ -6673,14 +6973,14 @@ window.scanFromPhoto = async function(input) {
 function fallbackScan(statusEl) {
   // Smart fallback: try to find code from filename or use demo
   if (statusEl) statusEl.innerHTML = '⚠️ Não foi possível ler o código. Tente apontar melhor a câmera ou <a href="#" onclick="setScanMode(\'manual\')" style="color:var(--green)">digite manualmente</a>.';
-  toast('Dica: mantenha o código de barras centralizado e bem iluminado 💡', 'info', 4000);
+  toast(t('scan_tip_barcode') 💡', 'info', 4000);
 }
 
 window.handleScanPhoto = window.scanFromPhoto;
 
 
 function doScan(code) {
-  if (!code?.trim()) { toast('Digite ou selecione um código', 'error'); return; }
+  if (!code?.trim()) { toast(t('scan_enter_select'), 'error'); return; }
   if (window._scanLock) return; // prevent re-entry from scanner re-render
   window._scanLock = true;
   setTimeout(function() { window._scanLock = false; }, 3000);
@@ -6717,7 +7017,7 @@ function doScan(code) {
   SCAN.barcode = clean;
   if (!SCAN.history.find(h => h.code === p.code)) SCAN.history.unshift(p);
   addXP(5);
-  toast('✅ Produto identificado! +5 XP', 'success', 2000);
+  toast('✅ '+t('scan_product_found')+' +5 XP', 'success', 2000);
   navigate('scanner');
 }
 
@@ -6889,7 +7189,7 @@ function renderAchievements() {
   <!-- Badges -->
   <div class="section-title">${t('ach_badges')}</div>
   <div class="badge-grid" style="margin-bottom:16px">
-    ${BADGES.map(b=>`<div class="badge-item ${b.unlocked?'unlocked':'locked'}" onclick="${b.unlocked?`toast('Badge ${b.name} conquistado! +${b.xp} XP ✅','success')`:`toast('Continue para desbloquear: ${b.desc}','info')`}">
+    ${BADGES.map(b=>`<div class="badge-item ${b.unlocked?'unlocked':'locked'}" onclick="${b.unlocked?`toast('Badge ${b.name} '+t('badge_conquered_toast')+' +${b.xp} XP ✅','success')`:`toast(t('badge_continue_toast')+' ${b.desc}','info')`}">
       <div class="badge-icon" style="${!b.unlocked?'filter:grayscale(1)':''}">${b.icon}</div>
       <div class="badge-name">${b.name}</div>
       <div class="badge-desc">${b.unlocked?`+${b.xp} XP`:b.desc}</div>
@@ -6947,7 +7247,7 @@ function renderShopping() {
     <div class="card card-blue">
       <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:4px">🤖 ${t('shop_ai_mode')}</div>
       <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Diga o que você tem e recebo sugestões de receitas!</div>
-      <button class="btn btn-outline btn-full" onclick="openModal(t('shop_creative'),\`<textarea class='input' rows='3' placeholder='Ex: frango, arroz, brócolis, ovos...' style='resize:none;width:100%;margin-bottom:12px'></textarea><button class='btn btn-primary btn-full' onclick='toast(\\\"Receitas sugeridas pela IA! 🍴\\\",\\\"success\\\");closeModal()'>Sugerir receitas</button>\`)" style="font-size:12px;padding:8px">🔍 ${t('shop_suggest')}</button>
+      <button class="btn btn-outline btn-full" onclick="openModal(t('shop_creative'),\`<textarea class='input' rows='3' placeholder='${t("shop_placeholder_ing")}' style='resize:none;width:100%;margin-bottom:12px'></textarea><button class='btn btn-primary btn-full' onclick='toast(\\\"'+t('shop_recipes_ok')+'\\\",\\\"success\\\");closeModal()'>${t('shop_suggest_btn')}</button>\`)" style="font-size:12px;padding:8px">🔍 ${t('shop_suggest')}</button>
     </div>
   </div>
 
@@ -7007,9 +7307,9 @@ function renderSettings() {
   <!-- Profile settings -->
   <div class="section-title">${t('set_profile')}</div>
   <div class="settings-group">
-    <div class="settings-row" onclick="typeof editProfile==='function'?editProfile():openModal('Editar perfil','<div style=padding:16px>${t('set_in_dev')} 🚧</div>')"><div class="settings-icon">👤</div><div class="settings-text"><div class="settings-label">${t('set_edit')}</div><div class="settings-sub">${t('set_edit_sub')}</div></div><div class="settings-arrow">›</div></div>
-    <div class="settings-row" onclick="typeof editRestrictions==='function'?editRestrictions():openModal('Restrições','<div style=padding:16px>Em desenvolvimento 🚧</div>')"><div class="settings-icon">🍽️</div><div class="settings-text"><div class="settings-label">${t('set_restrictions')}</div><div class="settings-sub">${t('set_restrictions_sub')}</div></div><div class="settings-arrow">›</div></div>
-    <div class="settings-row" onclick="typeof editMealTimes==='function'?editMealTimes():openModal('Horários','<div style=padding:16px>Em desenvolvimento 🚧</div>')"><div class="settings-icon">⏰</div><div class="settings-text"><div class="settings-label">${t('set_meal_times')}</div><div class="settings-sub">${t('set_meal_times_sub')}</div></div><div class="settings-arrow">›</div></div>
+    <div class="settings-row" onclick="typeof editProfile==='function'?editProfile():openModal(t('edit_profile_title'),'<div style=padding:16px>${t('set_in_dev')} 🚧</div>')"><div class="settings-icon">👤</div><div class="settings-text"><div class="settings-label">${t('set_edit')}</div><div class="settings-sub">${t('set_edit_sub')}</div></div><div class="settings-arrow">›</div></div>
+    <div class="settings-row" onclick="typeof editRestrictions==='function'?editRestrictions():openModal(t('set_restrictions'),'<div style=padding:16px>Em desenvolvimento 🚧</div>')"><div class="settings-icon">🍽️</div><div class="settings-text"><div class="settings-label">${t('set_restrictions')}</div><div class="settings-sub">${t('set_restrictions_sub')}</div></div><div class="settings-arrow">›</div></div>
+    <div class="settings-row" onclick="typeof editMealTimes==='function'?editMealTimes():openModal(t('set_meal_times'),'<div style=padding:16px>Em desenvolvimento 🚧</div>')"><div class="settings-icon">⏰</div><div class="settings-text"><div class="settings-label">${t('set_meal_times')}</div><div class="settings-sub">${t('set_meal_times_sub')}</div></div><div class="settings-arrow">›</div></div>
   </div>
 
   <!-- Language -->
@@ -7054,7 +7354,7 @@ function renderSettings() {
   <!-- Notifications -->
   <div class="section-title">${t('set_notif')}</div>
   <div class="settings-group">
-    <div class="settings-row" onclick="typeof window['push']==='function'?window['push']():toast(t('set_soon'),'info',2000)"><div class="settings-icon">📱</div><div class="settings-text"><div class="settings-label">${t('settings_push')}</div><div class="settings-sub">${t('settings_push_sub')}</div></div><div class="settings-arrow">›</div></div>
+    <div class="settings-row" onclick="typeof window['push']==='function'?window['push']():toast(t('misc_soon'),'info',2000)"><div class="settings-icon">📱</div><div class="settings-text"><div class="settings-label">${t('settings_push')}</div><div class="settings-sub">${t('settings_push_sub')}</div></div><div class="settings-arrow">›</div></div>
     <div class="settings-row" onclick="navigate('telegram')"><div class="settings-icon">✈️</div><div class="settings-text"><div class="settings-label">Telegram</div><div class="settings-sub">${t('settings_telegram_sub')}</div></div><div class="settings-arrow">›</div></div>
     <div class="settings-row" onclick="toast('Em breve!','info',2000)"><div class="settings-icon">💬</div><div class="settings-text"><div class="settings-label">WhatsApp</div><div class="settings-sub">${t('settings_whatsapp_sub')}</div></div><div class="settings-arrow">›</div></div>
     <div class="settings-row" onclick="toast('Em breve!','info',2000)"><div class="settings-icon">📧</div><div class="settings-text"><div class="settings-label">Email</div><div class="settings-sub">${t('settings_email_sub')}</div></div><div class="settings-arrow">›</div></div>
@@ -7150,19 +7450,19 @@ function openAvatarSheet() {
 
 function editProfile() {
   const p = APP.profile||{};
-  openModal('Editar Perfil', `
+  openModal(t('edit_profile_title'), `
     <div class='input-wrap'><label class='input-label'>Nome</label><input id='ep-name' class='input' value='${p.name||''}' placeholder='Seu nome completo'></div>
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>
       <div class='input-wrap'><label class='input-label'>Peso (kg)</label><input id='ep-weight' class='input' type='number' value='${p.weight||78}'></div>
       <div class='input-wrap'><label class='input-label'>Altura (cm)</label><input id='ep-height' class='input' type='number' value='${p.height||175}'></div>
     </div>
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>
-      <div class='input-wrap'><label class='input-label'>Idade</label><input id='ep-age' class='input' type='number' value='${p.age||30}'></div>
+      <div class='input-wrap'><label class='input-label'>${t('edit_age_label')}</label><input id='ep-age' class='input' type='number' value='${p.age||30}'></div>
       <div class='input-wrap'><label class='input-label'>Sexo</label><select id='ep-gender' class='input'><option value='m' ${p.gender==='m'?'selected':''}>Masculino</option><option value='f' ${p.gender==='f'?'selected':''}>Feminino</option></select></div>
     </div>
-    <div class='input-wrap'><label class='input-label'>Objetivo</label><select id='ep-goal' class='input'><option value='lose' ${p.goal==='lose'?'selected':''}>Perder peso</option><option value='maintain' ${p.goal==='maintain'?'selected':''}>Manter peso</option><option value='gain' ${p.goal==='gain'?'selected':''}>Ganhar massa</option><option value='health' ${p.goal==='health'?'selected':''}>Saúde geral</option></select></div>
+    <div class='input-wrap'><label class='input-label'>${t('edit_goal_label')}</label><select id='ep-goal' class='input'><option value='lose' ${p.goal==='lose'?'selected':''}>${t('goal_lose')}</option><option value='maintain' ${p.goal==='maintain'?'selected':''}>Manter peso</option><option value='gain' ${p.goal==='gain'?'selected':''}>${t('goal_gain')}</option><option value='health' ${p.goal==='health'?'selected':''}>${t('goal_health')}</option></select></div>
     <div class='input-wrap'><label class='input-label'>Nível de atividade</label><select id='ep-activity' class='input'><option value='sed' ${p.activity==='sed'?'selected':''}>Sedentário</option><option value='light' ${p.activity==='light'?'selected':''}>Levemente ativo</option><option value='mod' ${p.activity==='mod'?'selected':''}>Moderadamente ativo</option><option value='active' ${p.activity==='active'?'selected':''}>Muito ativo</option></select></div>
-    <button class='btn btn-primary btn-full' onclick='saveEditProfile()' style='padding:13px;margin-top:4px'>💾 Salvar alterações</button>
+    <button class='btn btn-primary btn-full' onclick='saveEditProfile()' style='padding:13px;margin-top:4px'>${t('edit_save')}</button>
   `);
 }
 
@@ -7175,13 +7475,13 @@ window.saveEditProfile = function() {
   const goal = document.getElementById('ep-goal')?.value;
   const activity = document.getElementById('ep-activity')?.value;
   if(!name){toast('Nome obrigatório','error');return;}
-  if(!weight||weight<20||weight>300){toast('Peso inválido','error');return;}
-  if(!height||height<100||height>250){toast('Altura inválida','error');return;}
+  if(!weight||weight<20||weight>300){toast(t('edit_weight_invalid'),'error');return;}
+  if(!height||height<100||height>250){toast(t('edit_height_invalid'),'error');return;}
   APP.profile = {...(APP.profile||{}), name, weight, height, age:age||30, gender:gender||'m', goal:goal||'lose', activity:activity||'mod'};
   APP.user = {...(APP.user||{}), name};
   APP.calc = calcProfile(APP.profile);
   save('v_profile', APP.profile); save('v_user', APP.user);
-  closeModal(); toast('✅ Perfil atualizado!', 'success'); navigate('settings');
+  closeModal(); toast('✅ '+t('edit_saved'), 'success'); navigate('settings');
 };
 
 function editRestrictions() {
@@ -7204,7 +7504,7 @@ function editRestrictions() {
     <div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px'>
       ${opts.map(o=>`<label style='display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;border:1px solid ${restrictions.includes(o.v)?'var(--green)':'var(--border)'};background:${restrictions.includes(o.v)?'rgba(34,197,94,.06)':'var(--surface2)'};cursor:pointer'><input type='checkbox' id='restr-${o.v}' ${restrictions.includes(o.v)?'checked':''} style='accent-color:var(--green)'> <span style='font-size:13px'>${o.l}</span></label>`).join('')}
     </div>
-    <button class='btn btn-primary btn-full' onclick='saveRestrictions()' style='padding:13px'>💾 Salvar</button>
+    <button class='btn btn-primary btn-full' onclick='saveRestrictions()' style='padding:13px'>${t('save')}</button>
   `);
 }
 
