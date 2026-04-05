@@ -2601,7 +2601,7 @@ const LANG = {
    APP STATE
 ═══════════════════════════════════════ */
 const APP = {
-  lang: localStorage.getItem('v_lang') || (navigator.language?.slice(0,2) || 'pt'),
+  lang: (localStorage.getItem('v_lang')||'').replace(/"/g,'') || (navigator.language?.slice(0,2) || 'pt'),
   darkMode: localStorage.getItem('v_dark') !== 'false',
   tab: 'home',
   user: JSON.parse(localStorage.getItem('v_user') || 'null'),
@@ -3090,10 +3090,10 @@ window.renderLogin=function(){
         <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:4px">
           <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">${t('login_lang')}</div>
           <div class="lang-pill-wrap">
-            <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';save(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
-            <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';save(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
-            <div class="lang-pill" data-lang="es" onclick="APP.lang=\'es\';save(\'v_lang\',\'es\');updateLoginLang()"><span class="lp-flag">🇪🇸</span><span class="lp-name">Español</span></div>
-            <div class="lang-pill" data-lang="ru" onclick="APP.lang=\'ru\';save(\'v_lang\',\'ru\');updateLoginLang()"><span class="lp-flag">🇷🇺</span><span class="lp-name">Русский</span></div>
+            <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';localStorage.setItem(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
+            <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';localStorage.setItem(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
+            <div class="lang-pill" data-lang="es" onclick="APP.lang=\'es\';localStorage.setItem(\'v_lang\',\'es\');updateLoginLang()"><span class="lp-flag">🇪🇸</span><span class="lp-name">Español</span></div>
+            <div class="lang-pill" data-lang="ru" onclick="APP.lang=\'ru\';localStorage.setItem(\'v_lang\',\'ru\');updateLoginLang()"><span class="lp-flag">🇷🇺</span><span class="lp-name">Русский</span></div>
           </div>
         </div>
       </div>
@@ -3423,7 +3423,7 @@ function renderRegister4() {
       <p class="auth-sub">Últimos ajustes</p>
       <div class="input-label" style="margin-bottom:8px">Idioma preferido</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-        ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';save('v_lang','${l.code}');renderAuth()"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
+        ${t('languages').map(l=>`<div class="lang-option ${APP.lang===l.code?'active':''}" onclick="APP.lang='${l.code}';localStorage.setItem('v_lang','${l.code}');renderAuth()"><span class="lang-flag">${l.flag}</span><span class="lang-name">${l.name}</span></div>`).join('')}
       </div>
       <div class="input-label" style="margin-bottom:8px">Notificações</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
@@ -6762,7 +6762,6 @@ window.getNutriCoachResponse = coachGetAIResp;
 
 // ── updateLoginLang ─────────────────────────────────────────────
 function updateLoginLang() {
-  // lang-pill (login) + lang-option (settings)
   document.querySelectorAll('.lang-pill').forEach(function(el) {
     el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
@@ -6772,8 +6771,11 @@ function updateLoginLang() {
   document.querySelectorAll('#login-lang-grid .lang-option').forEach(function(el) {
     el.classList.toggle('active', el.dataset.lang === APP.lang);
   });
-  if (APP.authStep && !APP.session) { renderAuth(); return; }
-  if (APP.session && APP.tab) { renderNav(); navigate(APP.tab); }
+  // If on auth screen (login/register), always re-render it
+  var authEl = document.getElementById('auth-screen');
+  if (authEl && authEl.classList.contains('active')) { renderAuth(); return; }
+  // If inside app, re-render current screen
+  if (APP.tab) { renderNav(); navigate(APP.tab); }
 }
 
 // ── initFireflies — Vagalumes verdes animados ───────────────────
