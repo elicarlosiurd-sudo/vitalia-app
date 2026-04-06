@@ -4394,19 +4394,32 @@ window.startLiveScanner = async function() {
     });
 
     // On successful decode
-    let lastCode = '', lastTime = 0;
+    let lastCode = '', lastTime = 0, detecting = false;
     Quagga.onDetected(function(result) {
+      if (detecting) return; // prevent concurrent detections
       const code = result.codeResult.code;
       const now = Date.now();
-      // Debounce: same code within 3s = skip
+      
+      // 1. Validate barcode length (EAN-8=8, EAN-13=13, UPC-A=12)
+      if (!code || code.length < 8) return;
+      
+      // 2. Debounce: same code within 3s = skip
       if (code === lastCode && now - lastTime < 3000) return;
+      
+      // 3. Lock to prevent multiple fires
+      detecting = true;
       lastCode = code;
       lastTime = now;
 
       // Vibrate on success
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       stopLiveScanner();
-      if (!window._scanLock) doScan(code);
+      
+      // Small delay to let camera cleanup finish before UI update
+      setTimeout(function() {
+        detecting = false;
+        if (!window._scanLock) doScan(code);
+      }, 300);
     });
 
     // Draw overlay on detected frames
@@ -4578,45 +4591,103 @@ function fallbackScan(statusEl) {
 window.handleScanPhoto = window.scanFromPhoto;
 
 
-function doScan(code) {
+async function doScan(code) {
   if (!code?.trim()) { toast(t('toast_scan_enter'), 'error'); return; }
-  if (window._scanLock) return; // prevent re-entry from scanner re-render
+  if (window._scanLock) return;
   window._scanLock = true;
   setTimeout(function() { window._scanLock = false; }, 3000);
   const clean = code.trim().replace(/\s/g, '');
 
   // Auto-detect country from barcode prefix
   let detectedCountry = '🌍';
-  if (clean.startsWith('789')) detectedCountry = '🇧🇷';          // Brasil
-  else if (clean.startsWith('46'))  detectedCountry = '🇷🇺';     // Rússia
-  else if (clean.length === 12)     detectedCountry = '🇺🇸';     // UPC-A (EUA)
-  else if (clean.startsWith('00') || clean.startsWith('01') ||
-           clean.startsWith('03') || clean.startsWith('04')) detectedCountry = '🇺🇸'; // EAN-13 EUA
-  else if (clean.startsWith('50'))  detectedCountry = '🇬🇧';     // UK
-  else if (clean.startsWith('40') || clean.startsWith('41') ||
-           clean.startsWith('42') || clean.startsWith('43')) detectedCountry = '🇩🇪'; // Alemanha
-  else if (clean.startsWith('30') || clean.startsWith('37')) detectedCountry = '🇫🇷'; // França
-  else if (clean.startsWith('80') || clean.startsWith('83')) detectedCountry = '🇮🇹'; // Itália
-  else if (clean.startsWith('84'))  detectedCountry = '🇪🇸';     // Espanha
-  else if (clean.startsWith('860')) detectedCountry = '🇷🇸';     // Sérvia
-  else if (clean.startsWith('728')) detectedCountry = '🇮🇱';     // Israel
-  else if (clean.startsWith('690') || clean.startsWith('691') ||
-           clean.startsWith('692')) detectedCountry = '🇨🇳';     // China
+  if (clean.startsWith('789')) detectedCountry = '🇧🇷';
+  else if (clean.startsWith('46'))  detectedCountry = '🇷🇺';
+  else if (clean.length === 12)     detectedCountry = '🇺🇸';
+  else if (/^0[0-4]/.test(clean))   detectedCountry = '🇺🇸';
+  else if (clean.startsWith('50'))  detectedCountry = '🇬🇧';
+  else if (/^4[0-3]/.test(clean))   detectedCountry = '🇩🇪';
+  else if (clean.startsWith('30') || clean.startsWith('37')) detectedCountry = '🇫🇷';
+  else if (clean.startsWith('80') || clean.startsWith('83')) detectedCountry = '🇮🇹';
+  else if (clean.startsWith('84'))  detectedCountry = '🇪🇸';
 
+  // ── STEP 1: Search local PRODUCTS array ──
   const found = PRODUCTS.find(p => p.code === clean);
-  const p = found || {
-    ...PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)],
-    code: clean,
-    name: 'Produto ' + clean,
-    country: detectedCountry,
-  };
-  if (!found) p.country = detectedCountry;
+  if (found) {
+    SCAN.result = found;
+    SCAN.barcode = clean;
+    if (!SCAN.history.find(h => h.code === found.code)) SCAN.history.unshift(found);
+    addXP(5);
+    toast('✅ '+t('toast_scan_found')+' +5 XP', 'success', 2000);
+    navigate('scanner');
+    return;
+  }
 
-  SCAN.result = p;
+  // ── STEP 2: Fallback — Open Food Facts API ──
+  toast('🔍 Buscando produto online...', 'info', 3000);
+  try {
+    const resp = await fetch('https://world.openfoodfacts.org/api/v0/product/' + clean + '.json');
+    const data = await resp.json();
+    
+    if (data.status === 1 && data.product) {
+      const pr = data.product;
+      const nutriments = pr.nutriments || {};
+      const serving = pr.serving_size || '100g';
+      
+      // Determine sem (health score)
+      let sem = '🟡', score = 5;
+      const nscore = pr.nutriscore_grade;
+      if (nscore === 'a' || nscore === 'b') { sem = '🟢'; score = 8; }
+      else if (nscore === 'd' || nscore === 'e') { sem = '🔴'; score = 2; }
+      
+      // Build alerts
+      const alerts = [];
+      const sugar100 = nutriments.sugars_100g || 0;
+      const sodium100 = nutriments.sodium_100g ? nutriments.sodium_100g * 1000 : (nutriments.salt_100g || 0) * 400;
+      const fat100 = nutriments.fat_100g || 0;
+      if (sugar100 > 15) alerts.push('🔴 Alto açúcar: ' + sugar100.toFixed(0) + 'g/100g');
+      else if (sugar100 > 5) alerts.push('🟡 Açúcar: ' + sugar100.toFixed(0) + 'g/100g');
+      if (sodium100 > 400) alerts.push('🔴 Alto sódio: ' + sodium100.toFixed(0) + 'mg/100g');
+      if (fat100 > 20) alerts.push('🔴 Alto em gordura: ' + fat100.toFixed(0) + 'g/100g');
+      if (nutriments.proteins_100g > 10) alerts.push('✅ Proteína: ' + (nutriments.proteins_100g||0).toFixed(0) + 'g/100g');
+      if (nutriments.fiber_100g > 3) alerts.push('✅ Fibra: ' + (nutriments.fiber_100g||0).toFixed(0) + 'g/100g');
+      if (!alerts.length) alerts.push('ℹ️ Dados nutricionais básicos');
+      
+      const product = {
+        code: clean,
+        name: pr.product_name || pr.product_name_en || pr.product_name_pt || ('Produto ' + clean),
+        brand: pr.brands || '—',
+        sem: sem,
+        score: score,
+        cal100: Math.round(nutriments['energy-kcal_100g'] || nutriments.energy_100g / 4.184 || 0),
+        cal_serving: Math.round(nutriments['energy-kcal_serving'] || (nutriments['energy-kcal_100g']||0) * 1.5),
+        carb100: (nutriments.carbohydrates_100g||0).toFixed(0) + 'g',
+        prot100: (nutriments.proteins_100g||0).toFixed(0) + 'g',
+        fat100: (nutriments.fat_100g||0).toFixed(0) + 'g',
+        sodium100: sodium100.toFixed(0) + 'mg',
+        serving: serving,
+        alerts: alerts,
+        alt: pr.compared_to_category || '—',
+        tags: (pr.categories_tags || []).slice(0, 3).map(t => t.replace('en:','').replace('pt:','')),
+        country: detectedCountry,
+        source: 'OpenFoodFacts',
+      };
+      
+      SCAN.result = product;
+      SCAN.barcode = clean;
+      if (!SCAN.history.find(h => h.code === product.code)) SCAN.history.unshift(product);
+      addXP(5);
+      toast('✅ '+t('toast_scan_found')+' (Open Food Facts) +5 XP', 'success', 3000);
+      navigate('scanner');
+      return;
+    }
+  } catch(e) {
+    console.warn('Open Food Facts fetch failed:', e);
+  }
+
+  // ── STEP 3: Not found anywhere ──
+  toast('⚠️ Código ' + clean + ' não cadastrado na base', 'info', 4000);
+  SCAN.result = null;
   SCAN.barcode = clean;
-  if (!SCAN.history.find(h => h.code === p.code)) SCAN.history.unshift(p);
-  addXP(5);
-  toast('✅ '+t('toast_scan_found')+' +5 XP', 'success', 2000);
   navigate('scanner');
 }
 
