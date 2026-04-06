@@ -13,14 +13,14 @@
    CSS VARIABLES & RESET
 ═══════════════════════════════════════ */
 :root {
-  --bg:#0d1117; --surface:#161b22; --surface2:#1e2530; --surface3:#242c38;
-  --green:#22c55e; --green2:#16a34a; --orange:#f97316; --blue:#38bdf8;
+  --bg:#0a1014; --surface:#111a1f; --surface2:#162024; --surface3:#1c2a2f;
+  --green:#19c37d; --green2:#15a367; --orange:#f97316; --blue:#38bdf8;
   --purple:#a78bfa; --red:#f87171; --yellow:#fbbf24; --pink:#f472b6;
-  --text:#f0f6fc; --text2:#8b949e; --text3:#484f58;
-  --border:#21262d; --border2:#30363d;
-  --gradient:linear-gradient(135deg,#22c55e,#16a34a);
+  --text:#f3f7f6; --text2:#9fb0aa; --text3:#4a5854;
+  --border:#1a2e28; --border2:#253d35;
+  --gradient:linear-gradient(135deg,#19c37d,#15a367);
   --gradient2:linear-gradient(135deg,#38bdf8,#a78bfa);
-  --shadow:0 8px 32px rgba(0,0,0,.5);
+  --shadow:0 8px 32px rgba(0,0,0,.6);
   --radius:16px; --radius-sm:10px; --radius-lg:24px;
   --font-body:'Sora',sans-serif; --font-serif:'Lora',serif;
   --nav-h:68px; --header-h:60px;
@@ -686,6 +686,69 @@ a{text-decoration:none;color:inherit}
 .screen-header { display:flex; align-items:center; }
 .back-btn-inline { background:transparent; border:none; font-size:22px; color:var(--text); cursor:pointer; padding:0 8px 0 0; line-height:1; flex-shrink:0; -webkit-tap-highlight-color:transparent; }
 .back-btn-inline:active { opacity:.6; }
+/* ═══════════════════════════════════════
+   PREMIUM LOGIN REDESIGN
+═══════════════════════════════════════ */
+.login-premium{min-height:100dvh;background:#0a1014;display:flex;flex-direction:column;padding:0;overflow-y:auto;overflow-x:hidden;position:relative}
+.login-premium *{box-sizing:border-box}
+.lp-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0}
+.lp-lang-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1px solid rgba(25,195,125,.12);background:rgba(25,195,125,.04);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);font-family:var(--font-body);transition:all .2s;position:relative}
+.lp-lang-btn:active{background:rgba(25,195,125,.08)}
+.lp-lang-btn svg{width:16px;height:16px;opacity:.5}
+.lp-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border2);border-radius:12px;overflow:hidden;min-width:160px;box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:50;opacity:0;transform:translateY(-8px);pointer-events:none;transition:all .2s}
+.lp-dropdown.open{opacity:1;transform:translateY(0);pointer-events:all}
+.lp-dropdown-item{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;font-size:13px;color:var(--text2);transition:background .15s}
+.lp-dropdown-item:hover,.lp-dropdown-item:active{background:rgba(25,195,125,.06)}
+.lp-dropdown-item.active{color:var(--green);font-weight:600}
+.lp-dropdown-item .lp-check{margin-left:auto;font-size:14px;opacity:0}
+.lp-dropdown-item.active .lp-check{opacity:1}
+
+.lp-hero{text-align:center;padding:32px 24px 28px}
+.lp-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px}
+.lp-logo-icon{font-size:32px;filter:drop-shadow(0 0 12px rgba(25,195,125,.15))}
+.lp-logo-text{font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--green);font-style:italic;letter-spacing:-.5px}
+.lp-title{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--text);margin:0 0 6px;letter-spacing:-.3px}
+.lp-subtitle{font-size:14px;color:var(--text2);margin:0;line-height:1.5;font-weight:400}
+
+.lp-card{padding:0 20px 24px}
+.lp-field{margin-bottom:16px}
+.lp-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.3px}
+.lp-input-wrap{position:relative}
+.lp-input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.35;pointer-events:none}
+.lp-input{width:100%;padding:14px 16px 14px 42px;border-radius:12px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:15px;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s}
+.lp-input::placeholder{color:var(--text3);font-weight:400}
+.lp-input:focus{border-color:rgba(25,195,125,.4);box-shadow:0 0 0 3px rgba(25,195,125,.08)}
+.lp-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.lp-remember{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)}
+.lp-remember input{accent-color:var(--green);width:16px;height:16px}
+.lp-forgot{font-size:13px;color:var(--text2);cursor:pointer;border:none;background:none;font-family:var(--font-body);transition:color .15s;padding:0}
+.lp-forgot:hover,.lp-forgot:active{color:var(--green)}
+
+.lp-cta{width:100%;padding:16px;border-radius:14px;border:none;background:var(--green);color:#fff;font-size:16px;font-weight:700;font-family:var(--font-body);cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(25,195,125,.2);letter-spacing:.2px}
+.lp-cta:hover{background:var(--green2);box-shadow:0 6px 28px rgba(25,195,125,.3)}
+.lp-cta:active{transform:scale(.985);box-shadow:0 2px 12px rgba(25,195,125,.2)}
+.lp-cta.btn-loading{opacity:.7;pointer-events:none}
+
+.lp-bio{width:100%;padding:13px;border-radius:12px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:14px;font-weight:500;font-family:var(--font-body);cursor:pointer;transition:all .2s;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+.lp-bio:hover,.lp-bio:active{border-color:rgba(25,195,125,.25);color:var(--text)}
+
+.lp-more-toggle{width:100%;padding:10px;border:none;background:none;color:var(--text3);font-size:13px;font-family:var(--font-body);cursor:pointer;margin-top:16px;transition:color .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.lp-more-toggle:hover{color:var(--text2)}
+.lp-more-toggle svg{width:14px;height:14px;transition:transform .25s}
+.lp-more-toggle.expanded svg{transform:rotate(180deg)}
+.lp-socials{max-height:0;overflow:hidden;transition:max-height .35s ease,opacity .25s;opacity:0}
+.lp-socials.open{max-height:300px;opacity:1;padding-top:12px}
+.lp-social-btn{width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body);transition:all .15s;margin-bottom:6px}
+.lp-social-btn:hover,.lp-social-btn:active{border-color:var(--border2);background:var(--surface2);color:var(--text)}
+.lp-social-btn svg{width:20px;height:20px;flex-shrink:0}
+.lp-social-btn span{flex:1}
+
+.lp-create{text-align:center;padding:20px;font-size:14px;color:var(--text2)}
+.lp-create a{color:var(--green);font-weight:600;cursor:pointer;text-decoration:none}
+.lp-create a:hover{text-decoration:underline}
+
+.lp-footer{text-align:center;padding:12px 20px 24px;display:flex;align-items:center;justify-content:center;gap:20px}
+.lp-footer span{font-size:11px;color:var(--text3);letter-spacing:.2px}
 </style>
 </head>
 <body>
@@ -2997,119 +3060,135 @@ function renderAuth() {
 
 window.renderLogin=function(){
   var el=document.getElementById('auth-screen');
+  var langMap={pt:'PT',en:'EN',es:'ES',ru:'RU'};
+  var langCurrent=langMap[APP.lang]||'PT';
   el.innerHTML=`
   <div class="auth-bg-premium">
     <canvas id="fireflies-canvas"></canvas>
-    <div class="auth-scroll">
+    <div class="auth-scroll" style="padding:0">
 
-      <!-- Logo Premium -->
-      <div class="auth-logo-premium" style="margin-bottom:4px">
-        <span class="leaf">🌿</span>
-        <div class="brand">VitalIA</div>
-        <div class="tagline">Saúde com Inteligência</div>
+      <!-- Header with language selector -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;position:relative;z-index:10">
+        <div style="width:60px"></div>
+        <div class="lp-lang-btn" onclick="event.stopPropagation();document.getElementById('lp-lang-dd').classList.toggle('open')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>${langCurrent}</span>
+          <div class="lp-dropdown" id="lp-lang-dd">
+            <div class="lp-dropdown-item ${APP.lang==='pt'?'active':''}" onclick="event.stopPropagation();APP.lang='pt';localStorage.setItem('v_lang','pt');updateLoginLang()"><span>🇧🇷</span> Português<span class="lp-check">✓</span></div>
+            <div class="lp-dropdown-item ${APP.lang==='en'?'active':''}" onclick="event.stopPropagation();APP.lang='en';localStorage.setItem('v_lang','en');updateLoginLang()"><span>🇺🇸</span> English<span class="lp-check">✓</span></div>
+            <div class="lp-dropdown-item ${APP.lang==='es'?'active':''}" onclick="event.stopPropagation();APP.lang='es';localStorage.setItem('v_lang','es');updateLoginLang()"><span>🇪🇸</span> Español<span class="lp-check">✓</span></div>
+            <div class="lp-dropdown-item ${APP.lang==='ru'?'active':''}" onclick="event.stopPropagation();APP.lang='ru';localStorage.setItem('v_lang','ru');updateLoginLang()"><span>🇷🇺</span> Русский<span class="lp-check">✓</span></div>
+          </div>
+        </div>
       </div>
 
-      <!-- Card Premium -->
-      <div class="auth-card-premium">
-        <h2 style="font-family:var(--font-serif);font-size:17px;font-weight:700;text-align:center;margin:0 0 1px;color:var(--text)">${t('login_title')}</h2>
-        <p style="text-align:center;font-size:11px;color:var(--green);margin:0 0 8px">${t('login_welcome')}</p>
+      <!-- Logo -->
+      <div style="text-align:center;padding:28px 24px 24px;position:relative;z-index:5">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px">
+          <span style="font-size:32px;filter:drop-shadow(0 0 12px rgba(25,195,125,.15))">🌿</span>
+          <span style="font-family:var(--font-serif);font-size:26px;font-weight:700;color:var(--green);font-style:italic;letter-spacing:-.5px">VitalIA</span>
+        </div>
+        <h1 style="font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--text);margin:0 0 6px;letter-spacing:-.3px">${t('login_title')}</h1>
+        <p style="font-size:14px;color:var(--text2);margin:0;line-height:1.5">${t('login_welcome')}</p>
+      </div>
 
-        <!-- E-mail -->
-        <div class="input-wrap" style="margin-bottom:5px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_email_label')}</label>
-          <div class="input-icon" style="border-radius:12px;overflow:hidden">
-            <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">📧</span>
-            <input id="a-email" class="input input-premium" type="email" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite seu e-mail" autocomplete="email">
+      <!-- Form -->
+      <div style="padding:0 20px 24px;position:relative;z-index:5">
+        <!-- Email -->
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">${t('login_email_label')}</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.35;pointer-events:none">✉</span>
+            <input id="a-email" type="email" placeholder="${t('login_email_label')}" autocomplete="email"
+              style="width:100%;padding:14px 16px 14px 42px;border-radius:12px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:15px;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box"
+              onfocus="this.style.borderColor='rgba(25,195,125,.4)';this.style.boxShadow='0 0 0 3px rgba(25,195,125,.08)'"
+              onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'">
           </div>
         </div>
 
-        <!-- Senha -->
-        <div class="input-wrap" style="margin-bottom:4px">
-          <label class="input-label" style="color:var(--green);font-weight:600;font-size:11px">${t('login_pass_label')}</label>
-          <div class="input-icon" style="border-radius:12px;overflow:hidden">
-            <span class="icon" style="text-shadow:0 0 8px rgba(34,197,94,.4)">🔒</span>
-            <input id="a-pass" class="input input-premium" type="password" style="border:1.5px solid rgba(34,197,94,.3)" placeholder="Digite sua senha" onkeydown="if(event.key===\'Enter\')doLogin()">
+        <!-- Password -->
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.3px">${t('login_pass_label')}</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;opacity:.35;pointer-events:none">🔒</span>
+            <input id="a-pass" type="password" placeholder="${t('login_min_chars')}" autocomplete="current-password"
+              style="width:100%;padding:14px 16px 14px 42px;border-radius:12px;border:1px solid var(--border2);background:var(--surface);color:var(--text);font-size:15px;font-family:var(--font-body);outline:none;transition:border-color .2s,box-shadow .2s;box-sizing:border-box"
+              onfocus="this.style.borderColor='rgba(25,195,125,.4)';this.style.boxShadow='0 0 0 3px rgba(25,195,125,.08)'"
+              onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"
+              onkeydown="if(event.key==='Enter')doLogin()">
           </div>
-          <div style="font-size:9px;color:rgba(34,197,94,.5);margin-top:1px">${t('login_min_chars')}</div>
         </div>
 
-        <!-- Lembrar + Esqueci -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text2)">
-            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:15px;height:15px"> <span style="color:var(--green)">${t('remember')}</span>
+        <!-- Remember + Forgot -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+            <input type="checkbox" id="a-remember" style="accent-color:var(--green);width:16px;height:16px"> ${t('remember')}
           </label>
-          <span class="auth-link" onclick="forgotPassword()" style="font-size:13px">🔗 ${t('forgot')}?</span>
+          <button onclick="forgotPassword()" style="font-size:13px;color:var(--text2);cursor:pointer;border:none;background:none;font-family:var(--font-body);padding:0">${t('forgot')}?</button>
         </div>
 
-        <!-- Botão principal -->
-        <button id="login-btn" class="btn btn-primary btn-full" onclick="doLogin()" style="padding:10px;font-size:14px;font-weight:700;margin-bottom:4px;box-shadow:0 0 24px rgba(34,197,94,.35),0 4px 20px rgba(34,197,94,.2)">
+        <!-- Primary CTA -->
+        <button id="login-btn" onclick="doLogin()" style="width:100%;padding:16px;border-radius:14px;border:none;background:var(--green);color:#fff;font-size:16px;font-weight:700;font-family:var(--font-body);cursor:pointer;box-shadow:0 4px 20px rgba(25,195,125,.2);letter-spacing:.2px;transition:all .2s;margin-bottom:0">
           ${t('login_btn')}
         </button>
-        <div style="text-align:center;font-size:9px;color:var(--text3);margin-bottom:4px">${t('login_secure')}</div>
 
-        <!-- Biometria -->
-        <button class="biometric-btn" onclick="tryBiometric()" style="margin-bottom:4px;padding:8px;border:1.5px solid rgba(34,197,94,.3);box-shadow:0 0 12px rgba(34,197,94,.1)">
+        <!-- Biometric (secondary/ghost) -->
+        <button onclick="tryBiometric()" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:14px;font-weight:500;font-family:var(--font-body);cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
           ${t('login_biometric')}
         </button>
 
-        <!-- Divisor -->
-        <div class="divider" style="margin-bottom:4px">
-          <div class="divider-line"></div>
-          <div class="divider-text" style="font-size:11px;color:rgba(34,197,94,.7);text-shadow:0 0 8px rgba(34,197,94,.3);font-weight:600">${t('login_or')}</div>
-          <div class="divider-line"></div>
+        <!-- Collapsible social logins -->
+        <div style="margin-top:16px;text-align:center">
+          <button id="lp-more-btn" onclick="var s=document.getElementById('lp-socials');if(s.style.maxHeight){s.style.maxHeight=null;s.style.opacity=0;this.querySelector('svg').style.transform=''}else{s.style.maxHeight='300px';s.style.opacity=1;this.querySelector('svg').style.transform='rotate(180deg)'}"
+            style="border:none;background:none;color:var(--text3);font-size:13px;font-family:var(--font-body);cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:8px">
+            ${t('login_or')}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform .25s"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
         </div>
 
-        <!-- Botões Sociais — Full width premium -->
-        <button onclick="telegramLogin()" class="social-premium-btn">
-          <svg class="sp-icon" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.267l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.983.292z" fill="#229ED9"/></svg>
-          <span class="sp-label">${t('login_telegram')}</span>
-          <span class="sp-arrow">→</span>
-        </button>
-        <button onclick="socialLogin(\'Google\')" class="social-premium-btn">
-          <svg class="sp-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          <span class="sp-label">${t('login_google')}</span>
-          <span class="sp-arrow">→</span>
-        </button>
-        <button onclick="socialLogin(\'Apple\')" class="social-premium-btn">
-          <svg class="sp-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          <span class="sp-label">${t('login_apple')}</span>
-          <span class="sp-arrow">→</span>
-        </button>
-        <button onclick="socialLogin(\'Facebook\')" class="social-premium-btn" style="margin-bottom:5px">
-          <svg class="sp-icon" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          <span class="sp-label">${t('login_facebook')}</span>
-          <span class="sp-arrow">→</span>
-        </button>
-
-        <!-- Criar conta -->
-        <p style="text-align:center;font-size:11px;color:var(--text2);margin:0 0 6px">
-          <span style="color:var(--green)">${t('login_no_account')}</span> <span class="auth-link" style="font-weight:700" onclick="APP.authStep=\'register\';renderAuth()">${t('login_create')}</span>
-        </p>
-
-        <!-- Idioma — 4 pills em linha com vagalume -->
-        <div style="border-top:1px solid rgba(34,197,94,.15);padding-top:4px">
-          <div style="text-align:center;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;color:var(--green);text-shadow:0 0 10px rgba(34,197,94,.6)">${t('login_lang')}</div>
-          <div class="lang-pill-wrap">
-            <div class="lang-pill" data-lang="pt" onclick="APP.lang=\'pt\';localStorage.setItem(\'v_lang\',\'pt\');updateLoginLang()"><span class="lp-flag">🇧🇷</span><span class="lp-name">Português</span></div>
-            <div class="lang-pill" data-lang="en" onclick="APP.lang=\'en\';localStorage.setItem(\'v_lang\',\'en\');updateLoginLang()"><span class="lp-flag">🇺🇸</span><span class="lp-name">English</span></div>
-            <div class="lang-pill" data-lang="es" onclick="APP.lang=\'es\';localStorage.setItem(\'v_lang\',\'es\');updateLoginLang()"><span class="lp-flag">🇪🇸</span><span class="lp-name">Español</span></div>
-            <div class="lang-pill" data-lang="ru" onclick="APP.lang=\'ru\';localStorage.setItem(\'v_lang\',\'ru\');updateLoginLang()"><span class="lp-flag">🇷🇺</span><span class="lp-name">Русский</span></div>
+        <div id="lp-socials" style="max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s">
+          <div style="padding-top:8px">
+            <button onclick="telegramLogin()" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body);margin-bottom:6px;transition:all .15s">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.267l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.983.292z" fill="#229ED9"/></svg>
+              <span style="flex:1;text-align:left">${t('login_telegram')}</span>
+            </button>
+            <button onclick="socialLogin('Google')" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body);margin-bottom:6px;transition:all .15s">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              <span style="flex:1;text-align:left">${t('login_google')}</span>
+            </button>
+            <button onclick="socialLogin('Apple')" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body);margin-bottom:6px;transition:all .15s">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              <span style="flex:1;text-align:left">${t('login_apple')}</span>
+            </button>
+            <button onclick="socialLogin('Facebook')" style="width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text2);font-family:var(--font-body);margin-bottom:6px;transition:all .15s">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <span style="flex:1;text-align:left">${t('login_facebook')}</span>
+            </button>
           </div>
+        </div>
+
+        <!-- Create account -->
+        <div style="text-align:center;padding:20px 0 0;font-size:14px;color:var(--text2)">
+          ${t('login_no_account')} <a style="color:var(--green);font-weight:600;cursor:pointer" onclick="APP.authStep='register';renderAuth()">${t('login_create')}</a>
         </div>
       </div>
 
-      <!-- Rodapé segurança -->
-      <div style="text-align:center;padding:4px 0 2px;display:flex;align-items:center;justify-content:center;gap:16px">
-        <span style="font-size:10px;color:var(--text3)">🔒 SSL 256-bit</span>
-        <span style="font-size:10px;color:var(--text3)">🌿 LGPD</span>
-        <span style="font-size:10px;color:var(--text3)">✅ Dados protegidos</span>
+      <!-- Footer -->
+      <div style="text-align:center;padding:12px 20px 24px;display:flex;align-items:center;justify-content:center;gap:20px">
+        <span style="font-size:11px;color:var(--text3)">🔒 SSL</span>
+        <span style="font-size:11px;color:var(--text3)">LGPD</span>
+        <span style="font-size:11px;color:var(--text3)">${t('login_secure')}</span>
       </div>
     </div>
   </div>`;
 
-  // Ativar idioma ativo
+  document.addEventListener('click', function _closeDD() {
+    var dd = document.getElementById('lp-lang-dd');
+    if (dd) dd.classList.remove('open');
+    if (!document.getElementById('lp-lang-dd')) document.removeEventListener('click', _closeDD);
+  });
   updateLoginLang();
-  // Iniciar vagalumes
   initFireflies();
 }
 
