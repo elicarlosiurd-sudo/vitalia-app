@@ -984,7 +984,7 @@ const LANG = {
     coach_q1:'Como aumentar proteínas?',coach_q2:'Quanto devo beber de água?',
     scanner_title:'Scanner',scanner_live:'Câmera ao vivo',scanner_photo:'Foto',scanner_manual:'Manual',
     scanner_aim:'Aponte para o código de barras',scanner_active:'Câmera ativa — aponte para o código de barras',
-    scanner_stop:'Parar câmera',scanner_off:'Câmera desligada',
+    scanner_stop:'Parar câmera',scanner_off:'Câmera desligada',scanner_restart:'Reiniciar câmera',
     scanner_examples:'EXEMPLOS RÁPIDOS:',
     settings_title:'Configurações',
     settings_notif:'NOTIFICAÇÕES',settings_push:'Push no celular',settings_push_sub:'Alertas e lembretes',
@@ -1396,7 +1396,7 @@ const LANG = {
     coach_q1:'How to increase protein?',coach_q2:'How much water should I drink?',
     scanner_title:'Scanner',scanner_live:'Live camera',scanner_photo:'Photo',scanner_manual:'Manual',
     scanner_aim:'Point at the barcode',scanner_active:'Camera active — point at the barcode',
-    scanner_stop:'Stop camera',scanner_off:'Camera off',
+    scanner_stop:'Stop camera',scanner_off:'Camera off',scanner_restart:'Restart camera',
     scanner_examples:'QUICK EXAMPLES:',
     settings_title:'Settings',
     settings_notif:'NOTIFICATIONS',settings_push:'Push notifications',settings_push_sub:'Alerts and reminders',
@@ -1809,7 +1809,7 @@ const LANG = {
     coach_q1:'¿Cómo aumentar proteínas?',coach_q2:'¿Cuánta agua debo beber?',
     scanner_title:'Scanner',scanner_live:'Cámara en vivo',scanner_photo:'Foto',scanner_manual:'Manual',
     scanner_aim:'Apunta al código de barras',scanner_active:'Cámara activa — apunta al código de barras',
-    scanner_stop:'Detener cámara',scanner_off:'Cámara apagada',
+    scanner_stop:'Detener cámara',scanner_off:'Cámara apagada',scanner_restart:'Reiniciar cámara',
     scanner_examples:'EJEMPLOS RÁPIDOS:',
     settings_title:'Configuración',
     settings_notif:'NOTIFICACIONES',settings_push:'Push en celular',settings_push_sub:'Alertas y recordatorios',
@@ -2221,7 +2221,7 @@ const LANG = {
     coach_q1:'Как увеличить белок?',coach_q2:'Сколько воды нужно пить?',
     scanner_title:'Сканер',scanner_live:'Камера',scanner_photo:'Фото',scanner_manual:'Вручную',
     scanner_aim:'Наведите на штрих-код',scanner_active:'Камера активна — наведите на штрих-код',
-    scanner_stop:'Остановить камеру',scanner_off:'Камера выключена',
+    scanner_stop:'Остановить камеру',scanner_off:'Камера выключена',scanner_restart:'Перезапустить камеру',
     scanner_examples:'БЫСТРЫЕ ПРИМЕРЫ:',
     settings_title:'Настройки',
     settings_notif:'УВЕДОМЛЕНИЯ',settings_push:'Push-уведомления',settings_push_sub:'Оповещения и напоминания',
@@ -4384,6 +4384,13 @@ window.startLiveScanner = async function() {
       Quagga.start();
       SCAN.quaggaRunning = true;
       if (statusEl) statusEl.textContent = '🟢 ' + t('scanner_active');
+      // Reset the button back to "Stop"
+      var scanBtn = document.querySelector('[onclick="startLiveScanner()"]');
+      if(scanBtn){
+        scanBtn.className='btn btn-danger btn-full';
+        scanBtn.innerHTML='⏹ '+t('scanner_stop');
+        scanBtn.setAttribute('onclick','stopLiveScanner()');
+      }
     });
 
     // On successful decode
@@ -4424,16 +4431,54 @@ window.startLiveScanner = async function() {
 };
 
 window.stopLiveScanner = function() {
-  if(typeof Quagga!=='undefined'){try{Quagga.stop()}catch(e){}try{Quagga.offDetected()}catch(e){}}
+  // 1. Stop QuaggaJS
+  if(typeof Quagga!=='undefined'){
+    try{Quagga.stop()}catch(e){}
+    try{Quagga.offDetected()}catch(e){}
+    try{Quagga.offProcessed()}catch(e){}
+  }
   SCAN.quaggaRunning=false;
+
+  // 2. Stop ALL camera tracks in viewport
   var vp=document.getElementById('quagga-viewport');
   if(vp){
     var vids=vp.querySelectorAll('video');
-    for(var i=0;i<vids.length;i++){try{if(vids[i].srcObject){vids[i].srcObject.getTracks().forEach(function(t){t.stop()});vids[i].srcObject=null;}vids[i].remove()}catch(e){}}
+    for(var i=0;i<vids.length;i++){
+      try{
+        if(vids[i].srcObject){
+          vids[i].srcObject.getTracks().forEach(function(tk){tk.stop()});
+          vids[i].srcObject=null;
+        }
+        vids[i].pause();
+        vids[i].remove();
+      }catch(e){}
+    }
     vp.querySelectorAll('canvas').forEach(function(cv){cv.remove()});
-    vp.innerHTML='';
+    vp.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3);font-size:14px">'+t('scanner_off')+'</div>';
   }
-  document.querySelectorAll('video').forEach(function(v){try{if(v.srcObject){v.srcObject.getTracks().forEach(function(t){t.stop()});v.srcObject=null}}catch(e){}});
+
+  // 3. Kill any remaining camera streams globally
+  document.querySelectorAll('video').forEach(function(v){
+    try{
+      if(v.srcObject){
+        v.srcObject.getTracks().forEach(function(tk){tk.stop()});
+        v.srcObject=null;
+      }
+      v.pause();
+    }catch(e){}
+  });
+
+  // 4. Update status text
+  var statusEl=document.getElementById('scan-live-status');
+  if(statusEl) statusEl.innerHTML='⏹ '+t('scanner_off')+' — <a href="#" onclick="startLiveScanner();return false" style="color:var(--green)">▶ '+t('scanner_restart')+'</a>';
+
+  // 5. Update button to restart
+  var stopBtn=document.querySelector('[onclick="stopLiveScanner()"]');
+  if(stopBtn){
+    stopBtn.className='btn btn-primary btn-full';
+    stopBtn.innerHTML='▶ '+t('scanner_restart');
+    stopBtn.setAttribute('onclick','startLiveScanner()');
+  }
 };
 
 // ── MODO 2: Leitura de foto com ZXing ─────
