@@ -3589,14 +3589,21 @@ function injectBackBtn(screen) {
   btn.innerHTML = '←';
   btn.onclick = function() { goBack(); };
   btn.style.cssText = [
-    'background:transparent',
-    'border:none',
-    'font-size:22px',
+    'background:var(--surface2)',
+    'border:1.5px solid var(--border2)',
+    'font-size:28px',
+    'font-weight:bold',
     'color:var(--text)',
     'cursor:pointer',
-    'padding:0 10px 0 0',
+    'padding:8px 14px',
     'line-height:1',
     'flex-shrink:0',
+    'border-radius:12px',
+    'min-width:44px',
+    'min-height:44px',
+    'display:flex',
+    'align-items:center',
+    'justify-content:center',
     '-webkit-tap-highlight-color:transparent',
     'touch-action:manipulation'
   ].join(';');
@@ -4393,33 +4400,47 @@ window.startLiveScanner = async function() {
       }
     });
 
-    // On successful decode
-    let lastCode = '', lastTime = 0, detecting = false;
+    // On successful decode — CONSECUTIVE READS FILTER
+    // Requires same code 3 out of last 5 reads to accept (eliminates false positives)
+    var readBuffer = [], accepted = false;
     Quagga.onDetected(function(result) {
-      if (detecting) return; // prevent concurrent detections
-      const code = result.codeResult.code;
-      const now = Date.now();
+      if (accepted) return;
+      var code = result.codeResult.code;
       
-      // 1. Validate barcode length (EAN-8=8, EAN-13=13, UPC-A=12)
+      // Reject codes shorter than 8 digits
       if (!code || code.length < 8) return;
       
-      // 2. Debounce: same code within 3s = skip
-      if (code === lastCode && now - lastTime < 3000) return;
+      // Add to buffer (keep last 5)
+      readBuffer.push(code);
+      if (readBuffer.length > 5) readBuffer.shift();
       
-      // 3. Lock to prevent multiple fires
-      detecting = true;
-      lastCode = code;
-      lastTime = now;
-
-      // Vibrate on success
+      // Count occurrences of this code in buffer
+      var count = 0;
+      for (var i = 0; i < readBuffer.length; i++) {
+        if (readBuffer[i] === code) count++;
+      }
+      
+      // Update status with read progress
+      var statusEl = document.getElementById('scan-live-status');
+      if (statusEl && count < 3) {
+        statusEl.textContent = '🔍 ' + code + ' (' + count + '/3)...';
+      }
+      
+      // Need 3 consistent reads to accept
+      if (count < 3) return;
+      
+      // ACCEPTED — lock, stop camera, process
+      accepted = true;
+      readBuffer = [];
+      
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+      if (statusEl) statusEl.textContent = '✅ ' + code;
       stopLiveScanner();
       
-      // Small delay to let camera cleanup finish before UI update
       setTimeout(function() {
-        detecting = false;
+        accepted = false;
         if (!window._scanLock) doScan(code);
-      }, 300);
+      }, 400);
     });
 
     // Draw overlay on detected frames
